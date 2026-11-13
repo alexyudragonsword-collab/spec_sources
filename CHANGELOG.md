@@ -3,6 +3,16 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
+## 未发布
+
+### 三个消费方的迁移验收（2026-11-13）
+- mmw60_trx（[#21](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/21)，合并 `b8fc55b`）、fmcw_radar（[#13](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/13)，`79d040a`）、d2d_link（[#1](https://github.com/alexyudragonsword-collab/d2d_link/issues/1)，`0cbd4e9`）都已按 spec_sources@`d7b4d1e` 迁完。本库在各自 main 上独立复核：
+  - vendored 文件与 PIN 逐字节相同：8 / 2 / 3 个；
+  - 指纹重录逐位相同：68、1979、3597 个值（d2d 补装 scikit-rf 后录全）；
+  - mmw60 经垫片读出的 125 条旧条目 `repr` 逐条相同。
+- 三份迁移说明删除；fmcw 那 14 条的清单移到 ROADMAP 里程碑 2。
+- `consumers.yaml` 加 `vendored:` 一节（铁律 4 的第二种登记）：整份 vendor 的消费方按文件登记（库、pin、文件）。这些文件在某个消费方的 pin 之后改了，CHANGELOG 必须写一行 `` `<库>` 需重新 pin ``（`tests/test_consumers.py` 用 git 历史核对，CI 改成完整检出）。按条连值登记仍只用于在自己表里抄了数的引用（fmcw 的 5 条）。
+
 ## 0.1.0 —— 开库：三张表合成一处（2026-11-13）
 
 **为什么**：同一类外部数字散在三个库里各一张表（mmw60_trx 125 条、fmcw_radar 39 条、d2d_link 16 条），表放在某个消费方里，改一次键名就打断别人，核实一条原文也只惠及一个库。

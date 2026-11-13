@@ -6,6 +6,12 @@
 # 直到这里的登记与 CHANGELOG 一起改——下游重新 pin 时用它们自己的表核对同一个数。
 #
 # at = 登记时读过的下游提交（完整 SHA）。
+#
+# 两种登记：
+#   consumers  在自己的表里抄了数、再用引用核对的（fmcw_radar 的 upstream:）——按条登记数值，见上。
+#   vendored   把本库的文件整份 vendor 进去、按键读的（垫片）——按文件登记：哪个库、pin 在哪个提交、拷了哪些文件。
+#              数值由它们自己的指纹守；本库这边，登记的文件在它的 pin 之后有改动时，CHANGELOG 必须写一行
+#              "`<库>` 需重新 pin"（tests/test_consumers.py 用 git 历史核对），对方重新 pin 后把这里的 pin 改掉。
 
 consumers:
 
@@ -49,3 +55,25 @@ consumers:
     key: isolation.tx_rx_tue2018_no_ebg_min_db
     value: 20.0
     was: "mmw60_trx:isolation.tx_rx_tue2018#with_ebg_db-improvement_max_db"
+
+# 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。
+vendored:
+
+  - repo: mmw60_trx
+    at: b8fc55b97dae05ce74311c8d36c3be07d168e585
+    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
+    issue: "mmw60_trx#21"
+    files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
+            data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
+
+  - repo: fmcw_radar
+    at: 79d040a78fd1e10c71fede49d4984b44bb0c760e
+    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
+    issue: "fmcw_radar#13"
+    files: [reader.py, data/frontend60.yaml]
+
+  - repo: d2d_link
+    at: 0cbd4e9e0d2533a97b949dca47eeffb62df326d6
+    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
+    issue: "d2d_link#1"
+    files: [reader.py, data/ucie.yaml, legacy_keys/d2d_link.yaml]

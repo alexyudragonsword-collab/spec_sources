@@ -12,30 +12,39 @@
 | Recommendation ITU-R P.676-13 (08/2022), "Attenuation by atmospheric gases and related effects" | www.itu.int | Annex 1：Table 1（44 条氧气谱线）与式 (1)–(9) → `itu_p676.*`。式子在文本层里丢了 θ，渲染第 7、10 页读的。用 itur 0.4.0 独立核对过干大气结果 |
 | Y. Deep et al., "Polarimetric Radar Cross-Sections of Pedestrians at Automotive Radar Frequencies", arXiv:1910.13706v1, 2019 | arxiv.org | III.B 与图 4：77 GHz 行人同极化 RCS −10…+5 dBsm（射线追踪仿真）→ `target_rcs.deep2019_pedestrian_77g` |
 | H. Asada et al., "A 60 GHz CMOS Power Amplifier Using Capacitive Cross-Coupling Neutralization with 16 % PAE", EuMC 2011 | www.ssc.p.isct.ac.jp（东工大并入科学东京后的实验室站点，已放行） | 参考文献表（下面第 1 批的 13 篇）；Table I 的 14 行与 `pa60.eumc2011_table1` 逐格一致 |
+| Table I [1] Chan et al., ISSCC 2009 paper 22.4 | 用户从 IEEE Xplore 下载（2026-11-13），`asada_t1_01_chan_isscc2009.pdf` | Fig. 22.4.5 对比表（嵌入字体，渲染读）：增益 15.8、P1dB 2.5、Psat 11.5、PAE 11 % → `pa60.chan_isscc2009`。Asada 写增益 16.0。正文：P1dB 偏低"may be due to premature compression caused by non-optimal biasing" |
+| Table I [2] Lai, Valdes-Garcia, ISSCC 2010 paper 23.6 | 同上，`asada_t1_02_lai_isscc2010.pdf` | 正文 61.5 GHz、1.0 V：Psat 17.9、OP1dB 15.4、PAE 11.7 %；自己的汇总表 Fig. 23.6.7：17.7 / 15.1 / 11.1 %。Asada 抄汇总表，四格相同 → `pa60.lai_isscc2010`（两套都记） |
+| Table I [6] Law, Pham, ISSCC 2010 paper 23.7 | 同上，`asada_t1_06_law_isscc2010.pdf` | Fig. 23.7.6：P1dB 18.2、Max. Pout 19.9、PAE 14.2 %、增益 20.6，与 Asada 四格相同；正文取整为 +18 / 20 → `pa60.law_isscc2010` |
+| Table I [13] Tanomura et al., ISSCC 2008 paper 31.1 | 同上，`asada_t1_13_tanomura_isscc2008.pdf` | Fig. 31.1.6（嵌入字体，渲染读）60–64 GHz、1.0 V：Output RF power 11.0 ± 0.5、P-1dB 10.0 ± 0.5、PAE > 8.2 %、线性增益 14.3 ± 1.3。Asada 的 P1dB / Psat / PAE 是这三格，增益 15.2 却是正文 0.7 V、60 GHz 的线性增益 → `pa60.tanomura_isscc2008` |
 
 ## 待取清单（按里程碑 2 的顺序）
 
 ### 第 1 批 · 60 GHz PA（决定 mmw60_trx 同台表每格的 MCS）
 
-`tgad_em.*` 已核实。剩下的是 `pa60.eumc2011_table1` 里 Asada 转引的 13 行，要逐行对原文。全部 📥，8 篇是 ISSCC 文摘：
+`tgad_em.*` 已核实。剩下的是 `pa60.eumc2011_table1` 里 Asada 转引的 13 行，要逐行对原文。全部 📥，8 篇是 ISSCC 文摘。✅ 是已读（2026-11-13，见上面"已读"表）：
 
 | Table I 行 | 文献 | Psat − P1dB / Psat |
 |---|---|---|
-| [1] | W. L. Chan, J. R. Long, M. Spirito, J. J. Pekarik, "A 60 GHz-Band 1V 11.5 dBm Power Amplifier with 11 % PAE in 65 nm CMOS", ISSCC 2009, pp. 380–381 | **9.0 dB（最大）** / 11.5 dBm |
-| [2] | J. Lai, A. Valdes-Garcia, "A 1 V 17.9 dBm 60 GHz Power Amplifier in Standard 65 nm CMOS", ISSCC 2010, pp. 424–425 | 2.6 / **17.7 dBm（65 nm 最高）** |
+| ✅ [1] | W. L. Chan, J. R. Long, M. Spirito, J. J. Pekarik, "A 60 GHz-Band 1V 11.5 dBm Power Amplifier with 11 % PAE in 65 nm CMOS", ISSCC 2009, pp. 380–381 | **9.0 dB（最大）** / 11.5 dBm |
+| ✅ [2] | J. Lai, A. Valdes-Garcia, "A 1 V 17.9 dBm 60 GHz Power Amplifier in Standard 65 nm CMOS", ISSCC 2010, pp. 424–425 | 2.6 / **17.7 dBm（65 nm 最高）** |
 | [5] | T. Suzuki, Y. Kawano, M. Sato, T. Hirose, K. Joshin, "60 and 77 GHz Power Amplifiers in Standard 90 nm CMOS", ISSCC 2008, pp. 562–563 | 2.4 / 10.6 |
-| [6] | C. Y. Law, A. Pham, "A High-Gain 60 GHz Power Amplifier with 20 dBm Output Power in 90 nm CMOS", ISSCC 2010, pp. 426–428 | 1.7 / **19.9 dBm（最高）** |
+| ✅ [6] | C. Y. Law, A. Pham, "A High-Gain 60 GHz Power Amplifier with 20 dBm Output Power in 90 nm CMOS", ISSCC 2010, pp. 426–428 | 1.7 / **19.9 dBm（最高）** |
 | [7] | N. Kurita, H. Kondoh, "60 GHz and 80 GHz Wide Band Power Amplifier MMICs in 90 nm CMOS Technology", RFIC 2009, pp. 39–42 | 3.8 / 12.6 |
 | [8] | M. Bohsali, A. Niknejad, "Current Combining 60 GHz CMOS Power Amplifiers", RFIC 2009（Asada 写的页码 39–42 与 [7] 相同，应是笔误，以 Xplore 为准） | 2.1 / 14.2 |
 | [9] | J. L. Kuo, Z. M. Tsai, K. Y. Lin, H. Wang, "A 50 to 70 GHz Power Amplifier Using 90 nm CMOS Technology", IEEE MWCL vol. 19 no. 1, Jan. 2009, pp. 45–47 | 3.5 / 13.8 |
 | [10] | D. Dawn et al., "60 GHz CMOS Power Amplifier with 20-dB Gain and 12 dBm Psat", IMS 2009, pp. 537–540 | 3.8 / 12.0 |
 | [11] | Y. Jin, E. A. Rivero, M. A. T. Sanduleanu, J. R. Long, "A Millimeter-Wave Power Amplifier with 25 dB Power Gain and +8 dBm Saturated Output Power", ESSCIRC 2007, pp. 276–279 | 3.0 / 8.0 |
 | [12] | S. Pinel et al., "A 90 nm CMOS 60 GHz Radio", ISSCC 2008, pp. 130–131 | 3.3 / 8.4 |
-| [13] | M. Tanomura et al., "TX and RX Front-Ends for 60 GHz Band in 90 nm Standard Bulk CMOS", ISSCC 2008, pp. 558–559 | **1.0 dB（最小）** / 11.0 |
+| ✅ [13] | M. Tanomura et al., "TX and RX Front-Ends for 60 GHz Band in 90 nm Standard Bulk CMOS", ISSCC 2008, pp. 558–559 | **1.0 dB（最小）** / 11.0 |
 | [14] | D. Chowdhury, P. Reynaert, A. M. Niknejad, "A 60 GHz 1 V +12.3 dBm Transformer-Coupled Wideband PA in 90 nm CMOS", ISSCC 2008, pp. 560–561 | 3.3 / 12.3 |
 | [15] | B. Martineau et al., "A 53-to-68 GHz 18 dB Power Amplifier with an 8-Way Combiner in Standard 65 nm CMOS", ISSCC 2010, pp. 428–429 | 5.6 / 16.6 |
 
 **先下 4 篇**：[1]、[13]（Psat − P1dB 的两端）和 [6]、[2]（Psat 的两端）。表的分布（中位 3.3 dB）就是靠这几行撑起来的。[1] 和 [11] 出自 TU Delft 的 Long 组，机构库里可能有免费全文。
+
+**2026-11-13 补记**：这 4 篇已读，P1dB / Psat / PAE 与 Asada 逐格相同，只有 [1]、[13] 的增益不同（见上表）。顺带得到的：
+- [8] 的页码：Lai 与 Law 的参考文献都写 Bohsali, Niknejad, RFIC 2009, pp. 31–34，Asada 的 39–42 是笔误。
+- 这 4 篇的对比表也转引了别的行，与 Asada 对得上：[5] Suzuki 8.3 / 8.2 / 10.6（Law 表，PAE 一格空）；[7] Kurita 10 / 8.8 / 12.6 / 6.9（Law 表）；[8] Bohsali 4.4 / 12.1 / 14.2 / 5.8（Law 表；Lai 表的增益是 4.5）；[12] Pinel 17 / 5.1 / 8.4 / 5.8（Chan 表）；[14] Chowdhury P1dB 9.0、Psat 12.3、PAE 8.8（Chan、Law 两表），增益两表都是 5.6，Asada 写 5.5。这些是二手对二手，不算核实，那几行仍要读原文。
+- 下一篇建议 [15] Martineau：去掉 [1] 以后，它的 5.6 dB 是 Psat − P1dB 的最大一格。
 
 MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-AB Power Amplifier in 22 nm FD-SOI CMOS", Microwave 2026）**不取**：它只有版图后仿真，查到的内容里也没有 OFDM 的 EVM，给不了 mmw60 想要的 OFDM 工作点。
 
@@ -76,7 +85,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 
 ## 合计
 
-- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。
+- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），还剩 23 篇。
 - 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 

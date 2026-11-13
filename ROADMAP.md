@@ -2,18 +2,25 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文，剩 Asada Table I 转引的 13 篇等用户下载（先下 4 篇）。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。mmw60_trx 的 0.3.0 重新 pin 在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25)。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 4 篇（未发布），剩 9 篇等用户下载。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。等对方回报的：mmw60_trx [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25)、fmcw_radar [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15)。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### fmcw_radar、d2d_link —— 择机重新 pin，不单开 issue
-- 0.2.0 / 0.3.0 对它们只改了 `reader.py` 的一行版本号和 fmcw `frontend60.yaml` 里两条它不读的键名 / 别名，读到的数不变。等里程碑 2 给它们开 issue 时一并重新 pin；那之前它们本地的 `vendor_check --strict` 会报 pin 过期，CI 不受影响（CI 检出在 pin 上）。
+### mmw60_trx —— [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 等回报
+- #25：重新 pin 到 0.3.0（`9a443ba`），数值不变。验收后把 `consumers.yaml` 的 pin 改成它，关 issue。
+- 之后还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
+
+### fmcw_radar —— [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 等回报
+- 提前开了（原计划等第 4 批齐了再开）：氧气两条与人体 RCS 改成引用，重新 pin 到 `dfaa36b`。它要定 77 GHz 记纯氧气（a，建议）还是总气体衰减（b）。验收后登记 3 条引用、改 pin 与文件列表（加 `data/atmosphere.yaml`、`data/radar_targets.yaml`）。
+
+### d2d_link —— 择机重新 pin，不单开 issue
+- 0.2.0 / 0.3.0 对它只改了 `reader.py` 的一行版本号，读到的数不变。等第 3 批（UCIe 眼罩）给它开 issue 时一并重新 pin；那之前它本地的 `vendor_check --strict` 会报 pin 过期，CI 不受影响（CI 检出在 pin 上）。
 
 ## 里程碑 2：核实轮
 
 每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序：
 
-1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。剩 `pa60.eumc2011_table1` 里 Asada 转引的 13 行，要逐行对原文，13 篇都要用户下载，题名与先下哪 4 篇见 `cairn/Reference/README.md`。
+1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 4 行（[1]、[2]、[6]、[13]，未发布），P1dB / Psat / PAE 逐格相同。剩 9 行（[5] [7] [8] [9] [10] [11] [12] [14] [15]）要用户下载，题名见 `cairn/Reference/README.md`；下一步建议先下 [15]（去掉 [1] 后 Psat − P1dB 最大的 5.6 dB）。
 2. **TDC 抖动**（fmcw_radar 的 1 ps 占位，`60g_sensing.tdc_jitter_s`）：找 60 GHz FMCW ADPLL 的 TDC 输入参考抖动，进本库成 survey / spec 条目，fmcw 再引用。
 3. **UCIe 眼罩**（d2d_link 的判定全悬在 0.65 UI 上）：`ucie.rx_eye_width_ui@24-32`、`ucie.rx_eye_width_ui`、`ucie.rx_eye_height_mv`，然后是其余 13 条 ucie.*。
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
@@ -23,7 +30,7 @@
      - 大气已建 `itu_p676.gamma_o_dry_sea_level`。fmcw 改成引用时数会动：60 GHz 由 15.0 变为 14.651；77.5 GHz 由 0.4 变为 0.091 dB/km——0.4 实为总气体衰减，fmcw 要不要连水汽一起算是它自己的事，要的话本库再补 Table 2 和水汽那一支。
      - 人体 RCS 已有 `target_rcs.deep2019_pedestrian_77g`（仿真，−10…+5 dBsm）。车辆、角反射器、窗函数等下载。
 
-     给 fmcw 开 issue 等这一批齐了再开。
+     氧气两条与人体 RCS 已提前在 fmcw [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 交给它；车辆、角反射器、窗函数等原文下载后另开 issue。
 5. **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 6. **Halo_Serdes #11 的 4 条条文**。
 7. 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。

@@ -1,0 +1,51 @@
+# 被下游读取的条目登记（铁律 4）。每条：哪个库（repo）、它自己表里的哪个键（local）读了本库的哪个键（key）、
+# 哪个字段（field，可无）、哪个点（select，表格曲线上 "<轴>=<值>"，可无），读到的值（value），以及迁入前的引用写法（was）。
+#
+# tests/test_consumers.py 逐条把 key / field / select 拼成读取器的引用并解析，结果必须等于 value；
+# 并要求 CHANGELOG.md 里有一行写着 "`<引用>` = <value>"。所以改这些条目的数值或键名，测试会红，
+# 直到这里的登记与 CHANGELOG 一起改——下游重新 pin 时用它们自己的表核对同一个数。
+#
+# at = 登记时读过的下游提交（完整 SHA）。
+
+consumers:
+
+  - repo: fmcw_radar
+    at: 2e5cbb61cef62819804fad89a197b0412b2eb84d
+    local: 60g_sensing.tx_power_dbm
+    key: rx60.radar_iwr6843
+    field: tx_power_dbm
+    value: 12.0
+    was: "mmw60_trx:rx60.radar_iwr6843#tx_power_dbm"
+
+  - repo: fmcw_radar
+    at: 2e5cbb61cef62819804fad89a197b0412b2eb84d
+    local: 60g_sensing.nf_db
+    key: rx60.radar_iwr6843
+    field: nf_db
+    value: 12.0
+    was: "mmw60_trx:rx60.radar_iwr6843#nf_db"
+
+  - repo: fmcw_radar
+    at: 2e5cbb61cef62819804fad89a197b0412b2eb84d
+    local: 60g_sensing.p1db_oob_dbm
+    key: rx60.radar_iwr6843
+    field: p1db_in_oob_dbm
+    value: -12.0
+    was: "mmw60_trx:rx60.radar_iwr6843#p1db_in_oob_dbm"
+
+  - repo: fmcw_radar
+    at: 2e5cbb61cef62819804fad89a197b0412b2eb84d
+    local: 60g_sensing.p1db_inband_dbm
+    key: rx60.radar_iwr6843_fig7_2
+    field: p1db_inband_dbm
+    select: "gain_db=40"
+    value: -34.0
+    was: "mmw60_trx:rx60.radar_iwr6843_fig7_2#p1db_inband_dbm@gain_db=40"
+
+  # 原来的引用在字段里做减法（with_ebg_db - improvement_max_db）；读取器的引用只做查找，减法落成本库的 derived 条目。
+  - repo: fmcw_radar
+    at: 2e5cbb61cef62819804fad89a197b0412b2eb84d
+    local: 60g_sensing.tx_rx_isolation_db
+    key: isolation.tx_rx_tue2018_no_ebg_min_db
+    value: 20.0
+    was: "mmw60_trx:isolation.tx_rx_tue2018#with_ebg_db-improvement_max_db"

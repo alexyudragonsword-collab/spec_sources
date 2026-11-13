@@ -9,7 +9,7 @@ import re
 import subprocess
 
 import pytest
-from conftest import PACKAGE, REPO
+from conftest import PACKAGE, RENAMED_0_2_0, REPO
 
 import spec_sources as ss
 
@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 80
+    assert len(table) == 84
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -96,27 +96,6 @@ FILE_PREFIXES = {
     "pa60.yaml": {"pa60"},
     "regulatory.yaml": {"fcc15255"},
     "ucie.yaml": {"ucie"},
-}
-#: 0.2.0 renamed mmw60_trx's 17 keys whose prefix was a tag (survey. / derived.), not a domain;
-#: the old names are aliases until at least 0.3.0
-RENAMED_0_2_0 = {
-    "survey.horowitz_mult32_pj": "horowitz2014.mult32_pj",
-    "survey.horowitz_add32_pj": "horowitz2014.add32_pj",
-    "survey.walden_fom_fj": "adc_survey.walden_fom_fj",
-    "survey.walden_fom_range_fj": "adc_survey.walden_fom_range_fj",
-    "survey.node_scale_45_to_7nm": "deepscale.node_scale_45_to_7nm",
-    "survey.n_sd_11ac": "ieee80211ac.n_sd",
-    "survey.n_sd_11be": "ieee80211be.n_sd",
-    "survey.eht_tone_mapper_dtm": "ieee80211be.ldpc_tone_mapping_distance",
-    "survey.ldpc_ppdu_encoding_thresholds": "ieee80211.ldpc_ppdu_encoding_thresholds",
-    "survey.rx60_comm_iscas2015": "rx60.comm_iscas2015",
-    "survey.dmg_sensitivity_assumptions": "dmg.sensitivity_assumptions",
-    "survey.antenna60_okada2013_dbi": "antenna60.okada2013_dbi",
-    "derived.cfo_liu2025_hz": "liu2025.cfo_from_ppm_hz",
-    "derived.k_threshold_stf": "liu2025.k_threshold_stf",
-    "derived.k_threshold_ltf_only": "liu2025.k_threshold_ltf_only",
-    "derived.rapp_p1db_below_psat_db": "tgad_em.rapp_p1db_below_psat_db",
-    "derived.pa60_rapp_p_asada_eumc2011": "pa60.asada_eumc2011_rapp_p",
 }
 
 
@@ -198,7 +177,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 10, "survey": 64, "assumed": 0, "derived": 6}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 23, "survey": 55, "assumed": 0, "derived": 6}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -207,13 +186,15 @@ def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
         assert not re.search(r"source:", p.read_text(encoding="utf-8")), p.name
 
 
-def test_rule3_the_0_2_0_renames_are_aliases_that_warn_and_resolve():
-    """The 17 renamed keys: each old name is an alias since 0.2.0 (not a live
-    key), reading it warns and gives the entry under its new name."""
-    assert {a: v.to for a, v in ss.aliases().items()} == RENAMED_0_2_0
+def test_rule3_the_0_2_0_renames_were_retired_in_0_3_0():
+    """The 17 keys renamed in 0.2.0 kept their old names as aliases for one
+    version; 0.3.0 retired them (no consumer reads an old name: mmw60_trx#23).
+    The ledger keeps every old name with aliased=0.2.0 retired=0.3.0, and an
+    old name now reads as an unknown key."""
+    ledger = _ledger()
+    assert ss.aliases() == {}
     for old, new in RENAMED_0_2_0.items():
-        assert old not in ss.all_entries() and new in ss.all_entries()
-        assert ss.aliases()[old].since == "0.2.0"
-        with pytest.warns(ss.DeprecatedKeyWarning, match=new):
-            e = ss.survey(old)
-        assert e.key == new and e is ss.survey(new)
+        assert ledger[old] == {"added": "0.1.0", "aliased": "0.2.0", "retired": "0.3.0"}, old
+        assert new in ss.all_entries() and old not in ss.all_entries()
+        with pytest.raises(KeyError):
+            ss.survey(old)

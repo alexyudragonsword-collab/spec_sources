@@ -3,6 +3,19 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · 0.3.0：TGad 评估方法学对上原文，退役别名（feat/0.3.0-tgad-em-verified）
+
+- 原文怎么取到的：
+  - Asada EuMC 2011：东工大实验室站点已迁到 www.ssc.p.isct.ac.jp，这个域名本来就在放行列表里，只是我先试了旧域名；
+  - TGad EM：在环境 "rf design" 里放行了 mentor.ieee.org（用户批准），取到 802.11-09/0296r16（2010-01-20）与 r09。
+- 9 条 `tgad_em.*` 由 survey 改为 spec，值一个不变。7 个参数与原文 3.2 节逐个相同；两个公式是 .doc 里嵌入的对象，转 PDF 渲染第 4–5 页读的。
+- 顺带读到的新事实，新增 4 条 spec：TGad 的相噪参数（−90 dBc/Hz、1 MHz、100 MHz、−130）、相噪加在收发两侧、回退从 Psat 算、推荐回退 OFDM 8 dB / 单载波 0.5 dB。mmw60 的 `assumed.pn_apply_sides`、`assumed.pa_obo_reference` 一直标着"原文没说"，现在有原文可引了，要不要改由它定。
+- 修订史：r09（2009）的 CMOS PA 是 g 5 / Asat 0.6 / s 0.71；r12（2009-11-19）"Modified CMOS PA model"改成现值；r11 把相噪改成单极点。
+- Asada 的参考文献表：Table I 那 13 行的题名都读出来了（`cairn/Reference/README.md`），Table I 与 `pa60.eumc2011_table1` 逐格一致。[8] 的页码与 [7] 相同，应是原文笔误。
+- 17 个别名退役（`retired=0.3.0`），前提已在 #23 验收时确认。
+- 共享表 84 条：spec 23、survey 55、derived 6；`keys.lock` 101 行。
+- 本环境实测：ROADMAP 原来写"脚本能自己取"的 mentor、eCFR 其实被拦，IEEE Xplore 返回 418、MDPI 返回 403。清单已按实测重写。
+
 ## 2026-11-13 · mmw60_trx 跟上 0.2.0，#23 验收关闭（feat/accept-mmw60-0.2.0）
 
 - 回报：mmw60 PR #24，合并 `97353e0`，pin 到 `e573d4d`。本库在它的 main 上独立复核：

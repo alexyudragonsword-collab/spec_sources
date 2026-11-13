@@ -89,6 +89,10 @@ pa60.eumc2011_table1  added=0.1.0
 pa60.wu_isscc2015  added=0.1.0
 pa60.asada_eumc2011_rapp_p  added=0.2.0
 derived.pa60_rapp_p_asada_eumc2011  added=0.1.0  aliased=0.2.0  retired=0.3.0
+pa60.chan_isscc2009  added=unreleased
+pa60.lai_isscc2010  added=unreleased
+pa60.law_isscc2010  added=unreleased
+pa60.tanomura_isscc2008  added=unreleased
 # regulatory.yaml
 fcc15255.eirp_avg_dbm  added=0.1.0
 fcc15255.eirp_peak_dbm  added=0.1.0

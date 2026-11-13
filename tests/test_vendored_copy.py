@@ -69,7 +69,7 @@ def test_the_whole_package_works_from_a_temporary_copy(tmp_path):
     dest = _vendor(tmp_path)
     out = _probe(tmp_path)
     assert Path(out["file"]).resolve().is_relative_to(dest.resolve())
-    assert out["n"] == len(ss.all_entries()) == 90
+    assert out["n"] == len(ss.all_entries()) == 94
     assert out["tags"] == {t: len(ss.by_source(t)) for t in ss.SOURCES}
     assert out["audit"] == []                         # the attribution headers do not break the grep guard
     assert out["ucie"] == 1.0e-27 and out["ref"] == -34.0
@@ -86,7 +86,7 @@ def test_the_copy_survives_being_moved(tmp_path):
     """Nothing in the package remembers where it was: copy, then move the copy."""
     _vendor(tmp_path / "a")
     shutil.move(str(tmp_path / "a"), str(tmp_path / "b"))
-    assert _probe(tmp_path / "b")["n"] == 90
+    assert _probe(tmp_path / "b")["n"] == 94
 
 
 def test_the_reader_imports_only_the_standard_library_and_pyyaml():

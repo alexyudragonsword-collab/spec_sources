@@ -5,7 +5,23 @@
 
 ## 未发布
 
-不升版本号：只新增两个数据文件，没有哪个库 vendor 它们，`__init__.py`、`reader.py` 与已登记的文件都没动，**没有库需要重新 pin**。
+不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
+
+- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里先 pin 0.3.0（`9a443ba`，那个 issue 的验收数字按 0.3.0 写），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 4 条。
+- fmcw_radar、d2d_link：它们 vendor 的文件这一节都没动。
+
+### 里程碑 2 第 1 批（部分）：Asada Table I 的 4 行对上原文
+- 用户从 IEEE Xplore 下了 4 篇 ISSCC 文摘，是 Table I 里 Psat − P1dB 的两端（[1]、[13]）与 Psat 的两端（[6]、[2]）。`data/pa60.yaml` 新增 4 条 spec：
+  - `pa60.chan_isscc2009`（[1]）：P1dB 2.5、Psat 11.5 dBm，差 9.0 dB；
+  - `pa60.lai_isscc2010`（[2]）：0.9 / 1.0 V 两档；
+  - `pa60.law_isscc2010`（[6]）：P1dB 18.2、Psat 19.9 dBm，差 1.7 dB；
+  - `pa60.tanomura_isscc2008`（[13]）：0.7 / 1.0 V 两档，带汇总表的 ± 范围。
+- **4 行里 P1dB、Psat、峰值 PAE 与原文各自的对比表逐格相同**，`pa60.eumc2011_table1` 的值不动。不同之处：
+  - 增益有两格不同：[1] 原文表是 15.8（Asada 写 16.0）；[13] 的 15.2 是 0.7 V 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 是 14.3）。
+  - [2] 原文前后不一：正文与题名是 Psat 17.9 / OP1dB 15.4 dBm、PAE 11.7 %，它自己的汇总表是 17.7 / 15.1、11.1 %。Asada 抄的是汇总表，条目两套都记。
+- **发现**：Table I 里唯一接近 TGad Rapp 9.5 dB 的 [1]（9.0 dB），原作者自己说 P1dB 偏低可能是各级偏置不当造成的提前压缩。去掉这一行，13 行里最大是 [15] 的 5.6 dB（原文未读）。`pa60.eumc2011_table1` 的 note 写明了这几点，并把"本库"改成库名（`CHANGED` 登记）。
+- 顺带核了 Asada [8] 的页码：Lai 与 Law 的参考文献都写 Bohsali RFIC 2009 pp. 31–34，Asada 的 39–42 是笔误。
+- 共享表 94 条：spec 31、survey 55、derived 8。账本新增 4 个键，记 `added=unreleased`。
 
 ### 里程碑 2 第 4 批（部分）：大气衰减与行人 RCS
 - `data/atmosphere.yaml`（新，前缀 `itu_p676`）：ITU-R P.676-13 的逐线法，只录氧气 / 干空气这一支。
@@ -17,7 +33,7 @@
     两条都在 `RECOMPUTE` 里用共享条目复算；与独立实现 itur（P.676-12）一致，到 4 位小数。
   - **发现**：fmcw_radar 记的 77 GHz 氧气衰减 0.4 dB/km 实为总气体衰减（标准大气下氧气 0.098 加水汽 0.251，合计 0.348）。氧气本身在 77–77.5 GHz 只有 0.09–0.10 dB/km。
 - `data/radar_targets.yaml`（新，前缀 `target_rcs`）：`target_rcs.deep2019_pedestrian_77g`（spec，arXiv:1910.13706），77 GHz 行人同极化 RCS −10 到 +5 dBsm，交叉极化约低 10 dB。**是射线追踪仿真，不是实测**，note 写明。
-- 共享表 90 条：spec 27、survey 55、derived 8。账本新增 6 个键，记 `added=unreleased`（发版时换成版本号）。
+- 当时共享表 90 条：spec 27、survey 55、derived 8。账本新增 6 个键，记 `added=unreleased`（发版时换成版本号）。
 
 ## 0.3.0 —— 里程碑 2 第一批：TGad 评估方法学对上原文；退役 0.2.0 的别名（2026-11-13）
 

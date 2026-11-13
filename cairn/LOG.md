@@ -3,6 +3,20 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · 第 1 批（部分）：Asada Table I 的 4 行对上原文（feat/m2-batch1-pa60-originals，未发布）
+
+- PR #9 已合并（main `dfaa36b`）。fmcw [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 提前开了，ROADMAP 原来写的是"等第 4 批齐了再开"，已改。#15 与 mmw60 #25 都还没回报。
+- 用户从 IEEE Xplore 下了 [1] Chan、[2] Lai、[6] Law、[13] Tanomura（ISSCC 2009 / 2010 / 2010 / 2008）。Chan 与 Tanomura 的表格用嵌入字体，文本层是乱码，渲染 300 dpi 读。
+- 12 格 P1dB / Psat / PAE 与 Asada 全部相同，Psat − P1dB 依次为 9.0 / 2.6 / 1.7 / 1.0 dB。不同的有三处：
+  - [1] 的增益：原文表 15.8，Asada 写 16.0；
+  - [13] 的增益：Asada 的 15.2 是 0.7 V 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益是 14.3 ± 1.3）；
+  - [2] 原文前后不一：正文 17.9 / 15.4 dBm、11.7 %，汇总表 17.7 / 15.1、11.1 %，Asada 抄的是汇总表。
+- **[1] 的 9.0 dB 原作者自己归因于偏置不当造成的提前压缩**。它是 Table I 里唯一接近 TGad Rapp 9.5 dB 的一行；去掉它，最大是 [15] 的 5.6 dB（未读）。
+- [13] 的 Psat 是"Output RF power"（扫到 Pin = 0 dBm 的最高输出），带 ±0.5 dB；60 GHz 正文给 P1dB 10.5、增益 13.3 dB 时输出 11.3，只差 0.8 dB。
+- 新增 4 条 spec，`pa60.eumc2011_table1` 只改 note（`CHANGED` 登记一次替换，"本库"换成库名），值不动。
+- 共享表 94 条：spec 31、survey 55、derived 8；账本 125 行。测试 68 个（66 通过，2 跳过）。
+- 环境：容器里 pytest 的 uv 环境丢了 PyYAML，重装后测试才跑得起来。
+
 ## 2026-11-13 · 第 4 批（部分）：P.676 氧气衰减与行人 RCS（feat/m2-batch4-atmosphere-rcs，未发布）
 
 - PR #8 合并为 0.3.0（main `9a443ba`），给 mmw60 开了 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25)：重新 pin，数值不变，示例 09 一行标签变。

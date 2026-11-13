@@ -30,7 +30,9 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "tgad_em.pn_params", "tgad_em.pn_sides", "tgad_em.pa_backoff_definition", "tgad_em.pa_backoff_recommended_db",
        # milestone 2 batch 4, read in ITU-R P.676-13 and arXiv:1910.13706 (not migrated from a table)
        "itu_p676.oxygen_lines", "itu_p676.method", "itu_p676.figure1_conditions", "itu_p676.gamma_o_dry_sea_level",
-       "itu_p676.gamma_o_dry_sea_level_peak", "target_rcs.deep2019_pedestrian_77g"}
+       "itu_p676.gamma_o_dry_sea_level_peak", "target_rcs.deep2019_pedestrian_77g",
+       # milestone 2 batch 1, read in four of the originals Asada's Table I quotes (rows [1], [2], [6], [13])
+       "pa60.chan_isscc2009", "pa60.lai_isscc2010", "pa60.law_isscc2010", "pa60.tanomura_isscc2008"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -46,6 +48,19 @@ CHANGED = {
     "adc_survey.walden_fom_fj": {"note": ("survey.walden_fom_range_fj", "adc_survey.walden_fom_range_fj")},
     "liu2025.k_threshold_stf": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
     "liu2025.k_threshold_ltf_only": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
+    # milestone 2 batch 1: four of the 13 quoted rows read in their originals; the note says which and what differs
+    # (and names the library instead of the migrated "本库")
+    "pa60.eumc2011_table1": {"note": (
+        "表里其他各行是它转引的、本库没有读各自的原文；用来看量级与分布，不用作基准档。"
+        "14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3），"
+        "只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB。",
+        "表里其他各行是它转引的。spec_sources 读了其中 4 行的原文（里程碑 2 第 1 批）：[1] pa60.chan_isscc2009、"
+        "[2] pa60.lai_isscc2010、[6] pa60.law_isscc2010、[13] pa60.tanomura_isscc2008，P1dB、Psat、峰值 PAE "
+        "都与原文各自的对比表逐格相同；只有增益两格不同：[1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 "
+        "60 GHz 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3）。其余 9 行 mmw60_trx 与 spec_sources "
+        "都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB"
+        "（中位 3.3）。只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P1dB "
+        "偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是 [15] 的 5.6 dB（原文未读）。")},
 }
 
 
@@ -114,7 +129,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 11 == 90
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 15 == 94
     assert set(CHANGED) <= set(ss.all_entries())
 
 

@@ -2,14 +2,14 @@
 
 把 `src/d2d_link/data/spec/ucie_survey.yaml` 的 16 条换成 vendored 的 spec_sources `data/ucie.yaml`（键名加了 `ucie.` 前缀）。`d2d_link/spec` 用别名表 `legacy_keys/d2d_link.yaml` 把它们按旧的裸键名接住，所以 `survey("reach_mm", "standard")`、`survey_tiered(...)`、报告里打印的键名全都照旧。只搬家，不动数：**指纹逐位不变**。
 
-`<PIN>` = spec_sources main 上合并里程碑 1 的提交的完整 SHA（合并后由用户填）。
+**PIN = `d7b4d1eb510617d69784622c593c8ed31ab32b8b`**：spec_sources main 上合并里程碑 1（PR #1）的提交。下面凡是写 PIN 的地方都填这个完整 SHA。
 
 ## 1. vendor 哪些文件
 
 目标目录 `src/d2d_link/vendor/spec_sources/`，原样拷贝，前面两行头：
 
 ```
-# Vendored from spec_sources@<PIN>: src/spec_sources/<相对路径>
+# Vendored from spec_sources@d7b4d1eb510617d69784622c593c8ed31ab32b8b: src/spec_sources/<相对路径>
 # Adapted-copy policy: see src/d2d_link/vendor/__init__.py
 ```
 
@@ -28,7 +28,7 @@
   - 第 176、254 行 `VENDOR.rglob("*.py")` 只扫 `.py`：改成 `[*VENDOR.rglob("*.py"), *VENDOR.rglob("*.yaml")]`；
   - `_strip_header` 去掉**所有**开头的 `# ` 行：vendored YAML 的第一行正文就是 `# ucie —— …` 注释，会被一起去掉。改成只去两行归属头（`Vendored from` 那行与紧跟的 `Adapted-copy policy` 那行）。
 - `tools/example_drift.py::spec_values` 按路径读 `src/d2d_link/data/spec/ucie_survey.yaml`；文件删了它返回空集，`tests/test_example_drift.py::test_accept_gate_reads_history_releases_and_spec_numbers_as_no_quote` 就红（演练里查到的）。改成读 `src/d2d_link/vendor/spec_sources/data/*.yaml` 的全部条目。
-- CI 的 vendor-drift：加 `repository: alexyudragonsword-collab/spec_sources`、`ref: <PIN>`、`path: _siblings/spec_sources` 与对应的 `--siblings`。
+- CI 的 vendor-drift：加 `repository: alexyudragonsword-collab/spec_sources`、`ref: d7b4d1eb510617d69784622c593c8ed31ab32b8b`、`path: _siblings/spec_sources` 与对应的 `--siblings`。
 
 ## 2. 垫片：`src/d2d_link/spec/__init__.py`
 
@@ -78,7 +78,7 @@ def _table() -> dict[str, SpecNumber]:
 
 ## 演练（2026-11-13，本会话在 d2d_link@6789810 的临时 worktree 上按本说明做了一遍；没有推到 d2d_link）
 
-PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor、重跑了指纹与相关测试，结果相同（合并后换成 main 的 SHA）。
+PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor、重跑了指纹与相关测试，结果相同。`59726b9` 与 PIN `d7b4d1e` 之间 `src/spec_sources/` 逐字节相同（`git diff` 为空），所以演练结果对 PIN 照样成立。
 
 - 指纹：迁移前后各记一次，**3345 个值逐位相同**（`tools/fingerprint.py compare`）。
 - `pytest`：250 passed，12 skipped（dash、scikit-rf 没装的 9 条，Halo / pllsim 检出不在的 2 条，`test_structure` 原本就跳的 1 条），1 deselected（slow）。

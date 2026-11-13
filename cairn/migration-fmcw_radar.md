@@ -2,14 +2,14 @@
 
 fmcw_radar 现在 vendor 了 mmw60_trx@ef0f00c 的 `spec.py` + `data/spec/survey.yaml`，用 5 条 `upstream: "mmw60_trx:<条目>#<字段>"` 读其中的数，自己解析 `@gain_db=40` 选择子和 `#a-b` 减法。迁移后改读 vendored 的 spec_sources：引用统一成读取器的 `ref()`，减法换成 spec_sources 的一条 derived。只搬家，不动数：**指纹逐位不变**。
 
-`<PIN>` = spec_sources main 上合并里程碑 1 的提交的完整 SHA（合并后由用户填）。
+**PIN = `d7b4d1eb510617d69784622c593c8ed31ab32b8b`**：spec_sources main 上合并里程碑 1（PR #1）的提交。下面凡是写 PIN 的地方都填这个完整 SHA。
 
 ## 1. vendor 哪些文件
 
 目标目录 `src/fmcw_radar/vendor/spec_sources/`，原样拷贝，前面两行头：
 
 ```
-# Vendored from spec_sources@<PIN>: src/spec_sources/<相对路径>
+# Vendored from spec_sources@d7b4d1eb510617d69784622c593c8ed31ab32b8b: src/spec_sources/<相对路径>
 # Adapted-copy policy: see src/fmcw_radar/vendor/__init__.py
 ```
 
@@ -23,8 +23,8 @@ fmcw_radar 现在 vendor 了 mmw60_trx@ef0f00c 的 `spec.py` + `data/spec/survey
 
 - **删** `vendor/mmw60/spec.py` 与 `vendor/mmw60/data/spec/survey.yaml`。**留** `vendor/mmw60/data/clock_profiles/pllsim_wu19_x10_60p48g_floor150.yaml`（LO 剖面，不是规范数字，仍 pin 在 mmw60_trx@ef0f00c），`vendor/mmw60/__init__.py` 的说明改成"只有 LO 剖面"。
 - `pyproject.toml` 的 package-data：`"vendor/mmw60/data/spec/*.yaml"` 换成 `"vendor/spec_sources/data/*.yaml"`。
-- `src/fmcw_radar/vendor/__init__.py` 的 Pins 节：mmw60 一条只剩剖面文件；加 spec_sources @ `<PIN>`。
-- CI 的 vendor-drift：加 `repository: alexyudragonsword-collab/spec_sources`、`ref: <PIN>`、`path: _siblings/spec_sources` 与对应的 `--siblings`；mmw60_trx 那个 checkout 留着（剖面文件）。`tools/vendor_check.py` 已经核对 YAML，不用改。
+- `src/fmcw_radar/vendor/__init__.py` 的 Pins 节：mmw60 一条只剩剖面文件；加 spec_sources @ `d7b4d1eb510617d69784622c593c8ed31ab32b8b`。
+- CI 的 vendor-drift：加 `repository: alexyudragonsword-collab/spec_sources`、`ref: d7b4d1eb510617d69784622c593c8ed31ab32b8b`、`path: _siblings/spec_sources` 与对应的 `--siblings`；mmw60_trx 那个 checkout 留着（剖面文件）。`tools/vendor_check.py` 已经核对 YAML，不用改。
 
 ## 2. 垫片：`src/fmcw_radar/sources.py` 与 `data/sources.yaml`
 
@@ -65,7 +65,7 @@ def upstream_value(ref: str) -> float:
 - `test_in_band_compression_follows_the_gain`：同样换 import。
 - 加一条：vendored 的表四个标签都数得准——`for f in ss.data_files(): assert ss.audit_tags(f) == []`。
 - `test_grep_lists_every_sourced_number`（数本库自己的表）不改。
-- `tests/test_vendor_check.py`：`PINS` 加 `"spec_sources": "<PIN>"`；`test_every_file_has_a_full_sha_header_pinned_to_its_sibling` 按路径挑 pin 的那一行加上 `"spec_sources" if "spec_sources" in f.parts`（演练里这条先红了）。
+- `tests/test_vendor_check.py`：`PINS` 加 `"spec_sources": "d7b4d1eb510617d69784622c593c8ed31ab32b8b"`；`test_every_file_has_a_full_sha_header_pinned_to_its_sibling` 按路径挑 pin 的那一行加上 `"spec_sources" if "spec_sources" in f.parts`（演练里这条先红了）。
 - 以后新加 `upstream:` 要报回 spec_sources，登记进它的 `consumers.yaml`（spec_sources 看不到这张表）。
 
 ## 4. 验收
@@ -76,7 +76,7 @@ def upstream_value(ref: str) -> float:
 
 ## 演练（2026-11-13，本会话在 fmcw_radar@2e5cbb6 的临时 worktree 上按本说明做了一遍；没有推到 fmcw_radar）
 
-PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor、重跑了指纹与相关测试，结果相同（合并后换成 main 的 SHA）。
+PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor、重跑了指纹与相关测试，结果相同。`59726b9` 与 PIN `d7b4d1e` 之间 `src/spec_sources/` 逐字节相同（`git diff` 为空），所以演练结果对 PIN 照样成立。
 
 - 指纹：迁移前后 **1979 个值逐位相同**。
 - `pytest`：197 passed，2 skipped（polar_tx / array_tx 检出不在）。

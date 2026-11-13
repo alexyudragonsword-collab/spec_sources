@@ -2,14 +2,14 @@
 
 把 `src/mmw60/data/spec/survey.yaml` 里关于外部世界的 63 条换成 vendored 的 spec_sources，`mmw60/spec.py` 留成薄垫片。只搬家，不动数：**指纹逐位不变**，示例输出不变（键名一个都没改）。
 
-`<PIN>` = spec_sources main 上合并里程碑 1 的提交的完整 SHA（合并后由用户填）。
+**PIN = `d7b4d1eb510617d69784622c593c8ed31ab32b8b`**：spec_sources main 上合并里程碑 1（PR #1）的提交。下面凡是写 PIN 的地方都填这个完整 SHA。
 
 ## 1. vendor 哪些文件
 
 目标目录 `src/mmw60/vendor/spec_sources/`，每个文件原样拷贝，前面加两行头（YAML 也一样，`#` 注释）：
 
 ```
-# Vendored from spec_sources@<PIN>: src/spec_sources/<相对路径>
+# Vendored from spec_sources@d7b4d1eb510617d69784622c593c8ed31ab32b8b: src/spec_sources/<相对路径>
 # Adapted-copy policy: see src/mmw60/vendor/__init__.py
 ```
 
@@ -21,10 +21,10 @@
 不拷 `data/ucie.yaml` 与 `legacy_keys/`。另外：
 
 - `pyproject.toml` 的 package-data 加 `"vendor/spec_sources/data/*.yaml"`（装好的包也要找得到）。
-- `src/mmw60/vendor/__init__.py` 的 Pins 节加一条 spec_sources @ `<PIN>`。
+- `src/mmw60/vendor/__init__.py` 的 Pins 节加一条 spec_sources @ `d7b4d1eb510617d69784622c593c8ed31ab32b8b`。
 - `tools/vendor_check.py` 的 `vendored_files()` 现在只收 `*.py`：照 fmcw_radar 的写法加上 `VENDOR.rglob("*.yaml")`，否则 6 个数据文件不被核对。
 - `tools/example_drift.py::spec_values` 按路径只读 `src/mmw60/data/spec/survey.yaml`：迁移后那里少了 63 条，文档里引用这些规范数的地方会被 accept 闸门当成"过期引用"。改成读本地表 + `src/mmw60/vendor/spec_sources/data/*.yaml`（d2d_link 的演练里同一个函数让 `test_example_drift` 红过）。
-- CI 的 vendor-drift 作业加一个 checkout（公开库，不要 token）：`repository: alexyudragonsword-collab/spec_sources`，`ref: <PIN>`，`path: _siblings/spec_sources`，命令行加 `--siblings spec_sources=${{ github.workspace }}/_siblings/spec_sources`。本地默认根 `/home/user` 下有 `spec_sources/` 即可。
+- CI 的 vendor-drift 作业加一个 checkout（公开库，不要 token）：`repository: alexyudragonsword-collab/spec_sources`，`ref: d7b4d1eb510617d69784622c593c8ed31ab32b8b`，`path: _siblings/spec_sources`，命令行加 `--siblings spec_sources=${{ github.workspace }}/_siblings/spec_sources`。本地默认根 `/home/user` 下有 `spec_sources/` 即可。
 
 ## 2. 本地表：`src/mmw60/data/spec/survey.yaml`
 
@@ -92,7 +92,7 @@ def ref(reference: str):
 - 加一条：本地表只剩该剩的——`{e.source for e in spec.load_table().values()} == {"assumed", "derived", "survey"}`，3 条 survey 正是上面那 3 条，且与共享表没有交集（`spec.all_entries()` 能建起来就说明没有）。
 - `test_derived_entries_follow_their_formulas`、`test_every_entry_is_tagged_and_cited`、`test_spec_source_needs_a_quote_and_survey_needs_unverified`、`test_unknown_key_names_what_exists`、fig4 / LDPC 两条：不改。
 - `test_entries_a_downstream_library_reads_keep_their_keys_fields_and_values`：守的东西搬到了 spec_sources（`consumers.yaml` + `tests/test_consumers.py`）。fmcw_radar 迁完（它不再 vendor 本库的表）之后删掉；在那之前留着，照样绿。
-- `tests/test_vendor_check.py` 写死了只有 wifi_trx_cal 一个 pin（演练里红了两条）：加 `PINS = {"wifi_trx_cal": PIN, "spec_sources": "<PIN>"}`，`test_every_vendored_file_has_the_header` 改成 `m["repo"] in PINS and m["sha"] == PINS[m["repo"]]`；`test_check_without_sibling_skips_and_fail_on_skip_is_red` 的 `Siblings` 里 spec_sources 也指到 `nowhere`（否则默认根下的检出让它 verbatim 而不是 skip）；`test_no_drift_against_sibling_*` 同样把 spec_sources 的检出传进去。
+- `tests/test_vendor_check.py` 写死了只有 wifi_trx_cal 一个 pin（演练里红了两条）：加 `PINS = {"wifi_trx_cal": PIN, "spec_sources": "d7b4d1eb510617d69784622c593c8ed31ab32b8b"}`，`test_every_vendored_file_has_the_header` 改成 `m["repo"] in PINS and m["sha"] == PINS[m["repo"]]`；`test_check_without_sibling_skips_and_fail_on_skip_is_red` 的 `Siblings` 里 spec_sources 也指到 `nowhere`（否则默认根下的检出让它 verbatim 而不是 skip）；`test_no_drift_against_sibling_*` 同样把 spec_sources 的检出传进去。
 - 本地表 `assumed.pa60_surveyed_pick` 的值是 `{source: "pa60.asada_eumc2011", …}`：映射里的键，不改任何 grep 计数，`audit_tags` 不报（演练里第一版的 `audit_tags` 报过，已在 spec_sources 改正）。
 - 迁移前后各跑一次，核对每个旧键的值：
   ```python
@@ -104,7 +104,7 @@ def ref(reference: str):
 
 - `AGENTS.md` 铁律 5：外部的数在 vendored spec_sources（`src/mmw60/vendor/spec_sources/data/`），本库自己的 assumed / derived 在 `data/spec/survey.yaml`；grep 守卫覆盖两边、四个标签。
 - `cairn/spec-sources.md` 的"制度"一节同上；"本库定的假设清单"不变。
-- `CHANGELOG.md` 一条：vendor spec_sources @ `<PIN>`，表从 125 条变成 62 条本地 + 64 条共享，指纹不变。
+- `CHANGELOG.md` 一条：vendor spec_sources @ `d7b4d1eb510617d69784622c593c8ed31ab32b8b`，表从 125 条变成 62 条本地 + 64 条共享，指纹不变。
 
 ## 6. 验收
 
@@ -119,7 +119,7 @@ def ref(reference: str):
 
 ## 演练（2026-11-13，本会话在 mmw60_trx@13024e0 的临时 worktree 上按本说明做了一遍；没有推到 mmw60_trx）
 
-PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor（合并后换成 main 的 SHA）。
+PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor。`59726b9` 与 PIN `d7b4d1e` 之间 `src/spec_sources/` 逐字节相同（`git diff` 为空），所以演练结果对 PIN 照样成立。
 
 - 指纹：**68 个值逐位相同**；经垫片读出的表：旧的 125 个键 `repr` 逐条相同（8 个字段），只多出 `isolation.tx_rx_tue2018_no_ebg_min_db`，合计 126。
 - 本地表删掉 63 条后剩 62 条，四个标签的 grep 数 0 / 3 / 56 / 3，`audit_tags` 干净。

@@ -15,7 +15,7 @@ MMW60 = "mmw60_trx.survey.yaml"
 D2D = "d2d_link.ucie_survey.yaml"
 
 #: what stays in mmw60_trx's local table besides its 56 assumed entries, and why
-#: (iron rule 2: a library's own choices and outputs stay with it)
+#: (iron rule 2: a library's own choices and outputs stay with it; confirmed by the user 2026-11-13)
 MMW60_STAYS = {
     "derived.isi_beyond_gi_k16_db": "uses assumed.cr_rms_delay_ns",
     "derived.pa60_obo_at_evm_limit_db": "uses assumed.pa60_operating_rule",

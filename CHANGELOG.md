@@ -21,5 +21,6 @@
   - `rx60.radar_iwr6843_fig7_2#p1db_inband_dbm@gain_db=40` = -34.0（`60g_sensing.p1db_inband_dbm`）
   - `isolation.tx_rx_tue2018_no_ebg_min_db` = 20.0（`60g_sensing.tx_rx_isolation_db`；原引用 `#with_ebg_db-improvement_max_db`）
 - **守卫**：六条铁律各有测试（`AGENTS.md` 写明哪条对哪个测试）；迁入条目逐字段对 `tests/fixtures/` 的源表副本（文件头写库名与完整 SHA，有姊妹库检出时再对 `git show` 逐字节）；`src/spec_sources/` 拷到临时目录、换个包名 import 并运行。`keys.lock` 是发布过的键的账本。
-- **迁移说明**：`cairn/migration-mmw60_trx.md`、`cairn/migration-fmcw_radar.md`、`cairn/migration-d2d_link.md`；三个库本轮不改，要它们做的在 ROADMAP"报回上游"。
+- **迁移说明**：`cairn/migration-mmw60_trx.md`、`cairn/migration-fmcw_radar.md`、`cairn/migration-d2d_link.md`；三个库本轮不改，要它们做的在 ROADMAP"报回上游"。每份都在那个库 pin 提交的临时 worktree 上演练过：指纹 d2d 3345 / fmcw 1979 / mmw60 68 个值逐位相同，mmw60 经垫片读出的 125 条旧条目逐字段相同；演练查出的问题写进了说明。
+- `audit_tags`（给消费方本地表用的守卫）只报铁律 5 禁止的：非标签行里的 `source: <标签>`、注释与 cite / note / quote / section / unit 里的 `source:`。值映射里的 `source` 键是数据（mmw60 的 `assumed.pa60_surveyed_pick`），不报；共享表另有更严的测试（`grep -c "source:"` 等于条目数）。
 - CI：ruff + pytest（Python 3.10 / 3.12）。依赖只有 PyYAML。LICENSE 与 mmw60_trx 相同（MIT）。

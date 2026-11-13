@@ -76,7 +76,7 @@ def upstream_value(ref: str) -> float:
 
 ## 演练（2026-11-13，本会话在 fmcw_radar@2e5cbb6 的临时 worktree 上按本说明做了一遍；没有推到 fmcw_radar）
 
-PIN 用的是本库分支提交 `522e1e7d570c181e4986ef4d9ac591a76e6ce56a`（合并后换成 main 的）。
+PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor、重跑了指纹与相关测试，结果相同（合并后换成 main 的 SHA）。
 
 - 指纹：迁移前后 **1979 个值逐位相同**。
 - `pytest`：197 passed，2 skipped（polar_tx / array_tx 检出不在）。

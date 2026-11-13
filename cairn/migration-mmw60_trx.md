@@ -92,6 +92,8 @@ def ref(reference: str):
 - 加一条：本地表只剩该剩的——`{e.source for e in spec.load_table().values()} == {"assumed", "derived", "survey"}`，3 条 survey 正是上面那 3 条，且与共享表没有交集（`spec.all_entries()` 能建起来就说明没有）。
 - `test_derived_entries_follow_their_formulas`、`test_every_entry_is_tagged_and_cited`、`test_spec_source_needs_a_quote_and_survey_needs_unverified`、`test_unknown_key_names_what_exists`、fig4 / LDPC 两条：不改。
 - `test_entries_a_downstream_library_reads_keep_their_keys_fields_and_values`：守的东西搬到了 spec_sources（`consumers.yaml` + `tests/test_consumers.py`）。fmcw_radar 迁完（它不再 vendor 本库的表）之后删掉；在那之前留着，照样绿。
+- `tests/test_vendor_check.py` 写死了只有 wifi_trx_cal 一个 pin（演练里红了两条）：加 `PINS = {"wifi_trx_cal": PIN, "spec_sources": "<PIN>"}`，`test_every_vendored_file_has_the_header` 改成 `m["repo"] in PINS and m["sha"] == PINS[m["repo"]]`；`test_check_without_sibling_skips_and_fail_on_skip_is_red` 的 `Siblings` 里 spec_sources 也指到 `nowhere`（否则默认根下的检出让它 verbatim 而不是 skip）；`test_no_drift_against_sibling_*` 同样把 spec_sources 的检出传进去。
+- 本地表 `assumed.pa60_surveyed_pick` 的值是 `{source: "pa60.asada_eumc2011", …}`：映射里的键，不改任何 grep 计数，`audit_tags` 不报（演练里第一版的 `audit_tags` 报过，已在 spec_sources 改正）。
 - 迁移前后各跑一次，核对每个旧键的值：
   ```python
   old = yaml.safe_load(subprocess.run(["git", "show", "13024e0:src/mmw60/data/spec/survey.yaml"], ...).stdout)["entries"]

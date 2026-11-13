@@ -9,11 +9,13 @@ import subprocess
 
 import pytest
 import yaml
-from conftest import PACKAGE, REPO, fixture_entries
+from conftest import PACKAGE, REPO, fixture_entries, fixture_header
 
 import spec_sources as ss
 
 FMCW = "fmcw_radar.sources.yaml"
+FMCW_15 = "fmcw_radar.sources.ffc703e.yaml"   # its table when fmcw_radar#15 was accepted
+M1 = "2e5cbb61cef62819804fad89a197b0412b2eb84d"   # fmcw_radar when milestone 1 registered its five references
 REQUIRED = {"repo", "at", "local", "key", "value", "was"}
 OPTIONAL = {"field", "select"}
 
@@ -36,7 +38,7 @@ def _ref(r: dict) -> str:
 
 def test_registrations_are_well_formed():
     regs = _registrations()
-    assert len(regs) == 5
+    assert len(regs) == 8
     for r in regs:
         assert REQUIRED <= set(r) <= REQUIRED | OPTIONAL, r
         assert re.fullmatch(r"[0-9a-f]{40}", r["at"]), r
@@ -64,11 +66,10 @@ def test_fmcw_references_are_all_registered_and_agree_with_its_table():
     derived entry instead (iron rule 6)."""
     src = fixture_entries(FMCW)
     upstream = {k: e for k, e in src.items() if e.get("upstream")}
-    regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar"}
+    regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar" and r["at"] == M1}
     assert set(regs) == set(upstream)
     for local, r in regs.items():
         assert upstream[local]["upstream"] == r["was"] and upstream[local]["value"] == r["value"]
-        assert r["at"] == "2e5cbb61cef62819804fad89a197b0412b2eb84d"
         old = r["was"].removeprefix("mmw60_trx:")
         if "-" in old.partition("#")[2]:
             with pytest.raises(ValueError, match="derived"):
@@ -78,16 +79,34 @@ def test_fmcw_references_are_all_registered_and_agree_with_its_table():
             assert old == _ref(r) and ss.ref(old) == r["value"]
 
 
+def test_fmcw_references_at_its_last_acceptance_are_all_registered():
+    """fmcw_radar#15 (accepted at ffc703e): every ``upstream:`` in its table --
+    the five front-end figures and the three read since (oxygen at 60 and 77.5
+    GHz, the pedestrian RCS) -- is a registration here, spelled as the
+    reference, with the same value."""
+    src = fixture_entries(FMCW_15)
+    upstream = {k: e for k, e in src.items() if e.get("upstream")}
+    regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar"}
+    assert set(regs) == set(upstream) and len(regs) == 8
+    for local, r in regs.items():
+        assert upstream[local]["upstream"] == f"spec_sources:{_ref(r)}", local
+        assert upstream[local]["value"] == r["value"] == ss.ref(_ref(r)), local
+        assert r["at"] in (M1, fixture_header(FMCW_15)["sha"]), local
+
+
 def test_fmcws_own_spec_and_survey_entries_are_listed_for_milestone_2():
     """Not migrated in milestone 1: the 14 spec / survey entries of fmcw_radar's
     table (5 of them the registered front-end figures, 9 its own: oxygen, RCS,
-    window widths) are listed under milestone 2 in ROADMAP.md."""
+    window widths).  Each is either registered here (read from this library
+    since) or still listed under milestone 2 in ROADMAP.md."""
     src = fixture_entries(FMCW)
     own = [k for k, e in src.items() if e["source"] in ("spec", "survey")]
     assert len(own) == 14 and sum(bool(src[k].get("upstream")) for k in own) == 5
+    registered = {r["local"] for r in _registrations() if r["repo"] == "fmcw_radar"}
     note = (REPO / "ROADMAP.md").read_text(encoding="utf-8")
     for k in own:
-        assert f"`{k}`" in note, k
+        assert k in registered or f"`{k}`" in note, k
+    assert len(set(own) - registered) == 6
 
 
 # ------------------------------------------------------------------- consumers that vendor whole files

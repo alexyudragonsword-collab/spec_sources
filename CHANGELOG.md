@@ -7,8 +7,22 @@
 
 不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
 
-- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里先 pin 0.3.0（`9a443ba`，那个 issue 的验收数字按 0.3.0 写），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 4 条。
-- fmcw_radar、d2d_link：它们 vendor 的文件这一节都没动。
+- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 4 条。
+- fmcw_radar 已在 [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 里 pin 到 `dfaa36b`（已验收），它 vendor 的 4 个文件之后没动。d2d_link vendor 的文件这一节也没动。
+
+### 验收：mmw60_trx#25、fmcw_radar#15
+- mmw60_trx 重新 pin 到 0.3.0：合并 `b16b6a0`。
+  - 8 个文件去掉出处头后与 `9a443ba` 逐字节相同。
+  - 指纹在 97353e0 与 b16b6a0 之间 69 个值逐位相同。
+  - `all_entries()` 130 条，未核实 42 条。
+- fmcw_radar 改成引用 3 条（选了只算氧气）：合并 `ffc703e`，pin `dfaa36b`。
+  - 4 个文件逐字节相同。
+  - 指纹对 79d040a 动了 319 / 1979 个值。在 79d040a 上只把两个氧气数换成新值，1979 个值就与 ffc703e 逐位相同，所以全部变化都只由这两个数引起。
+  - 登记 3 条引用：
+    - `itu_p676.gamma_o_dry_sea_level#db_per_km@f_ghz=60` = 14.651
+    - `itu_p676.gamma_o_dry_sea_level#db_per_km@f_ghz=77.5` = 0.091
+    - `target_rcs.deep2019_pedestrian_77g#co_pol_min_dbsm` = -10.0
+  - fmcw 自己加了第四个标签 derived（必须带 upstream，note 写公式）。氧气两条标 derived，人体 RCS 标 spec。
 
 ### 里程碑 2 第 1 批（部分）：Asada Table I 的 4 行对上原文
 - 用户从 IEEE Xplore 下了 4 篇 ISSCC 文摘，是 Table I 里 Psat − P1dB 的两端（[1]、[13]）与 Psat 的两端（[6]、[2]）。`data/pa60.yaml` 新增 4 条 spec：
@@ -32,6 +46,7 @@
 
     两条都在 `RECOMPUTE` 里用共享条目复算；与独立实现 itur（P.676-12）一致，到 4 位小数。
   - **发现**：fmcw_radar 记的 77 GHz 氧气衰减 0.4 dB/km 实为总气体衰减（标准大气下氧气 0.098 加水汽 0.251，合计 0.348）。氧气本身在 77–77.5 GHz 只有 0.09–0.10 dB/km。
+    - **更正**（fmcw_radar#15 指出）：0.348 是把 1013.25 hPa 当干空气压算的（itur 的 `p` 参数是干空气压，总压 1023.2）。若当总压读，是 0.096 + 0.249 = 0.344。条目只登记干大气，数值不受影响；`itu_p676.gamma_o_dry_sea_level` 的 note 里那句"合计 0.348"等这个文件下次改时注明读法（ROADMAP）。
 - `data/radar_targets.yaml`（新，前缀 `target_rcs`）：`target_rcs.deep2019_pedestrian_77g`（spec，arXiv:1910.13706），77 GHz 行人同极化 RCS −10 到 +5 dBsm，交叉极化约低 10 dB。**是射线追踪仿真，不是实测**，note 写明。
 - 当时共享表 90 条：spec 27、survey 55、derived 8。账本新增 6 个键，记 `added=unreleased`（发版时换成版本号）。
 

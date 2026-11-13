@@ -56,22 +56,52 @@ consumers:
     value: 20.0
     was: "mmw60_trx:isolation.tx_rx_tue2018#with_ebg_db-improvement_max_db"
 
-# 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）；
-# mmw60_trx 随后重新 pin 到 0.2.0（e573d4d，mmw60_trx#23，同日验收）。fmcw_radar、d2d_link 仍在 d7b4d1e（择机重新 pin）。
+  # 里程碑 2 第 4 批，fmcw_radar#15（验收于 2026-11-13）：这 3 条原是它自己表里的 survey，没有引用，所以 was 留空。
+  # 它选了只算氧气（ITU-R P.676 干大气）；氧气两条在它那边标 derived，人体 RCS 标 spec。
+  - repo: fmcw_radar
+    at: ffc703ed2208ac5c5b59ac1666537520619125c5
+    local: oxygen.60g_db_per_km
+    key: itu_p676.gamma_o_dry_sea_level
+    field: db_per_km
+    select: "f_ghz=60"
+    value: 14.651
+    was: ""
+
+  - repo: fmcw_radar
+    at: ffc703ed2208ac5c5b59ac1666537520619125c5
+    local: oxygen.77g_db_per_km
+    key: itu_p676.gamma_o_dry_sea_level
+    field: db_per_km
+    select: "f_ghz=77.5"
+    value: 0.091
+    was: ""
+
+  - repo: fmcw_radar
+    at: ffc703ed2208ac5c5b59ac1666537520619125c5
+    local: rcs.human_dbsm
+    key: target_rcs.deep2019_pedestrian_77g
+    field: co_pol_min_dbsm
+    value: -10.0
+    was: ""
+
+# 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。之后同日验收的重新 pin：
+#   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）
+#   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
+# d2d_link 仍在 d7b4d1e（择机重新 pin）。
 vendored:
 
   - repo: mmw60_trx
-    at: 97353e081ab4f272d08249c9f2df57a483c64a25
-    pin: e573d4d99dcf0584b7245c4869aaaa8a84ada24c
-    issue: "mmw60_trx#23"
+    at: b16b6a005fd1c47affbc51d3283de9c6ddd39f7e
+    pin: 9a443ba73655591665df003bd9a863769cf81bdf
+    issue: "mmw60_trx#25"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 
   - repo: fmcw_radar
-    at: 79d040a78fd1e10c71fede49d4984b44bb0c760e
-    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
-    issue: "fmcw_radar#13"
-    files: [reader.py, data/frontend60.yaml]
+    at: ffc703ed2208ac5c5b59ac1666537520619125c5
+    pin: dfaa36b67a144eb53acf692727efd431c4ac34e4
+    issue: "fmcw_radar#15"
+    files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml]
 
   - repo: d2d_link
     at: 0cbd4e9e0d2533a97b949dca47eeffb62df326d6

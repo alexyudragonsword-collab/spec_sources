@@ -6,7 +6,7 @@
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### mmw60_trx —— 0.2.0 改名（issue 见 LOG 最新一条）
+### mmw60_trx —— 0.2.0 改名：[mmw60_trx#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)
 - 重新 pin 到 0.2.0 的合并提交，把读旧键名的调用改成新名（0.3.0 退役别名之前要改完），更新示例 04 / 08 / 09 的期望输出（只是键名）。指纹必须逐位不变。
 - 验收：重新 pin 的 SHA、指纹、`vendor_check --strict`、跑测试时不再出现 `DeprecatedKeyWarning`。之后把 `consumers.yaml` 里它的 `pin` 改掉。
 

@@ -39,8 +39,6 @@ from pathlib import Path
 
 import yaml
 
-__version__ = "0.1.0"
-
 SOURCES = ("spec", "survey", "assumed", "derived")
 #: the fields an entry may carry (mmw60_trx's SpecNumber fields)
 FIELDS = ("value", "unit", "source", "cite", "note", "quote", "section")
@@ -351,4 +349,4 @@ def audit_tags(path: Path | str) -> list[str]:
 
 __all__ = ["SpecNumber", "SOURCES", "load_table", "all_entries", "survey", "value", "unverified", "by_source",
            "ref", "aliases", "Alias", "DeprecatedKeyWarning", "legacy_keys", "merge_tables", "audit_tags",
-           "data_files", "FIELDS", "KEY_PATTERN", "DATA_DIR", "LEGACY_DIR", "__version__"]
+           "data_files", "FIELDS", "KEY_PATTERN", "DATA_DIR", "LEGACY_DIR"]

@@ -3,6 +3,19 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · 0.2.0：17 个旧前缀键改名，旧名留别名（feat/0.2.0-rename）
+
+- 用户确认了新名表（ROADMAP 里拟的那张），照表改了 17 个键，分布：energy 5、ieee80211 6、liu2025 3、frontend60 2、pa60 1。值、单位、标签都没变。
+- 旧名写进各数据文件的 `aliases:`（since 0.2.0），读取时发 `DeprecatedKeyWarning`，返回的条目 `.key` 是新名。`keys.lock` 97 行：80 个活键，17 个 `aliased=0.2.0`。
+- 条目里引用旧名的交叉引用有 3 处，跟着改（登记在 `CHANGED`）：一条 note、两条 cite（`derived.cfo_liu2025_hz` → `liu2025.cfo_from_ppm_hz`）。文件头里的前缀说明重写。
+- `LEGACY_PREFIX_KEYS` 删掉，标签一律不许当前缀。新前缀 7 个，已登记在 `FILE_PREFIXES` 和 AGENTS 里。
+- 版本号从 `reader.py` 挪到 `__init__.py`，`reader.py` 只差这一行。以后单纯升版本，不会再让只 vendor `reader.py` 的 fmcw / d2d 变成"需重新 pin"。
+- 这次三个库都"需重新 pin"（`vendored:` 守卫要求 CHANGELOG 写明）：
+  - mmw60：要改调用，示例 04 / 08 / 09 打印的键名会变，开 issue；
+  - fmcw、d2d：读到的数不变，择机重新 pin，等里程碑 2 的 issue 一起做。
+- 测试 66 个（64 通过，2 跳过）：新增一条，逐个检查 17 个别名会警告并解析到新键。
+- **更正**：上一条（迁移验收）写的"测试 66 个（64 通过，2 跳过）"不对，应为 65 个（63 通过，2 跳过）——当时是数进度点数错了，这次用 `-o addopts=""` 拿到 pytest 的汇总行才核对出来。
+
 ## 2026-11-13 · 三个消费方的迁移验收通过，issue 关闭（feat/accept-migrations）
 
 - 回报：mmw60 PR #22 → `b8fc55b`；fmcw PR #14 → `79d040a`（0.2.10）；d2d → `0cbd4e9`（0.16.0）。三个都是各自 main 的 HEAD。

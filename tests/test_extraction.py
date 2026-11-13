@@ -31,7 +31,17 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db"}
 CHANGED = {
     # iron rule 5: the note spelled the tag word with a colon (d2d_link's grep counted 0 spec lines as 1)
     "ucie.rx_eye_width_ui@24-32": {"note": ("改 source: spec 或删去", "改成 spec 标签或删去")},
+    # 0.2.0: cross-references to renamed keys follow the rename
+    "adc_survey.walden_fom_fj": {"note": ("survey.walden_fom_range_fj", "adc_survey.walden_fom_range_fj")},
+    "liu2025.k_threshold_stf": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
+    "liu2025.k_threshold_ltf_only": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
 }
+
+
+def _now(key: str) -> str:
+    """A migrated key under its current name (0.2.0 renamed 17 of them; the old name is an alias)."""
+    a = ss.aliases().get(key)
+    return a.to if a else key
 
 
 @pytest.mark.parametrize("name", sorted(FIXTURE_FILES))
@@ -65,7 +75,7 @@ def test_mmw60_partition_is_explicit():
     assert collections.Counter(src[k]["source"] for k in moved) == {"spec": 10, "survey": 48, "derived": 5}
     assert collections.Counter(src[k]["source"] for k in stays) == {"assumed": 56, "survey": 3, "derived": 3}
     live = ss.all_entries()
-    assert moved <= set(live) and not (stays & set(live))
+    assert {_now(k) for k in moved} <= set(live) and not ({_now(k) for k in stays} & set(live))
 
 
 def test_mmw60_entries_equal_the_source_field_by_field():
@@ -73,7 +83,7 @@ def test_mmw60_entries_equal_the_source_field_by_field():
     moved = [k for k, e in src.items() if e["source"] != "assumed" and k not in MMW60_STAYS]
     assert len(moved) == 63
     for k in moved:
-        _check_equal(k, src[k], dst[k])
+        _check_equal(_now(k), src[k], dst[_now(k)])
 
 
 def test_d2d_entries_equal_the_source_field_by_field_under_the_ucie_prefix():
@@ -87,7 +97,7 @@ def test_d2d_entries_equal_the_source_field_by_field_under_the_ucie_prefix():
 
 
 def test_every_shared_entry_is_accounted_for():
-    mmw = {k for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
+    mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
     assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 1 == 80

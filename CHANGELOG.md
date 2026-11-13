@@ -3,7 +3,36 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
-## 未发布
+## 0.2.0 —— 17 个旧前缀键改名（2026-11-13）
+
+**下游重新 pin**（铁律 4；`consumers.yaml` 的 `vendored:` 核对）：
+- `mmw60_trx` 需重新 pin：它 vendor 的 5 个数据文件里有 17 个键改了名，`__init__.py` 里多了版本号，`reader.py` 少了版本号。旧键名在 0.2.x 仍能读，但会发 `DeprecatedKeyWarning`，读出来的条目 `.key` 是新名，所以示例 04 / 08 / 09 打印的键名会变；数值不变，指纹应逐位不变。0.3.0 之前要把调用改成新名。见 mmw60_trx 的 issue。
+- `fmcw_radar` 需重新 pin：它 vendor 的 `data/frontend60.yaml` 里改名的两条（`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`）它不读，`reader.py` 只少了一行版本号。读到的 5 个数不变，可以择机重新 pin。
+- `d2d_link` 需重新 pin：`reader.py` 只少了一行版本号，`data/ucie.yaml` 与 `legacy_keys/d2d_link.yaml` 都没变。可以择机重新 pin。
+
+### 改名（铁律 3，走弃用期）
+- **为什么**：这些键的前缀是标签，不是领域；里程碑 2 把 survey 核实成 spec 之后，键名就和标签矛盾了。按 mmw60 迁完、核实轮动这些条目之前的时机做。
+- 17 个键：旧名写进各数据文件的 `aliases:`（`since: "0.2.0"`），读取时发 `DeprecatedKeyWarning`；`keys.lock` 里记 `aliased=0.2.0`，至少留到 0.3.0。
+
+| 旧键 | 新键 |
+|---|---|
+| `survey.horowitz_mult32_pj` / `survey.horowitz_add32_pj` | `horowitz2014.mult32_pj` / `horowitz2014.add32_pj` |
+| `survey.walden_fom_fj` / `survey.walden_fom_range_fj` | `adc_survey.walden_fom_fj` / `adc_survey.walden_fom_range_fj` |
+| `survey.node_scale_45_to_7nm` | `deepscale.node_scale_45_to_7nm` |
+| `survey.n_sd_11ac` / `survey.n_sd_11be` | `ieee80211ac.n_sd` / `ieee80211be.n_sd` |
+| `survey.eht_tone_mapper_dtm` | `ieee80211be.ldpc_tone_mapping_distance` |
+| `survey.ldpc_ppdu_encoding_thresholds` | `ieee80211.ldpc_ppdu_encoding_thresholds` |
+| `survey.rx60_comm_iscas2015` | `rx60.comm_iscas2015` |
+| `survey.dmg_sensitivity_assumptions` | `dmg.sensitivity_assumptions` |
+| `survey.antenna60_okada2013_dbi` | `antenna60.okada2013_dbi` |
+| `derived.cfo_liu2025_hz` | `liu2025.cfo_from_ppm_hz` |
+| `derived.k_threshold_stf` / `derived.k_threshold_ltf_only` | `liu2025.k_threshold_stf` / `liu2025.k_threshold_ltf_only` |
+| `derived.rapp_p1db_below_psat_db` | `tgad_em.rapp_p1db_below_psat_db` |
+| `derived.pa60_rapp_p_asada_eumc2011` | `pa60.asada_eumc2011_rapp_p` |
+
+- 条目里指向旧名的 3 处交叉引用跟着改，登记在 `tests/test_extraction.py::CHANGED`：`adc_survey.walden_fom_fj` 的 note，以及 `liu2025.k_threshold_stf`、`liu2025.k_threshold_ltf_only` 的 cite。值、单位、标签都不变。
+- 新前缀 `horowitz2014`、`adc_survey`、`deepscale`、`ieee80211`、`ieee80211ac`、`ieee80211be`、`antenna60`。标签不能再当前缀（`LEGACY_PREFIX_KEYS` 删掉，改成一律禁止）。
+- 版本号从 `reader.py` 挪到 `__init__.py`：以后单纯升版本，不会再让只 vendor `reader.py` 的消费方变成"需重新 pin"。
 
 ### 三个消费方的迁移验收（2026-11-13）
 - mmw60_trx（[#21](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/21)，合并 `b8fc55b`）、fmcw_radar（[#13](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/13)，`79d040a`）、d2d_link（[#1](https://github.com/alexyudragonsword-collab/d2d_link/issues/1)，`0cbd4e9`）都已按 spec_sources@`d7b4d1e` 迁完。本库在各自 main 上独立复核：

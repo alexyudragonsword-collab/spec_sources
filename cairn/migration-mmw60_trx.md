@@ -116,3 +116,13 @@ def ref(reference: str):
 2. `examples/expected/` 不动（键名没改，04 / 08 / 09 打印的键名照旧）。
 3. `python tools/vendor_check.py --strict` 绿，spec_sources 的 8 个文件都是 verbatim。
 4. `pytest` 与 `ruff check .` 绿。
+
+## 演练（2026-11-13，本会话在 mmw60_trx@13024e0 的临时 worktree 上按本说明做了一遍；没有推到 mmw60_trx）
+
+PIN 先用本库分支提交 `522e1e7`，改了 `audit_tags` 之后用 `59726b90bbb1020254d1cec7abb4487e88f992f1` 重新 vendor（合并后换成 main 的 SHA）。
+
+- 指纹：**68 个值逐位相同**；经垫片读出的表：旧的 125 个键 `repr` 逐条相同（8 个字段），只多出 `isolation.tx_rx_tue2018_no_ebg_min_db`，合计 126。
+- 本地表删掉 63 条后剩 62 条，四个标签的 grep 数 0 / 3 / 56 / 3，`audit_tags` 干净。
+- `pytest -m "not slow"`（numba 开）：**199 passed，6 skipped**（test_compare 里 ay 波形的 5 条本来就是 n/a / 里程碑 3；wifi_trx_cal 检出不在的 1 条），0 failed。
+- `vendor_check.py --strict`：spec_sources 的 8 个文件都 verbatim；wifitrx 的 106 个因 wifi_trx_cal（私有库）检出不在而 skip（与本迁移无关）。
+- 第一遍查到的三处已写进第 1、4 节：`example_drift.spec_values`、`test_vendor_check` 的 pin（两条），以及 `audit_tags` 误报值映射里的 `source` 键（spec_sources 已改）。

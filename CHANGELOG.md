@@ -3,6 +3,10 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
+## 未发布
+
+- mmw60_trx 已重新 pin 到 0.2.0（`e573d4d`；[#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)，它的合并提交 `97353e0`），读旧键名的调用全部改掉，`consumers.yaml` 里它的 pin 已更新。fmcw_radar、d2d_link 仍在 `d7b4d1e`，择机重新 pin（见 0.2.0 一节）。
+
 ## 0.2.0 —— 17 个旧前缀键改名（2026-11-13）
 
 **下游重新 pin**（铁律 4；`consumers.yaml` 的 `vendored:` 核对）：

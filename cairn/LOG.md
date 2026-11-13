@@ -3,6 +3,21 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · mmw60_trx 跟上 0.2.0，#23 验收关闭（feat/accept-mmw60-0.2.0）
+
+- 回报：mmw60 PR #24，合并 `97353e0`，pin 到 `e573d4d`。本库在它的 main 上独立复核：
+  - 8 个 vendored 文件与 PIN 逐字节相同；
+  - 代码 / 测试 / 本地表 / 期望输出里的旧名从 42 / — / 4 / 4 处降到 0；
+  - 指纹 68 / 68 逐位相同，对 b8fc55b 和 13024e0 都一致。
+- 逐字段比对（旧名映射到新名后）：126 条只差 7 处，全是文字或值里出现的改名键名。
+  - 文字 6 处：我们登记的 3 处，加上它本地表的 3 处；
+  - 值 1 处：`assumed.pa60_surveyed_pick` 的 `rapp_p` 引用；读到的数不变。
+- 它把 `DeprecatedKeyWarning` 设成了测试错误。非慢测试 199 通过、7 跳过（与回报一致）；受影响的 7 个测试文件 93 通过、2 跳过。
+- 它多做的一处：垫片原来自己查合并表、不认 `aliases:`，只重新 pin 的话旧名会直接 KeyError，它补了 `_resolve`。
+  - **更正**：这是迁移说明里给 mmw60 的垫片示例漏掉的，`survey()` 函数体照旧，不处理别名。
+  - 读取器带 `table` 时的 `ref()` 也不认别名。已记进 ROADMAP，下次动 `reader.py` 时一起做。
+- `consumers.yaml`：mmw60 的 pin 改到 `e573d4d`（at `97353e0`，issue #23）；fmcw、d2d 仍在 `d7b4d1e`。0.3.0 退役别名的前提已满足。
+
 ## 2026-11-13 · 0.2.0：17 个旧前缀键改名，旧名留别名（feat/0.2.0-rename）
 
 - 合并为 main `e573d4d`（PR #5），即 0.2.0 的 PIN。已开 [mmw60_trx#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)。

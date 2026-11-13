@@ -2,13 +2,9 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：0.2.0（17 个旧前缀键改名）等 mmw60_trx 重新 pin、改调用；然后是里程碑 2 的核实轮。
+**当前焦点**：里程碑 2 的核实轮（第一项：60 GHz PA）。0.2.0 改名已由 mmw60_trx 跟上（#23 验收关闭），别名可在 0.3.0 退役。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
-
-### mmw60_trx —— 0.2.0 改名：[mmw60_trx#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)
-- 重新 pin 到 0.2.0 的合并提交，把读旧键名的调用改成新名（0.3.0 退役别名之前要改完），更新示例 08 / 09 的期望输出（只是键名，共 4 处）。指纹必须逐位不变。
-- 验收：重新 pin 的 SHA、指纹、`vendor_check --strict`、跑测试时不再出现 `DeprecatedKeyWarning`。之后把 `consumers.yaml` 里它的 `pin` 改掉。
 
 ### fmcw_radar、d2d_link —— 择机重新 pin，不单开 issue
 - 0.2.0 对它们只改了 `reader.py` 的一行版本号（fmcw 的 `frontend60.yaml` 另有两条它不读的改名），读到的数不变。等里程碑 2 给它们开 issue 时一并重新 pin；那之前它们本地的 `vendor_check --strict` 会报 pin 过期，CI 不受影响（CI 检出在 pin 上）。
@@ -37,7 +33,8 @@
 
 ## 其余待办
 
-- **0.3.0 退役 17 个别名**：mmw60_trx 改完调用（测试里不再出现 `DeprecatedKeyWarning`）之后，删掉各数据文件的 `aliases:`，`keys.lock` 补 `retired=0.3.0`。
+- **0.3.0 退役 17 个别名**：前提已满足——mmw60_trx 已不读旧名（它把 `DeprecatedKeyWarning` 设成了测试错误，#23），fmcw_radar、d2d_link 不读这 17 个键。删掉各数据文件的 `aliases:`，`keys.lock` 补 `retired=0.3.0`；数据文件变了，三个库都要在 CHANGELOG 里写"需重新 pin"，所以最好和下一次真正改数据的版本（里程碑 2 的第一批核实）一起发。
+- **读取器给合并表也解析别名**：`ref(..., table)` 与消费方垫片在合并表上的查找都不认 `aliases:`。mmw60_trx 在 #23 里自己在垫片里补了一份（`_resolve`：先查表，再查 `aliases()`，警告指向调用方）。把这段做成读取器的公开函数（如 `resolve(key, table)`，`ref` 带 `table` 时也走它），垫片就能更薄。改 `reader.py` 会让三个库都需重新 pin，等下一次必须动 `reader.py` 时一起做。
 - **迁入条目 note 里的"本库"**指 mmw60_trx 或 d2d_link（各文件头写明）。条目下一次因核实而改时，把"本库"与它们仓库里的路径改成明确的库名，记进 `CHANGED`。
 - 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。
 - `derived.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。

@@ -2,18 +2,18 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 1 合并后，三个消费方按 mmw60_trx → fmcw_radar → d2d_link 的顺序迁移（`cairn/migration-<库>.md`）；然后是里程碑 2 的核实轮。
+**当前焦点**：三个消费方迁移（`cairn/migration-<库>.md`）：mmw60_trx 先迁，fmcw_radar、d2d_link 不依赖它、可以同时迁。mmw60 迁完后本库出 0.2.0 给 17 个旧前缀键改名，然后是里程碑 2 的核实轮。
 
 ## 报回上游（本会话不改这三个库；由用户转）
 
-合并后先把 spec_sources main 上合并提交的**完整 SHA** 填进三份迁移说明里的 `<PIN>`。
+三份迁移说明都 pin `d7b4d1eb510617d69784622c593c8ed31ab32b8b`（PR #1 的合并提交）。
 
 ### mmw60_trx（第一个迁）
 - 按 `cairn/migration-mmw60_trx.md` 迁：vendor `src/spec_sources/` 的读取器与 6 个数据文件，`mmw60/spec.py` 留成薄垫片，本地 `data/spec/survey.yaml` 只剩 62 条（assumed 56、derived 3、survey 3）。验收：指纹逐位不变，`tools/vendor_check.py --strict` 绿。
 - `tools/vendor_check.py` 现在只扫 `*.py`（`vendored_files()`），vendored 的 YAML 表不被核对。照 fmcw_radar 的改法（它的 `vendored_files()` 也收 `*.yaml`）补上，否则数据表漂了也绿。
 - `tools/example_drift.py::spec_values` 按路径只读本地表，迁移后要连 vendored 的数据表一起读（迁移说明第 1 节）。
 - 本地表第 636 行的注释与表头第 9–10 行写着"标签词 + 冒号"，`grep -c "source: spec"` 得 11、实际 10。迁移时那条注释随 spec 条目一起走了；表头两行要改写，否则 `audit_tags` 报错。
-- 留在本地的 3 条 survey（两条 clock_profile、dsp_ip 综合估计）不进共享表，理由在 `tests/test_extraction.py::MMW60_STAYS`。如果 mmw60 认为其中哪条该进，回一句，本库改判。
+- 留在本地的 3 条 survey（两条 clock_profile、dsp_ip 综合估计）不进共享表（用户 2026-11-13 确认；理由在 `tests/test_extraction.py::MMW60_STAYS`）。另：这 3 条标的是 survey（未核实的外部文献），实际是姊妹库的模型输出 / 综合估计，标签由 mmw60 自己决定要不要改，不急。
 
 ### fmcw_radar（第二个）
 - 按 `cairn/migration-fmcw_radar.md` 迁：vendor 读取器与 `data/frontend60.yaml`；`upstream:` 改成 `spec_sources:<引用>`，`upstream_value` 换成 `ref()`，自己解析 `@` 与 `-` 的代码删掉。减法那条读 `isolation.tx_rx_tue2018_no_ebg_min_db`。`vendor/mmw60/` 只留 LO 剖面文件。验收同上。
@@ -48,12 +48,33 @@
 
 ## 其余待办
 
-- **mmw60 带来的 17 个旧前缀键改名**（`survey.*` 12 个、`derived.*` 5 个；标签不是领域）：改成领域前缀（如 `survey.rx60_comm_iscas2015` → `rx60.comm_iscas2015`、`derived.cfo_liu2025_hz` → `liu2025.cfo_derived_hz`、能耗三组 → `horowitz2014.*` / `adc_survey.*` / `deepscale.*`），走弃用期（`aliases:` + `keys.lock`）。要等 mmw60 迁完再做，并与它约好一轮 examples/expected 的重写：它的示例 04 / 08 / 09 打印键名。
+- **mmw60 带来的 17 个旧前缀键改名**（`survey.*` 12 个、`derived.*` 5 个：前缀是标签，不是领域；核实轮把 survey 改成 spec 后，键名就和标签矛盾）。
+  - 时机：mmw60 迁完之后、里程碑 2 动这些条目之前，单独出 0.2.0；不和迁移放在一起（迁移那一步只做搬家，指纹与示例文本都不动）。
+  - 做法：17 个旧键都写进数据文件的 `aliases:`（读取时 `DeprecatedKeyWarning`），`keys.lock` 记 `aliased=0.2.0`，至少留到 0.3.0。mmw60 重新 pin 一次，改约 30 处调用和示例 04 / 08 / 09 的期望输出（只是键名，数不动）；指纹必须逐位不变。fmcw、d2d 不读这些键，不受影响。
+  - 拟定的新名（动手前再确认）：
+
+    | 旧键 | 新键 |
+    |---|---|
+    | `survey.horowitz_mult32_pj` / `survey.horowitz_add32_pj` | `horowitz2014.mult32_pj` / `horowitz2014.add32_pj` |
+    | `survey.walden_fom_fj` / `survey.walden_fom_range_fj` | `adc_survey.walden_fom_fj` / `adc_survey.walden_fom_range_fj` |
+    | `survey.node_scale_45_to_7nm` | `deepscale.node_scale_45_to_7nm` |
+    | `survey.n_sd_11ac` / `survey.n_sd_11be` | `ieee80211ac.n_sd` / `ieee80211be.n_sd` |
+    | `survey.eht_tone_mapper_dtm` | `ieee80211be.ldpc_tone_mapping_distance` |
+    | `survey.ldpc_ppdu_encoding_thresholds` | `ieee80211.ldpc_ppdu_encoding_thresholds` |
+    | `survey.rx60_comm_iscas2015` | `rx60.comm_iscas2015` |
+    | `survey.dmg_sensitivity_assumptions` | `dmg.sensitivity_assumptions` |
+    | `survey.antenna60_okada2013_dbi` | `antenna60.okada2013_dbi` |
+    | `derived.cfo_liu2025_hz` | `liu2025.cfo_from_ppm_hz` |
+    | `derived.k_threshold_stf` / `derived.k_threshold_ltf_only` | `liu2025.k_threshold_stf` / `liu2025.k_threshold_ltf_only` |
+    | `derived.rapp_p1db_below_psat_db` | `tgad_em.rapp_p1db_below_psat_db` |
+    | `derived.pa60_rapp_p_asada_eumc2011` | `pa60.asada_eumc2011_rapp_p` |
+
+    新前缀 `horowitz2014`、`adc_survey`、`deepscale`、`ieee80211ac`、`ieee80211be`、`ieee80211`、`antenna60` 要在 `FILE_PREFIXES` 与 AGENTS.md 的布局表里登记；`LEGACY_PREFIX_KEYS` 清空。
 - **迁入条目 note 里的"本库"**指 mmw60_trx 或 d2d_link（各文件头写明）。条目下一次因核实而改时，把"本库"与它们仓库里的路径改成明确的库名，记进 `CHANGED`。
 - **消费方迁完后登记它们读的条目**：mmw60_trx 读全部 64 条、d2d_link 读 16 条，都按整条（不带字段）登记进 `consumers.yaml`，CHANGELOG 同步。
+- 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。
 - `derived.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。
 
 ## 开放问题
 
-1. 3 条留在 mmw60 的 survey（`MMW60_STAYS`）是本会话按铁律 2 的判断，与指令里的"survey 51 条全迁"不一致；需要用户确认。
-2. knowledge-vault 本会话没有挂上，没读。下次挂上它的会话先看里面有没有出处表或文献笔记，再决定合并还是只引用。
+1. knowledge-vault 本会话没有挂上，没读。下次挂上它的会话先看里面有没有出处表或文献笔记，再决定合并还是只引用。

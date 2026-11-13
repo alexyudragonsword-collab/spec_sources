@@ -16,7 +16,7 @@
 1. 先读本文件。
 2. 读根目录 `ROADMAP.md`（只写没做的，含"报回上游"节）。
 3. 读 `cairn/LOG.md` 最新几条（新条目在顶部）。
-4. 迁移相关读 `cairn/migration-<库>.md`（顺序 mmw60_trx → fmcw_radar → d2d_link）。
+4. 有进行中的迁移时读 `cairn/migration-<库>.md`（迁完验收后即删）；谁读了本库的什么在 `consumers.yaml`。
 
 ## 文档职责
 
@@ -44,7 +44,7 @@
 1. **每条带 `source` ∈ {spec, survey, assumed, derived}**：spec 必须带 quote + section，survey 的 note 必须写"未核实"，cite 必填（`SpecNumber.__post_init__`，沿用 mmw60_trx；`test_reader.py::test_spec_number_refuses_*`、`test_iron_rules.py::test_rule1_*`）。
 2. **只收关于外部世界的数**：规范条文、论文与数据手册的数，以及只由它们推出的 derived。某个库自己的取舍（mmw60_trx 的 assumed.\*）与它自己的产出（仿真读数、姊妹库的综合估计、指向它仓库里文件的条目）留在那个库，用本库的 `load_table` 读它本地的表。共享表里 assumed 为零；每条 derived 在 `test_iron_rules.py::RECOMPUTE` 里只用共享条目复算（`test_rule2_*`）。
 3. **键名全局唯一，带领域前缀**（liu2025.、pa60.、rx60.、ucie.……）。改名或删除走弃用期：旧键写进数据文件的 `aliases:`（读取时 `DeprecatedKeyWarning`），`keys.lock` 补 `aliased=`，至少再过一个版本才能 `retired=`。mmw60_trx 带来的 17 个 `survey.` / `derived.` 前缀键是冻结的旧名，不许新增（`test_rule3_*`）。
-4. **被下游读取的条目登记在 `consumers.yaml`**（库、键、字段、值）。改这些条目的数值或键名，必须同时改登记，并在 CHANGELOG 写一行 `` `<引用>` = <值> ``：下游重新 pin 时会核对（`test_consumers.py`）。
+4. **被下游读取的条目登记在 `consumers.yaml`**：在自己表里抄了数的引用按条登记（库、键、字段、值），改这些条目的数值或键名必须同时改登记，并在 CHANGELOG 写一行 `` `<引用>` = <值> ``；整份 vendor 的按文件登记（`vendored:`：库、pin、文件），这些文件在它的 pin 之后改了，CHANGELOG 写 `` `<库>` 需重新 pin ``（`test_consumers.py`）。
 5. **grep 计数守卫覆盖全部四个标签**：对每个数据文件，`grep -c "source: <标签>"` 等于该标签的条目数；注释与说明（cite / note / quote / section / unit）里一律不写"标签词 + 冒号"（`audit_tags`，消费方的本地表也用它）。共享表更严：整个文件只有标签行带它，`grep -c "source:"` 等于条目数（`test_rule5_*` 跑真的 grep）。
 6. **引用只做查找，不做计算**：`ref("<键>[#<字段>[@<轴>=<值>]]")`。差、比、换算都是本库一条 derived 条目，note 写公式（`test_reader.py::test_ref_*`、`test_consumers.py`）。
 

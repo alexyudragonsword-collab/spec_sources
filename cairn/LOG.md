@@ -3,6 +3,19 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · 三个消费方的迁移验收通过，issue 关闭（feat/accept-migrations）
+
+- 回报：mmw60 PR #22 → `b8fc55b`；fmcw PR #14 → `79d040a`（0.2.10）；d2d → `0cbd4e9`（0.16.0）。三个都是各自 main 的 HEAD。
+- 本库独立复核（不只看回报）：
+  - vendored 文件对 PIN 逐字节相同：mmw60 8 / 8、fmcw 2 / 2、d2d 3 / 3。fmcw、d2d 的 `__init__.py` 按说明是自己写的。
+  - mmw60 本地表 62 条，grep 0 / 3 / 56 / 3，`audit_tags` 空，与共享表无交集。
+  - fmcw 的 5 条 `upstream:` 与登记逐条一致，值相等。
+- 指纹（我这边重录，与各自迁移前比）：mmw60 68 / 68、fmcw 1979 / 1979、d2d 3597 / 3597，全部逐位相同。mmw60 经垫片读出的 125 条 `repr` 逐条相同。
+  - d2d 第一次只录到 3487 个：环境里缺 scikit-rf，Touchstone 用例被跳过。补装后两边都是 3597，与它的回报一致。
+- 改了原计划：mmw60 / d2d 不按条连值登记（那是把 80 条数据抄一遍），改成 `consumers.yaml` 的 `vendored:` 按文件登记；文件在某个消费方的 pin 之后改了，CHANGELOG 要写"`<库>` 需重新 pin"。变异：改 `frontend60.yaml` 并提交，只有 mmw60、fmcw 两条变红（d2d 不读它）；补上两行后转绿。
+- 删三份迁移说明，fmcw 的 14 条清单移进 ROADMAP。测试 66 个（64 通过，2 个因没有迁移说明而跳过）。
+- 各库回报里的后续，归它们自己：mmw60 的 ROADMAP C11（3 条 survey 的标签）；mmw60 的 `test_entries_a_downstream_library_reads_*` 现在可以删了（fmcw 已迁）。本库下一步：0.2.0 改名。
+
 ## 2026-11-13 · 迁移改由各库的 issue 跟踪（feat/upstream-issues）
 
 - PR #2 合并（main `bef20fb`；`src/spec_sources/` 与 PIN `d7b4d1e` 之间 diff 为空）。

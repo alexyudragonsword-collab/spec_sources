@@ -3,6 +3,21 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-13 · 验收 mmw60_trx#25、fmcw_radar#15（feat/accept-mmw60-25-fmcw-15）
+
+- PR #10 已合并（main `fff06a7`）。两边都回报了，在它们的 main 上独立复核。容器重建过，建了个 venv（numpy 2.5.4、scipy 1.18.1、itur 0.4.0）。
+- mmw60（b16b6a0，pin 9a443ba）：
+  - 8 个文件去掉两行出处头后与 pin 逐字节相同；`vendor_check --strict` 里 spec_sources 8 个都是 verbatim，`pa60.yaml` 报 stale pin，是 PR #10 造成的，属预期；
+  - 指纹 97353e0 对 b16b6a0：69 个值逐位相同，两边都有一项因没装 numba 而报错，算相同；
+  - `all_entries()` 130 条、未核实 42 条；它的 test_spec_sources / test_vendor_check 15 过 2 跳过。
+- fmcw（ffc703e，pin dfaa36b，选 (a) 只算氧气）：
+  - 4 个文件逐字节相同；它的 `__init__.py` 是自己写的，不在登记里；
+  - 指纹 79d040a 对 ffc703e 动了 319 / 1979。**在 79d040a 上只改两个氧气数（15.0→14.651、0.4→0.091），1979 个值就与 ffc703e 逐位相同**，所以变化全部来自这两个数；
+  - 全量 pytest 198 过 2 跳过（它的环境里是 200 过，跳过的 2 个要姊妹库）。
+- 登记 3 条引用（`consumers.yaml` 8 条），fmcw 在 ffc703e 时的表加为 fixture，`test_consumers.py` 用它核对 8 条 `upstream:` 都已登记且值相等。
+- **更正**（fmcw 指出）：上一条 LOG 里 77 GHz 总气体衰减"合计 0.348"，是 itur 把 `p` 当干空气压时的结果（总压 1023.2 hPa）。按总压 1013.25 读：氧气 0.0956、水汽 0.2485，合计 0.344。条目只登记干大气，数值不动；`atmosphere.yaml` 里那句 note 等这个文件下次改动时注明读法（ROADMAP）。
+- 测试 76 个（74 通过，2 跳过）：多出 3 条登记各 2 个、新 fixture 1 个、fmcw 引用核对 1 个。
+
 ## 2026-11-13 · 第 1 批（部分）：Asada Table I 的 4 行对上原文（feat/m2-batch1-pa60-originals，未发布）
 
 - PR #9 已合并（main `dfaa36b`）。fmcw [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 提前开了，ROADMAP 原来写的是"等第 4 批齐了再开"，已改。#15 与 mmw60 #25 都还没回报。

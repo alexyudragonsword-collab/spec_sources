@@ -37,7 +37,7 @@
   新领域开新文件，并在 `tests/test_iron_rules.py::FILE_PREFIXES` 登记它的前缀。
 - `src/spec_sources/legacy_keys/<库>.yaml`：某个消费方的旧键名 → 本库键名，给它的垫片用（现在只有 d2d_link）。
 - `consumers.yaml`（根）：被下游读取的条目登记。`keys.lock`（根）：发布过的每个键的账本。
-- `tests/fixtures/`：迁入时的源表原文件，文件头是库名与完整 SHA；只读。
+- `tests/fixtures/`：迁入时的源表原文件，以及验收时下游的表（核对它的引用），文件头是库名与完整 SHA；只读。
 
 ## 项目铁律（每条都有测试守着）
 

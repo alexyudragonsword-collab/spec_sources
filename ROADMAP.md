@@ -2,16 +2,16 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 4 篇（未发布），剩 9 篇等用户下载。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。等对方回报的：mmw60_trx [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25)、fmcw_radar [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15)。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 4 篇（未发布），剩 9 篇等用户下载。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。mmw60_trx #25、fmcw_radar #15 已验收关闭，现在没有等对方回报的 issue。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### mmw60_trx —— [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 等回报
-- #25：重新 pin 到 0.3.0（`9a443ba`），数值不变。验收后把 `consumers.yaml` 的 pin 改成它，关 issue。
-- 之后还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
+### mmw60_trx —— 下次开 issue 时重新 pin（现在 pin 在 0.3.0 `9a443ba`）
+- 还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
 
-### fmcw_radar —— [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 等回报
-- 提前开了（原计划等第 4 批齐了再开）：氧气两条与人体 RCS 改成引用，重新 pin 到 `dfaa36b`。它要定 77 GHz 记纯氧气（a，建议）还是总气体衰减（b）。验收后登记 3 条引用、改 pin 与文件列表（加 `data/atmosphere.yaml`、`data/radar_targets.yaml`）。
+### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `dfaa36b`）
+- 车辆 RCS、角反射器、4 条窗函数主瓣宽度：原文下载、建好条目后另开 issue（见里程碑 2 第 4 项）。
+- 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### d2d_link —— 择机重新 pin，不单开 issue
 - 0.2.0 / 0.3.0 对它只改了 `reader.py` 的一行版本号，读到的数不变。等第 3 批（UCIe 眼罩）给它开 issue 时一并重新 pin；那之前它本地的 `vendor_check --strict` 会报 pin 过期，CI 不受影响（CI 检出在 pin 上）。
@@ -25,12 +25,7 @@
 3. **UCIe 眼罩**（d2d_link 的判定全悬在 0.65 UI 上）：`ucie.rx_eye_width_ui@24-32`、`ucie.rx_eye_width_ui`、`ucie.rx_eye_height_mv`，然后是其余 13 条 ucie.*。
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
    - 5 条前端数已经读本库并登记（`consumers.yaml`）：`60g_sensing.tx_power_dbm`、`60g_sensing.nf_db`、`60g_sensing.p1db_oob_dbm`、`60g_sensing.p1db_inband_dbm`、`60g_sensing.tx_rx_isolation_db`。
-   - 9 条只在 fmcw 的 survey 迁进本库并核实，fmcw 改成引用：大气 `oxygen.60g_db_per_km`、`oxygen.77g_db_per_km`（ITU-R P.676）；RCS `rcs.human_dbsm`、`rcs.car_dbsm`、`rcs.corner_reflector_dbsm`；窗函数主瓣宽度 `window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`（Harris 1978 Table I）。做的时候在 fmcw_radar 开 issue。
-   - 进度：
-     - 大气已建 `itu_p676.gamma_o_dry_sea_level`。fmcw 改成引用时数会动：60 GHz 由 15.0 变为 14.651；77.5 GHz 由 0.4 变为 0.091 dB/km——0.4 实为总气体衰减，fmcw 要不要连水汽一起算是它自己的事，要的话本库再补 Table 2 和水汽那一支。
-     - 人体 RCS 已有 `target_rcs.deep2019_pedestrian_77g`（仿真，−10…+5 dBsm）。车辆、角反射器、窗函数等下载。
-
-     氧气两条与人体 RCS 已提前在 fmcw [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 交给它；车辆、角反射器、窗函数等原文下载后另开 issue。
+   - 9 条只在 fmcw 的 survey，要迁进本库并核实，fmcw 再改成引用。氧气两条与人体 RCS 已在 fmcw#15 改成引用并登记（`consumers.yaml`）。剩 6 条：RCS `rcs.car_dbsm`、`rcs.corner_reflector_dbsm`；窗函数主瓣宽度 `window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`（Harris 1978 Table I）。原文下载后建条目，再在 fmcw_radar 开 issue。
 5. **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 6. **Halo_Serdes #11 的 4 条条文**。
 7. 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
@@ -39,6 +34,7 @@
 
 ## 其余待办
 
+- **`itu_p676.gamma_o_dry_sea_level` 的 note 注明水汽那句的读法**：note 里"水汽另有 0.251 dB/km，合计 0.348"是把 1013.25 hPa 当干空气压算的；当总压读是 0.344（fmcw_radar#15 指出）。数值不受影响。改 note 会让 fmcw 需重新 pin，等 `atmosphere.yaml` 下次因别的原因改动时一起改（这条是本库新建的，不在迁入表里，不用记 `CHANGED`）。
 - **读取器给合并表也解析别名**：`ref(..., table)` 与消费方垫片在合并表上的查找都不认 `aliases:`。mmw60_trx 在 #23 里自己在垫片里补了一份（`_resolve`：先查表，再查 `aliases()`，警告指向调用方）。把这段做成读取器的公开函数（如 `resolve(key, table)`，`ref` 带 `table` 时也走它），垫片就能更薄。改 `reader.py` 会让三个库都需重新 pin，等下一次必须动 `reader.py` 时一起做。
 - **迁入条目 note 里的"本库"**指 mmw60_trx 或 d2d_link（各文件头写明）。条目下一次因核实而改时，把"本库"与它们仓库里的路径改成明确的库名，记进 `CHANGED`。
 - 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。

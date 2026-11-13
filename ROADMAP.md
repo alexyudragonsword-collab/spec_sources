@@ -2,7 +2,7 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第一批的 `tgad_em.*` 已在 0.3.0 对上原文；接着等用户下载 Asada Table I 转引的 13 篇（先下 4 篇），同时可以做第 4 批里本库能直接取的（ITU-R P.676、arXiv 1910.13706）。0.3.0 要 mmw60_trx 重新 pin（开 issue）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文，剩 Asada Table I 转引的 13 篇等用户下载（先下 4 篇）。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。mmw60_trx 的 0.3.0 重新 pin 在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25)。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
@@ -19,6 +19,11 @@
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
    - 5 条前端数已经读本库并登记（`consumers.yaml`）：`60g_sensing.tx_power_dbm`、`60g_sensing.nf_db`、`60g_sensing.p1db_oob_dbm`、`60g_sensing.p1db_inband_dbm`、`60g_sensing.tx_rx_isolation_db`。
    - 9 条只在 fmcw 的 survey 迁进本库并核实，fmcw 改成引用：大气 `oxygen.60g_db_per_km`、`oxygen.77g_db_per_km`（ITU-R P.676）；RCS `rcs.human_dbsm`、`rcs.car_dbsm`、`rcs.corner_reflector_dbsm`；窗函数主瓣宽度 `window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`（Harris 1978 Table I）。做的时候在 fmcw_radar 开 issue。
+   - 进度：
+     - 大气已建 `itu_p676.gamma_o_dry_sea_level`。fmcw 改成引用时数会动：60 GHz 由 15.0 变为 14.651；77.5 GHz 由 0.4 变为 0.091 dB/km——0.4 实为总气体衰减，fmcw 要不要连水汽一起算是它自己的事，要的话本库再补 Table 2 和水汽那一支。
+     - 人体 RCS 已有 `target_rcs.deep2019_pedestrian_77g`（仿真，−10…+5 dBsm）。车辆、角反射器、窗函数等下载。
+
+     给 fmcw 开 issue 等这一批齐了再开。
 5. **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 6. **Halo_Serdes #11 的 4 条条文**。
 7. 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。

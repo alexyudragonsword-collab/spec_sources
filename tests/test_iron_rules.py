@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 84
+    assert len(table) == 90
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -52,6 +52,37 @@ def _solve_p(gap_db: float) -> float:
     return 0.5 * (lo + hi)
 
 
+def _p676_gamma_o(v, f_ghz: float) -> float:
+    """ITU-R P.676-13 Annex 1, oxygen / dry-air branch (itu_p676.method), from the
+    shared Table 1 (itu_p676.oxygen_lines) at Figure 1's dry atmosphere."""
+    c = v("itu_p676.figure1_conditions")
+    T = c["t_c"] + 273.15
+    th = 300.0 / T
+    e = c["rho_dry_g_m3"] * T / 216.7
+    p = c["p_hpa"] - e
+    n = 0.0
+    for f0, a1, a2, a3, a4, a5, a6 in v("itu_p676.oxygen_lines")["rows"]:
+        s = a1 * 1e-7 * p * th ** 3 * math.exp(a2 * (1 - th))
+        df = a3 * 1e-4 * (p * th ** (0.8 - a4) + 1.1 * e * th)
+        df = math.sqrt(df * df + 2.25e-6)
+        dl = (a5 + a6 * th) * 1e-4 * (p + e) * th ** 0.8
+        n += s * f_ghz / f0 * ((df - dl * (f0 - f_ghz)) / ((f0 - f_ghz) ** 2 + df * df)
+                               + (df - dl * (f0 + f_ghz)) / ((f0 + f_ghz) ** 2 + df * df))
+    d = 5.6e-4 * (p + e) * th ** 0.8
+    nd = f_ghz * p * th ** 2 * (6.14e-5 / (d * (1 + (f_ghz / d) ** 2))
+                                + 1.4e-12 * p * th ** 1.5 / (1 + 1.9e-5 * f_ghz ** 1.5))
+    return 0.1820 * f_ghz * (n + nd)
+
+
+def _p676_points(v):
+    return [_p676_gamma_o(v, f) for f in v("itu_p676.gamma_o_dry_sea_level")["f_ghz"]]
+
+
+def _p676_peak(v):
+    best = max((_p676_gamma_o(v, 50 + i * 0.01), 50 + i * 0.01) for i in range(2001))
+    return [round(best[1], 2), best[0]]
+
+
 def _cfo(v):
     return (v("liu2025.xo_ppm_tx") + v("liu2025.xo_ppm_rx")) * 1e-6 * v("liu2025.carrier_hz")
 
@@ -67,6 +98,8 @@ RECOMPUTE = {
     "tgad_em.rapp_p1db_below_psat_db": (lambda v: _rapp_gap_db(v("tgad_em.pa_rapp_p")), 0.05),
     "pa60.asada_eumc2011_rapp_p": (
         lambda v: _solve_p(v("pa60.asada_eumc2011")["psat_dbm"] - v("pa60.asada_eumc2011")["p1db_dbm"]), 0.001),
+    "itu_p676.gamma_o_dry_sea_level": (_p676_points, 0.0005),
+    "itu_p676.gamma_o_dry_sea_level_peak": (_p676_peak, 0.005),
     "isolation.tx_rx_tue2018_no_ebg_min_db": (
         lambda v: v("isolation.tx_rx_tue2018")["with_ebg_db"] - v("isolation.tx_rx_tue2018")["improvement_max_db"],
         0.0),
@@ -76,7 +109,12 @@ RECOMPUTE = {
 def test_rule2_every_derived_entry_follows_its_formula_from_shared_entries():
     assert set(RECOMPUTE) == set(ss.by_source("derived"))
     for key, (f, tol) in RECOMPUTE.items():
-        assert f(ss.value) == pytest.approx(ss.value(key), abs=tol), key
+        got, want = f(ss.value), ss.value(key)
+        if key == "itu_p676.gamma_o_dry_sea_level":
+            want = want["db_per_km"]
+        elif key == "itu_p676.gamma_o_dry_sea_level_peak":
+            want = [want["f_ghz"], want["db_per_km"]]
+        assert got == pytest.approx(want, abs=tol), key
 
 
 def test_rule2_the_rapp_closed_form_matches_the_other_end():
@@ -89,11 +127,13 @@ def test_rule2_the_rapp_closed_form_matches_the_other_end():
 # ------------------------------------------------------------------- rule 3: global keys with a domain prefix
 #: which domain prefixes each table may hold (AGENTS.md has the same table)
 FILE_PREFIXES = {
+    "atmosphere.yaml": {"itu_p676"},
     "energy.yaml": {"horowitz2014", "adc_survey", "deepscale"},
     "frontend60.yaml": {"rx60", "isolation", "antenna60"},
     "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg"},
     "liu2025.yaml": {"liu2025"},
     "pa60.yaml": {"pa60"},
+    "radar_targets.yaml": {"target_rcs"},
     "regulatory.yaml": {"fcc15255"},
     "ucie.yaml": {"ucie"},
 }
@@ -140,7 +180,10 @@ def test_rule3_a_published_key_never_disappears_without_its_alias_period():
     now = _version(ss.__version__)
     assert set(live) <= set(ledger), f"add to keys.lock: {sorted(set(live) - set(ledger))}"
     for key, a in ledger.items():
-        assert _version(a["added"]) <= now, key
+        if a["added"] == "unreleased":
+            assert "## 未发布" in (REPO / "CHANGELOG.md").read_text(encoding="utf-8"), key
+        else:
+            assert _version(a["added"]) <= now, key
         if key in live:
             assert set(a) == {"added"}, f"{key} is live: no aliased= / retired="
         elif key in alias:
@@ -177,7 +220,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 23, "survey": 55, "assumed": 0, "derived": 6}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 27, "survey": 55, "assumed": 0, "derived": 8}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

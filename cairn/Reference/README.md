@@ -9,6 +9,8 @@
 | 文献 | 从哪里取 | 读了什么、落到哪里 |
 |---|---|---|
 | E. Perahia (Intel), "TGad Evaluation Methodology", IEEE 802.11-09/0296r16, 2010-01-20（另取 r09 对照） | mentor.ieee.org（2026-11-13 放行） | 3.2 Hardware impairments：9 条 `tgad_em.*` 由 survey 改为 spec（0.3.0），值不变；新增 `tgad_em.pn_params`、`pn_sides`、`pa_backoff_definition`、`pa_backoff_recommended_db`。公式是 .doc 里嵌入的公式对象，转成 PDF 后渲染第 4–5 页读的 |
+| Recommendation ITU-R P.676-13 (08/2022), "Attenuation by atmospheric gases and related effects" | www.itu.int | Annex 1：Table 1（44 条氧气谱线）与式 (1)–(9) → `itu_p676.*`。式子在文本层里丢了 θ，渲染第 7、10 页读的。用 itur 0.4.0 独立核对过干大气结果 |
+| Y. Deep et al., "Polarimetric Radar Cross-Sections of Pedestrians at Automotive Radar Frequencies", arXiv:1910.13706v1, 2019 | arxiv.org | III.B 与图 4：77 GHz 行人同极化 RCS −10…+5 dBsm（射线追踪仿真）→ `target_rcs.deep2019_pedestrian_77g` |
 | H. Asada et al., "A 60 GHz CMOS Power Amplifier Using Capacitive Cross-Coupling Neutralization with 16 % PAE", EuMC 2011 | www.ssc.p.isct.ac.jp（东工大并入科学东京后的实验室站点，已放行） | 参考文献表（下面第 1 批的 13 篇）；Table I 的 14 行与 `pa60.eumc2011_table1` 逐格一致 |
 
 ## 待取清单（按里程碑 2 的顺序）
@@ -46,9 +48,9 @@ MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-
 - 可选 📥 D. Das Sharma et al., IEEE Trans. CPMT 2022。有了规范就用不着。
 
 ### 第 4 批 · fmcw_radar 的 9 条
-- ✅ ITU-R P.676（www.itu.int）：两条氧气衰减。
+- ~~✅ ITU-R P.676~~ 已读（见上表）。
 - 📥 F. J. Harris, "On the use of windows for harmonic analysis with the discrete Fourier transform", Proc. IEEE 66(1), 1978：Table I，4 条窗函数主瓣宽度。
-- 人体 RCS：✅ arXiv 1910.13706（行人在汽车雷达频段的极化 RCS）先读；不够再 📥 Belgiovane et al., IEEE Radar Conf. 2014（76–77 GHz 人体 RCS 实测），或 🌐 EC JRC 报告 JRC78619（publications.jrc.ec.europa.eu）。
+- 人体 RCS：arXiv 1910.13706 已读，但只有仿真。要实测值 📥 Belgiovane et al., IEEE Radar Conf. 2014（76–77 GHz 人体 RCS 实测），或 🌐 EC JRC 报告 JRC78619（publications.jrc.ec.europa.eu）。
 - 车辆 RCS：🌐 NHTSA DOT HS 813 648（rosap.ntl.bts.gov，76–77 GHz，ISO 19206-3）；可选 📥 SAE 2021-01-5103。
 - 角反射器：教科书公式，不用取。
 
@@ -76,6 +78,6 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 
 - 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。
 - 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。
-- ✅ 已能取 3 篇。
+- ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 
 下载后把文件放进本目录，文件名用表里的编号或第一作者加年份（如 `asada_t1_01_chan_isscc2009.pdf`）。`*.pdf` / `*.doc` 不入库。

@@ -27,7 +27,10 @@ MMW60_STAYS = {
 #: entries this library added (not in any source table)
 NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        # 0.3.0, read in IEEE 802.11-09/0296r16 while verifying the tgad_em.* entries
-       "tgad_em.pn_params", "tgad_em.pn_sides", "tgad_em.pa_backoff_definition", "tgad_em.pa_backoff_recommended_db"}
+       "tgad_em.pn_params", "tgad_em.pn_sides", "tgad_em.pa_backoff_definition", "tgad_em.pa_backoff_recommended_db",
+       # milestone 2 batch 4, read in ITU-R P.676-13 and arXiv:1910.13706 (not migrated from a table)
+       "itu_p676.oxygen_lines", "itu_p676.method", "itu_p676.figure1_conditions", "itu_p676.gamma_o_dry_sea_level",
+       "itu_p676.gamma_o_dry_sea_level_peak", "target_rcs.deep2019_pedestrian_77g"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -111,7 +114,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 5 == 84
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 11 == 90
     assert set(CHANGED) <= set(ss.all_entries())
 
 

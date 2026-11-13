@@ -3,6 +3,22 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
+## 未发布
+
+不升版本号：只新增两个数据文件，没有哪个库 vendor 它们，`__init__.py`、`reader.py` 与已登记的文件都没动，**没有库需要重新 pin**。
+
+### 里程碑 2 第 4 批（部分）：大气衰减与行人 RCS
+- `data/atmosphere.yaml`（新，前缀 `itu_p676`）：ITU-R P.676-13 的逐线法，只录氧气 / 干空气这一支。
+  - spec 3 条：Table 1 的 44 条谱线（`itu_p676.oxygen_lines`）、式 (1)–(9)（`itu_p676.method`）、图 1 的条件（`itu_p676.figure1_conditions`）。
+  - derived 2 条：
+    - 海平面干大气的氧气比衰减 `itu_p676.gamma_o_dry_sea_level`：57 / 60 / 64 / 76 / 77 / 77.5 / 81 GHz 依次为 10.079 / 14.651 / 6.836 / 0.108 / 0.096 / 0.091 / 0.065 dB/km；
+    - 峰值 `itu_p676.gamma_o_dry_sea_level_peak`：15.06 dB/km @ 60.81 GHz。
+
+    两条都在 `RECOMPUTE` 里用共享条目复算；与独立实现 itur（P.676-12）一致，到 4 位小数。
+  - **发现**：fmcw_radar 记的 77 GHz 氧气衰减 0.4 dB/km 实为总气体衰减（标准大气下氧气 0.098 加水汽 0.251，合计 0.348）。氧气本身在 77–77.5 GHz 只有 0.09–0.10 dB/km。
+- `data/radar_targets.yaml`（新，前缀 `target_rcs`）：`target_rcs.deep2019_pedestrian_77g`（spec，arXiv:1910.13706），77 GHz 行人同极化 RCS −10 到 +5 dBsm，交叉极化约低 10 dB。**是射线追踪仿真，不是实测**，note 写明。
+- 共享表 90 条：spec 27、survey 55、derived 8。账本新增 6 个键，记 `added=unreleased`（发版时换成版本号）。
+
 ## 0.3.0 —— 里程碑 2 第一批：TGad 评估方法学对上原文；退役 0.2.0 的别名（2026-11-13）
 
 **下游重新 pin**（铁律 4）：

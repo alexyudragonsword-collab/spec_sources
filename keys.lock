@@ -1,5 +1,5 @@
 # 发布过的每一个键（铁律 3 的账本），只追加不删。一行一个：<键>  added=<版本> [aliased=<版本>] [retired=<版本>]
-#   活键：只有 added。改名 / 删除：数据里留一个别名（aliases:，读取时警告），这里补 aliased=<当时的版本>；
+#   活键：只有 added（上次发版之后才加的写 added=unreleased，发版时换成版本号）。改名 / 删除：数据里留一个别名（aliases:，读取时警告），这里补 aliased=<当时的版本>；
 #   至少再过一个版本才能删别名，那时补 retired=<版本>（必须晚于 aliased）。
 # tests/test_iron_rules.py 核对：活键都在账本里，账本里每个键要么是活键、要么是别名、要么已按期退役。
 
@@ -111,3 +111,11 @@ ucie.advanced.bump_pitch_um  added=0.1.0
 ucie.advanced.reach_mm  added=0.1.0
 ucie.advanced.module_width_lanes  added=0.1.0
 ucie.advanced.lane_repair  added=0.1.0
+# atmosphere.yaml
+itu_p676.oxygen_lines  added=unreleased
+itu_p676.method  added=unreleased
+itu_p676.figure1_conditions  added=unreleased
+itu_p676.gamma_o_dry_sea_level  added=unreleased
+itu_p676.gamma_o_dry_sea_level_peak  added=unreleased
+# radar_targets.yaml
+target_rcs.deep2019_pedestrian_77g  added=unreleased

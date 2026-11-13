@@ -8,3 +8,5 @@ dist/
 # cairn/Reference/ is tracked (git_policy: track), but publishers' PDFs stay local:
 # this repository is public. The list of what to fetch is in ROADMAP.md.
 cairn/Reference/*.pdf
+cairn/Reference/*.doc
+cairn/Reference/*.docx

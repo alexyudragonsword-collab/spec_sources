@@ -9,11 +9,11 @@ horowitz2014.add32_pj  added=0.2.0
 adc_survey.walden_fom_fj  added=0.2.0
 adc_survey.walden_fom_range_fj  added=0.2.0
 deepscale.node_scale_45_to_7nm  added=0.2.0
-survey.horowitz_mult32_pj  added=0.1.0  aliased=0.2.0
-survey.horowitz_add32_pj  added=0.1.0  aliased=0.2.0
-survey.walden_fom_fj  added=0.1.0  aliased=0.2.0
-survey.walden_fom_range_fj  added=0.1.0  aliased=0.2.0
-survey.node_scale_45_to_7nm  added=0.1.0  aliased=0.2.0
+survey.horowitz_mult32_pj  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.horowitz_add32_pj  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.walden_fom_fj  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.walden_fom_range_fj  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.node_scale_45_to_7nm  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # frontend60.yaml
 rx60.comm_asada2011  added=0.1.0
 rx60.comm_iscas2015  added=0.2.0
@@ -22,8 +22,8 @@ rx60.radar_iwr6843_fig7_2  added=0.1.0
 isolation.tx_rx_tue2018  added=0.1.0
 isolation.tx_rx_tue2018_no_ebg_min_db  added=0.1.0
 antenna60.okada2013_dbi  added=0.2.0
-survey.rx60_comm_iscas2015  added=0.1.0  aliased=0.2.0
-survey.antenna60_okada2013_dbi  added=0.1.0  aliased=0.2.0
+survey.rx60_comm_iscas2015  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.antenna60_okada2013_dbi  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # ieee80211.yaml
 tgad_em.pa_rapp_g  added=0.1.0
 tgad_em.pa_rapp_asat  added=0.1.0
@@ -34,6 +34,10 @@ tgad_em.pa_ampm_q1  added=0.1.0
 tgad_em.pa_ampm_q2  added=0.1.0
 tgad_em.pa_model_shape  added=0.1.0
 tgad_em.pn_model_shape  added=0.1.0
+tgad_em.pn_params  added=0.3.0
+tgad_em.pn_sides  added=0.3.0
+tgad_em.pa_backoff_definition  added=0.3.0
+tgad_em.pa_backoff_recommended_db  added=0.3.0
 tgad_em.rapp_p1db_below_psat_db  added=0.2.0
 ieee80211ay.channel_centres_ghz  added=0.1.0
 ieee80211ac.n_sd  added=0.2.0
@@ -42,12 +46,12 @@ dmg.sensitivity_assumptions  added=0.2.0
 dmg.rx_max_input_dbm  added=0.1.0
 ieee80211be.ldpc_tone_mapping_distance  added=0.2.0
 ieee80211.ldpc_ppdu_encoding_thresholds  added=0.2.0
-survey.n_sd_11ac  added=0.1.0  aliased=0.2.0
-survey.n_sd_11be  added=0.1.0  aliased=0.2.0
-survey.eht_tone_mapper_dtm  added=0.1.0  aliased=0.2.0
-survey.ldpc_ppdu_encoding_thresholds  added=0.1.0  aliased=0.2.0
-survey.dmg_sensitivity_assumptions  added=0.1.0  aliased=0.2.0
-derived.rapp_p1db_below_psat_db  added=0.1.0  aliased=0.2.0
+survey.n_sd_11ac  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.n_sd_11be  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.eht_tone_mapper_dtm  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.ldpc_ppdu_encoding_thresholds  added=0.1.0  aliased=0.2.0  retired=0.3.0
+survey.dmg_sensitivity_assumptions  added=0.1.0  aliased=0.2.0  retired=0.3.0
+derived.rapp_p1db_below_psat_db  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0
@@ -74,9 +78,9 @@ liu2025.mmwave_spectrum_ghz  added=0.1.0
 liu2025.cfo_from_ppm_hz  added=0.2.0
 liu2025.k_threshold_stf  added=0.2.0
 liu2025.k_threshold_ltf_only  added=0.2.0
-derived.cfo_liu2025_hz  added=0.1.0  aliased=0.2.0
-derived.k_threshold_stf  added=0.1.0  aliased=0.2.0
-derived.k_threshold_ltf_only  added=0.1.0  aliased=0.2.0
+derived.cfo_liu2025_hz  added=0.1.0  aliased=0.2.0  retired=0.3.0
+derived.k_threshold_stf  added=0.1.0  aliased=0.2.0  retired=0.3.0
+derived.k_threshold_ltf_only  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # pa60.yaml
 pa60.asada_eumc2011  added=0.1.0
 pa60.wu_asscc2012  added=0.1.0
@@ -84,7 +88,7 @@ pa60.ning_elex2011  added=0.1.0
 pa60.eumc2011_table1  added=0.1.0
 pa60.wu_isscc2015  added=0.1.0
 pa60.asada_eumc2011_rapp_p  added=0.2.0
-derived.pa60_rapp_p_asada_eumc2011  added=0.1.0  aliased=0.2.0
+derived.pa60_rapp_p_asada_eumc2011  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # regulatory.yaml
 fcc15255.eirp_avg_dbm  added=0.1.0
 fcc15255.eirp_peak_dbm  added=0.1.0

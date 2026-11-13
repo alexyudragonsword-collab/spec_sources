@@ -23,6 +23,28 @@ FIXTURE_FILES = {
     "fmcw_radar.sources.yaml": ("fmcw_radar", "2e5cbb61cef62819804fad89a197b0412b2eb84d",
                                 "src/fmcw_radar/data/sources.yaml"),
 }
+#: 0.2.0 renamed mmw60_trx's 17 keys whose prefix was a tag (survey. / derived.), not a domain;
+#: 0.3.0 retired the aliases (keys.lock: aliased=0.2.0 retired=0.3.0)
+RENAMED_0_2_0 = {
+    "survey.horowitz_mult32_pj": "horowitz2014.mult32_pj",
+    "survey.horowitz_add32_pj": "horowitz2014.add32_pj",
+    "survey.walden_fom_fj": "adc_survey.walden_fom_fj",
+    "survey.walden_fom_range_fj": "adc_survey.walden_fom_range_fj",
+    "survey.node_scale_45_to_7nm": "deepscale.node_scale_45_to_7nm",
+    "survey.n_sd_11ac": "ieee80211ac.n_sd",
+    "survey.n_sd_11be": "ieee80211be.n_sd",
+    "survey.eht_tone_mapper_dtm": "ieee80211be.ldpc_tone_mapping_distance",
+    "survey.ldpc_ppdu_encoding_thresholds": "ieee80211.ldpc_ppdu_encoding_thresholds",
+    "survey.rx60_comm_iscas2015": "rx60.comm_iscas2015",
+    "survey.dmg_sensitivity_assumptions": "dmg.sensitivity_assumptions",
+    "survey.antenna60_okada2013_dbi": "antenna60.okada2013_dbi",
+    "derived.cfo_liu2025_hz": "liu2025.cfo_from_ppm_hz",
+    "derived.k_threshold_stf": "liu2025.k_threshold_stf",
+    "derived.k_threshold_ltf_only": "liu2025.k_threshold_ltf_only",
+    "derived.rapp_p1db_below_psat_db": "tgad_em.rapp_p1db_below_psat_db",
+    "derived.pa60_rapp_p_asada_eumc2011": "pa60.asada_eumc2011_rapp_p",
+}
+
 _HEADER = re.compile(r"# fixture: (?P<repo>\S+)@(?P<sha>[0-9a-f]{40}) (?P<path>\S+)")
 HEADER_LINES = 2
 

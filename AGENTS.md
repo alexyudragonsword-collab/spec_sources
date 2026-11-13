@@ -43,7 +43,7 @@
 
 1. **每条带 `source` ∈ {spec, survey, assumed, derived}**：spec 必须带 quote + section，survey 的 note 必须写"未核实"，cite 必填（`SpecNumber.__post_init__`，沿用 mmw60_trx；`test_reader.py::test_spec_number_refuses_*`、`test_iron_rules.py::test_rule1_*`）。
 2. **只收关于外部世界的数**：规范条文、论文与数据手册的数，以及只由它们推出的 derived。某个库自己的取舍（mmw60_trx 的 assumed.\*）与它自己的产出（仿真读数、姊妹库的综合估计、指向它仓库里文件的条目）留在那个库，用本库的 `load_table` 读它本地的表。共享表里 assumed 为零；每条 derived 在 `test_iron_rules.py::RECOMPUTE` 里只用共享条目复算（`test_rule2_*`）。
-3. **键名全局唯一，带领域前缀**（liu2025.、pa60.、rx60.、ucie.……）。改名或删除走弃用期：旧键写进数据文件的 `aliases:`（读取时 `DeprecatedKeyWarning`），`keys.lock` 补 `aliased=`，至少再过一个版本才能 `retired=`。标签（spec / survey / assumed / derived）不能当前缀：mmw60_trx 带来的 17 个这样的键 0.2.0 已改名，旧名是别名（`test_rule3_*`）。
+3. **键名全局唯一，带领域前缀**（liu2025.、pa60.、rx60.、ucie.……）。改名或删除走弃用期：旧键写进数据文件的 `aliases:`（读取时 `DeprecatedKeyWarning`），`keys.lock` 补 `aliased=`，至少再过一个版本才能 `retired=`。标签（spec / survey / assumed / derived）不能当前缀：mmw60_trx 带来的 17 个这样的键 0.2.0 改名、0.3.0 退役了别名（`test_rule3_*`）。
 4. **被下游读取的条目登记在 `consumers.yaml`**：在自己表里抄了数的引用按条登记（库、键、字段、值），改这些条目的数值或键名必须同时改登记，并在 CHANGELOG 写一行 `` `<引用>` = <值> ``；整份 vendor 的按文件登记（`vendored:`：库、pin、文件），这些文件在它的 pin 之后改了，CHANGELOG 写 `` `<库>` 需重新 pin ``（`test_consumers.py`）。
 5. **grep 计数守卫覆盖全部四个标签**：对每个数据文件，`grep -c "source: <标签>"` 等于该标签的条目数；注释与说明（cite / note / quote / section / unit）里一律不写"标签词 + 冒号"（`audit_tags`，消费方的本地表也用它）。共享表更严：整个文件只有标签行带它，`grep -c "source:"` 等于条目数（`test_rule5_*` 跑真的 grep）。
 6. **引用只做查找，不做计算**：`ref("<键>[#<字段>[@<轴>=<值>]]")`。差、比、换算都是本库一条 derived 条目，note 写公式（`test_reader.py::test_ref_*`、`test_consumers.py`）。
@@ -51,7 +51,7 @@
 ## 本仓库特有的硬规矩
 
 - **`src/spec_sources/` 单独拷出去就要能用**：只依赖 PyYAML，只用相对导入，数据挨着代码找。消费方 vendor 它、pin 完整 SHA、过 `vendor_check --strict`（`test_vendored_copy.py` 从临时拷贝里 import 并运行）。
-- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。之后因核实而改的条目也记在那里。
+- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。核实后改成 spec 的条目列在 `VERIFIED`（值与单位仍等于源表）。原文清单与读书笔记在 `cairn/Reference/README.md`。
 - **不改消费方的仓库**：需要它们做的写进 ROADMAP 的"报回上游"节，并在那个库开 issue（标题以"spec_sources 收件："开头；对方迁完在 issue 里回报，本库验收后关）。
 - 提交信息写为什么，带实测数字。在 `feat/*` 分支上开 PR 合 main。
 

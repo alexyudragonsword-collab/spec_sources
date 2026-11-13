@@ -51,12 +51,3 @@ entries:
     source: survey
     cite: "DeepScaleTool（Sarangi & Baas, ISCAS 2021）45 nm → 7 nm 能量比；经 Halo_Serdes PowerCoefficients.node_scale"
     note: "未核实：同台表默认不缩放（45 nm 的 Horowitz 数照 dpd_cost.py / 示例 02 的口径），灵敏度节按 7 nm 再算一遍。"
-
-aliases:
-  # 0.2.0：mmw60_trx 带来的旧前缀键改名（前缀是标签，不是领域）。旧名至少留到 0.3.0，读取时 DeprecatedKeyWarning；
-  # keys.lock 里记着 aliased=0.2.0。
-  survey.horowitz_mult32_pj: {to: horowitz2014.mult32_pj, since: "0.2.0"}
-  survey.horowitz_add32_pj: {to: horowitz2014.add32_pj, since: "0.2.0"}
-  survey.walden_fom_fj: {to: adc_survey.walden_fom_fj, since: "0.2.0"}
-  survey.walden_fom_range_fj: {to: adc_survey.walden_fom_range_fj, since: "0.2.0"}
-  survey.node_scale_45_to_7nm: {to: deepscale.node_scale_45_to_7nm, since: "0.2.0"}

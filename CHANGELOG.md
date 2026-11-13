@@ -3,7 +3,32 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
-## 未发布
+## 0.3.0 —— 里程碑 2 第一批：TGad 评估方法学对上原文；退役 0.2.0 的别名（2026-11-13）
+
+**下游重新 pin**（铁律 4）：
+- `mmw60_trx` 需重新 pin：它 vendor 的 `data/ieee80211.yaml` 里 9 条 `tgad_em.*` 由 survey 改为 spec，并新增 4 条；5 个数据文件删掉了 `aliases:`；`__init__.py` 的版本号变了。**数值一个不变**，指纹应逐位不变。示例 09 期望输出第 15 行打印的 `tgad_em.pa_rapp_p [survey, unverified]` 会变成 spec 标签。它已经不读旧名（#23），别名退役不影响它。
+- `fmcw_radar` 需重新 pin：它 vendor 的 `data/frontend60.yaml` 只删了两行别名（它不读那两个旧名），读到的 5 个数不变。可以择机。
+- `d2d_link` 需重新 pin：自 0.2.0 起只差 `reader.py` 里删掉的版本号那一行（本版没碰 `reader.py`、`ucie.yaml`）。可以择机。
+
+### TGad 评估方法学对上原文（IEEE 802.11-09/0296r16）
+- **为什么**：mmw60_trx 预设 PA 的 AM/PM 至今用的是 TGad EM 的参数，这 9 条原来只读到搜索摘录。放行 mentor.ieee.org 后读了 r16（2010-01-20），并取 r09 对照；公式是 .doc 里嵌入的公式对象，转成 PDF 后渲染第 4–5 页读的。
+- 9 条由 survey 改为 spec：`tgad_em.pa_rapp_g` / `pa_rapp_asat` / `pa_rapp_p` / `pa_ampm_alpha` / `pa_ampm_beta` / `pa_ampm_q1` / `pa_ampm_q2` / `pa_model_shape` / `pn_model_shape`，带 quote 与 section。**值、单位都没变**，原来的数和原文逐个相同（g 4.65、Asat 0.58、s 0.81，α 2560、β 0.114、q1 2.4、q2 2.3，两个公式的形状也相同）。`tests/test_extraction.py::VERIFIED` 记着它们。
+- 新增 4 条 spec，都是原文写明、而消费方一直标着"原文没说"的：
+  - `tgad_em.pn_params`：PSD0 −90 dBc/Hz、fp 1 MHz、fz 100 MHz、PSD(∞) −130 dBc/Hz；
+  - `tgad_em.pn_sides`：相噪"modeled at both transmitter and receiver"；
+  - `tgad_em.pa_backoff_definition`：回退 = 10·log10(Average TX Power / Psat)；
+  - `tgad_em.pa_backoff_recommended_db`：OFDM 8 dB、单载波 0.5 dB。
+- 共享表 84 条：spec 23、survey 55、derived 6、assumed 0。
+
+### 退役 0.2.0 的 17 个别名
+- 前提：mmw60_trx 已不读旧名（它把 `DeprecatedKeyWarning` 设成了测试错误，#23），fmcw_radar、d2d_link 不读这 17 个键。各数据文件的 `aliases:` 删掉，`keys.lock` 补 `retired=0.3.0`，旧名再读是 KeyError。
+
+### 其他
+- mmw60_trx 已重新 pin 到 0.2.0（`e573d4d`；[#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)，它的合并提交 `97353e0`），读旧键名的调用全部改掉。
+- `cairn/Reference/README.md`：原文清单。
+  - 已读：TGad EM r16 / r09、Asada EuMC 2011。
+  - 待取：按里程碑 2 分批，Asada Table I 转引的 13 篇题名已从它的参考文献表里读出来；ROADMAP 里原来那份"脚本能取"的说法在本环境里有一半不成立，已改。
+  - `.gitignore` 加了 `*.doc` / `*.docx`。
 
 - mmw60_trx 已重新 pin 到 0.2.0（`e573d4d`；[#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)，它的合并提交 `97353e0`），读旧键名的调用全部改掉，`consumers.yaml` 里它的 pin 已更新。fmcw_radar、d2d_link 仍在 `d7b4d1e`，择机重新 pin（见 0.2.0 一节）。
 

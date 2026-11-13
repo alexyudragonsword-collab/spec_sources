@@ -7,7 +7,7 @@ from __future__ import annotations
 import collections
 
 import pytest
-from conftest import FIXTURE_FILES, fixture_entries, fixture_header, fixture_text, git_show, raw_entries
+from conftest import FIXTURE_FILES, RENAMED_0_2_0, fixture_entries, fixture_header, fixture_text, git_show, raw_entries
 
 import spec_sources as ss
 
@@ -25,7 +25,15 @@ MMW60_STAYS = {
     "survey.dsp_ip_dpd_poly_p4": "a sibling library's synthesis estimate, not a paper / datasheet / standard",
 }
 #: entries this library added (not in any source table)
-NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db"}
+NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
+       # 0.3.0, read in IEEE 802.11-09/0296r16 while verifying the tgad_em.* entries
+       "tgad_em.pn_params", "tgad_em.pn_sides", "tgad_em.pa_backoff_definition", "tgad_em.pa_backoff_recommended_db"}
+#: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
+#: still equal the source table; tag, cite, note, quote and section are the verification's own.
+VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
+    "tgad_em.pa_rapp_g", "tgad_em.pa_rapp_asat", "tgad_em.pa_rapp_p", "tgad_em.pa_ampm_alpha",
+    "tgad_em.pa_ampm_beta", "tgad_em.pa_ampm_q1", "tgad_em.pa_ampm_q2", "tgad_em.pa_model_shape",
+    "tgad_em.pn_model_shape")}
 #: fields changed on the way in: {key: {field: (old text, new text)}}; each is
 #: a replacement applied to the source's field and nothing else
 CHANGED = {
@@ -40,8 +48,7 @@ CHANGED = {
 
 def _now(key: str) -> str:
     """A migrated key under its current name (0.2.0 renamed 17 of them; the old name is an alias)."""
-    a = ss.aliases().get(key)
-    return a.to if a else key
+    return RENAMED_0_2_0.get(key, key)
 
 
 @pytest.mark.parametrize("name", sorted(FIXTURE_FILES))
@@ -55,6 +62,10 @@ def test_each_fixture_names_its_repo_and_full_sha(name):
 
 
 def _check_equal(new_key: str, src: dict, dst: dict):
+    if new_key in VERIFIED:
+        assert src["source"] == "survey" and dst["source"] == "spec" and dst["quote"] and dst["section"], new_key
+        assert (dst["value"], dst["unit"]) == (src["value"], src["unit"]), new_key
+        return
     changed = CHANGED.get(new_key, {})
     assert set(dst) == set(src), new_key
     for field in src:
@@ -100,7 +111,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 1 == 80
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 5 == 84
     assert set(CHANGED) <= set(ss.all_entries())
 
 

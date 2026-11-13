@@ -56,13 +56,14 @@ consumers:
     value: 20.0
     was: "mmw60_trx:isolation.tx_rx_tue2018#with_ebg_db-improvement_max_db"
 
-# 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。
+# 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）；
+# mmw60_trx 随后重新 pin 到 0.2.0（e573d4d，mmw60_trx#23，同日验收）。fmcw_radar、d2d_link 仍在 d7b4d1e（择机重新 pin）。
 vendored:
 
   - repo: mmw60_trx
-    at: b8fc55b97dae05ce74311c8d36c3be07d168e585
-    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
-    issue: "mmw60_trx#21"
+    at: 97353e081ab4f272d08249c9f2df57a483c64a25
+    pin: e573d4d99dcf0584b7245c4869aaaa8a84ada24c
+    issue: "mmw60_trx#23"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 

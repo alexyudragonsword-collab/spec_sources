@@ -17,7 +17,6 @@ from .reader import (
     Alias,
     DeprecatedKeyWarning,
     SpecNumber,
-    __version__,
     aliases,
     all_entries,
     audit_tags,
@@ -31,6 +30,10 @@ from .reader import (
     unverified,
     value,
 )
+
+#: the package version (pyproject.toml has the same); kept here, not in reader.py, so that a
+#: consumer vendoring only reader.py and its tables sees no change from a version bump alone
+__version__ = "0.2.0"
 
 __all__ = ["SpecNumber", "SOURCES", "load_table", "all_entries", "survey", "value", "unverified", "by_source",
            "ref", "aliases", "Alias", "DeprecatedKeyWarning", "legacy_keys", "merge_tables", "audit_tags",

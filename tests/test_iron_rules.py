@@ -12,7 +12,6 @@ import pytest
 from conftest import PACKAGE, REPO
 
 import spec_sources as ss
-from spec_sources import reader
 
 DATA_FILES = [f.name for f in ss.data_files()]
 
@@ -61,12 +60,12 @@ def _cfo(v):
 #: reader's value()): a derived entry that needs a library's own choice cannot
 #: be written here, so it cannot live in the shared tables.  (value, abs tolerance)
 RECOMPUTE = {
-    "derived.cfo_liu2025_hz": (lambda v: _cfo(v), 1.0),
+    "liu2025.cfo_from_ppm_hz": (lambda v: _cfo(v), 1.0),
     # 312.5 kHz: the 802.11 (VHT, 20 MHz) subcarrier spacing; L-STF repeats every 4 subcarriers
-    "derived.k_threshold_stf": (lambda v: 2 * _cfo(v) / (4 * 312.5e3), 0.01),
-    "derived.k_threshold_ltf_only": (lambda v: _cfo(v) / v("liu2025.ltf_capture_hz"), 0.05),
-    "derived.rapp_p1db_below_psat_db": (lambda v: _rapp_gap_db(v("tgad_em.pa_rapp_p")), 0.05),
-    "derived.pa60_rapp_p_asada_eumc2011": (
+    "liu2025.k_threshold_stf": (lambda v: 2 * _cfo(v) / (4 * 312.5e3), 0.01),
+    "liu2025.k_threshold_ltf_only": (lambda v: _cfo(v) / v("liu2025.ltf_capture_hz"), 0.05),
+    "tgad_em.rapp_p1db_below_psat_db": (lambda v: _rapp_gap_db(v("tgad_em.pa_rapp_p")), 0.05),
+    "pa60.asada_eumc2011_rapp_p": (
         lambda v: _solve_p(v("pa60.asada_eumc2011")["psat_dbm"] - v("pa60.asada_eumc2011")["p1db_dbm"]), 0.001),
     "isolation.tx_rx_tue2018_no_ebg_min_db": (
         lambda v: v("isolation.tx_rx_tue2018")["with_ebg_db"] - v("isolation.tx_rx_tue2018")["improvement_max_db"],
@@ -90,24 +89,35 @@ def test_rule2_the_rapp_closed_form_matches_the_other_end():
 # ------------------------------------------------------------------- rule 3: global keys with a domain prefix
 #: which domain prefixes each table may hold (AGENTS.md has the same table)
 FILE_PREFIXES = {
-    "energy.yaml": {"survey"},
-    "frontend60.yaml": {"rx60", "isolation", "survey"},
-    "ieee80211.yaml": {"tgad_em", "ieee80211ay", "dmg", "survey", "derived"},
-    "liu2025.yaml": {"liu2025", "derived"},
-    "pa60.yaml": {"pa60", "derived"},
+    "energy.yaml": {"horowitz2014", "adc_survey", "deepscale"},
+    "frontend60.yaml": {"rx60", "isolation", "antenna60"},
+    "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg"},
+    "liu2025.yaml": {"liu2025"},
+    "pa60.yaml": {"pa60"},
     "regulatory.yaml": {"fcc15255"},
     "ucie.yaml": {"ucie"},
 }
-#: mmw60_trx's keys whose prefix is a tag, not a domain: frozen, renamed later
-#: with an alias period (ROADMAP).  No new key may use a tag as its prefix.
-LEGACY_PREFIX_KEYS = frozenset({
-    "survey.horowitz_mult32_pj", "survey.horowitz_add32_pj", "survey.walden_fom_fj", "survey.walden_fom_range_fj",
-    "survey.node_scale_45_to_7nm", "survey.n_sd_11ac", "survey.n_sd_11be", "survey.rx60_comm_iscas2015",
-    "survey.dmg_sensitivity_assumptions", "survey.antenna60_okada2013_dbi", "survey.eht_tone_mapper_dtm",
-    "survey.ldpc_ppdu_encoding_thresholds",
-    "derived.cfo_liu2025_hz", "derived.k_threshold_stf", "derived.k_threshold_ltf_only",
-    "derived.rapp_p1db_below_psat_db", "derived.pa60_rapp_p_asada_eumc2011",
-})
+#: 0.2.0 renamed mmw60_trx's 17 keys whose prefix was a tag (survey. / derived.), not a domain;
+#: the old names are aliases until at least 0.3.0
+RENAMED_0_2_0 = {
+    "survey.horowitz_mult32_pj": "horowitz2014.mult32_pj",
+    "survey.horowitz_add32_pj": "horowitz2014.add32_pj",
+    "survey.walden_fom_fj": "adc_survey.walden_fom_fj",
+    "survey.walden_fom_range_fj": "adc_survey.walden_fom_range_fj",
+    "survey.node_scale_45_to_7nm": "deepscale.node_scale_45_to_7nm",
+    "survey.n_sd_11ac": "ieee80211ac.n_sd",
+    "survey.n_sd_11be": "ieee80211be.n_sd",
+    "survey.eht_tone_mapper_dtm": "ieee80211be.ldpc_tone_mapping_distance",
+    "survey.ldpc_ppdu_encoding_thresholds": "ieee80211.ldpc_ppdu_encoding_thresholds",
+    "survey.rx60_comm_iscas2015": "rx60.comm_iscas2015",
+    "survey.dmg_sensitivity_assumptions": "dmg.sensitivity_assumptions",
+    "survey.antenna60_okada2013_dbi": "antenna60.okada2013_dbi",
+    "derived.cfo_liu2025_hz": "liu2025.cfo_from_ppm_hz",
+    "derived.k_threshold_stf": "liu2025.k_threshold_stf",
+    "derived.k_threshold_ltf_only": "liu2025.k_threshold_ltf_only",
+    "derived.rapp_p1db_below_psat_db": "tgad_em.rapp_p1db_below_psat_db",
+    "derived.pa60_rapp_p_asada_eumc2011": "pa60.asada_eumc2011_rapp_p",
+}
 
 
 def test_rule3_every_key_has_its_tables_domain_prefix():
@@ -119,8 +129,7 @@ def test_rule3_every_key_has_its_tables_domain_prefix():
             assert ss.KEY_PATTERN.fullmatch(key), key
             prefix = key.split(".", 1)[0]
             assert prefix in FILE_PREFIXES[f.name], (f.name, key)
-            if prefix in ss.SOURCES:
-                assert key in LEGACY_PREFIX_KEYS, f"{key}: a tag is not a domain prefix"
+            assert prefix not in ss.SOURCES, f"{key}: a tag is not a domain prefix"
 
 
 def test_rule3_keys_are_unique_across_tables():
@@ -149,7 +158,7 @@ def test_rule3_a_published_key_never_disappears_without_its_alias_period():
     plainly; a renamed one is an alias in the data and marked aliased=; an
     alias can go only a later version (retired= after aliased=)."""
     ledger, live, alias = _ledger(), ss.all_entries(), ss.aliases()
-    now = _version(reader.__version__)
+    now = _version(ss.__version__)
     assert set(live) <= set(ledger), f"add to keys.lock: {sorted(set(live) - set(ledger))}"
     for key, a in ledger.items():
         assert _version(a["added"]) <= now, key
@@ -165,8 +174,8 @@ def test_rule3_a_published_key_never_disappears_without_its_alias_period():
 
 def test_version_is_one_number_everywhere():
     pyproject = (REPO / "pyproject.toml").read_text(encoding="utf-8")
-    assert f'version = "{reader.__version__}"' in pyproject
-    assert f"## {reader.__version__}" in (REPO / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert f'version = "{ss.__version__}"' in pyproject
+    assert f"## {ss.__version__}" in (REPO / "CHANGELOG.md").read_text(encoding="utf-8")
 
 
 # ------------------------------------------------------------------- rule 5: grep counts all four tags
@@ -196,3 +205,15 @@ def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
     """Besides the tables: the old-key maps, which are YAML a reader may grep too."""
     for p in (PACKAGE / "legacy_keys").glob("*.yaml"):
         assert not re.search(r"source:", p.read_text(encoding="utf-8")), p.name
+
+
+def test_rule3_the_0_2_0_renames_are_aliases_that_warn_and_resolve():
+    """The 17 renamed keys: each old name is an alias since 0.2.0 (not a live
+    key), reading it warns and gives the entry under its new name."""
+    assert {a: v.to for a, v in ss.aliases().items()} == RENAMED_0_2_0
+    for old, new in RENAMED_0_2_0.items():
+        assert old not in ss.all_entries() and new in ss.all_entries()
+        assert ss.aliases()[old].since == "0.2.0"
+        with pytest.warns(ss.DeprecatedKeyWarning, match=new):
+            e = ss.survey(old)
+        assert e.key == new and e is ss.survey(new)

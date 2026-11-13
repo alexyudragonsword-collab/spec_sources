@@ -2,11 +2,16 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：三个消费方的迁移已验收（2026-11-13，issue 都已关）。下一步是 0.2.0：给 17 个旧前缀键改名（新名表见"其余待办"，动手前与用户确认），做的时候在 mmw60_trx 开 issue；然后是里程碑 2 的核实轮。
+**当前焦点**：0.2.0（17 个旧前缀键改名）等 mmw60_trx 重新 pin、改调用；然后是里程碑 2 的核实轮。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-现在没有进行中的。下一个是 0.2.0 改名，只涉及 mmw60_trx（fmcw_radar、d2d_link 不读这 17 个键）。
+### mmw60_trx —— 0.2.0 改名（issue 见 LOG 最新一条）
+- 重新 pin 到 0.2.0 的合并提交，把读旧键名的调用改成新名（0.3.0 退役别名之前要改完），更新示例 04 / 08 / 09 的期望输出（只是键名）。指纹必须逐位不变。
+- 验收：重新 pin 的 SHA、指纹、`vendor_check --strict`、跑测试时不再出现 `DeprecatedKeyWarning`。之后把 `consumers.yaml` 里它的 `pin` 改掉。
+
+### fmcw_radar、d2d_link —— 择机重新 pin，不单开 issue
+- 0.2.0 对它们只改了 `reader.py` 的一行版本号（fmcw 的 `frontend60.yaml` 另有两条它不读的改名），读到的数不变。等里程碑 2 给它们开 issue 时一并重新 pin；那之前它们本地的 `vendor_check --strict` 会报 pin 过期，CI 不受影响（CI 检出在 pin 上）。
 
 ## 里程碑 2：核实轮
 
@@ -32,28 +37,7 @@
 
 ## 其余待办
 
-- **mmw60 带来的 17 个旧前缀键改名**（`survey.*` 12 个、`derived.*` 5 个：前缀是标签，不是领域；核实轮把 survey 改成 spec 后，键名就和标签矛盾）。
-  - 时机：mmw60 迁完之后、里程碑 2 动这些条目之前，单独出 0.2.0；不和迁移放在一起（迁移那一步只做搬家，指纹与示例文本都不动）。
-  - 做法：17 个旧键都写进数据文件的 `aliases:`（读取时 `DeprecatedKeyWarning`），`keys.lock` 记 `aliased=0.2.0`，至少留到 0.3.0。mmw60 重新 pin 一次，改约 30 处调用和示例 04 / 08 / 09 的期望输出（只是键名，数不动）；指纹必须逐位不变。fmcw、d2d 不读这些键，不受影响。
-  - 拟定的新名（动手前再确认）：
-
-    | 旧键 | 新键 |
-    |---|---|
-    | `survey.horowitz_mult32_pj` / `survey.horowitz_add32_pj` | `horowitz2014.mult32_pj` / `horowitz2014.add32_pj` |
-    | `survey.walden_fom_fj` / `survey.walden_fom_range_fj` | `adc_survey.walden_fom_fj` / `adc_survey.walden_fom_range_fj` |
-    | `survey.node_scale_45_to_7nm` | `deepscale.node_scale_45_to_7nm` |
-    | `survey.n_sd_11ac` / `survey.n_sd_11be` | `ieee80211ac.n_sd` / `ieee80211be.n_sd` |
-    | `survey.eht_tone_mapper_dtm` | `ieee80211be.ldpc_tone_mapping_distance` |
-    | `survey.ldpc_ppdu_encoding_thresholds` | `ieee80211.ldpc_ppdu_encoding_thresholds` |
-    | `survey.rx60_comm_iscas2015` | `rx60.comm_iscas2015` |
-    | `survey.dmg_sensitivity_assumptions` | `dmg.sensitivity_assumptions` |
-    | `survey.antenna60_okada2013_dbi` | `antenna60.okada2013_dbi` |
-    | `derived.cfo_liu2025_hz` | `liu2025.cfo_from_ppm_hz` |
-    | `derived.k_threshold_stf` / `derived.k_threshold_ltf_only` | `liu2025.k_threshold_stf` / `liu2025.k_threshold_ltf_only` |
-    | `derived.rapp_p1db_below_psat_db` | `tgad_em.rapp_p1db_below_psat_db` |
-    | `derived.pa60_rapp_p_asada_eumc2011` | `pa60.asada_eumc2011_rapp_p` |
-
-    新前缀 `horowitz2014`、`adc_survey`、`deepscale`、`ieee80211ac`、`ieee80211be`、`ieee80211`、`antenna60` 要在 `FILE_PREFIXES` 与 AGENTS.md 的布局表里登记；`LEGACY_PREFIX_KEYS` 清空。
+- **0.3.0 退役 17 个别名**：mmw60_trx 改完调用（测试里不再出现 `DeprecatedKeyWarning`）之后，删掉各数据文件的 `aliases:`，`keys.lock` 补 `retired=0.3.0`。
 - **迁入条目 note 里的"本库"**指 mmw60_trx 或 d2d_link（各文件头写明）。条目下一次因核实而改时，把"本库"与它们仓库里的路径改成明确的库名，记进 `CHANGED`。
 - 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。
 - `derived.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。

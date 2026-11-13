@@ -5,6 +5,11 @@
 
 ## 2026-11-13 · 0.2.0：17 个旧前缀键改名，旧名留别名（feat/0.2.0-rename）
 
+- 合并为 main `e573d4d`（PR #5），即 0.2.0 的 PIN。已开 [mmw60_trx#23](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/23)。
+  按 mmw60 main `b8fc55b` 数过：读旧名的代码 42 处（13 个文件），本地表文字 4 处，期望输出 4 处（08 三处、09 一处）。
+  issue 里建议它加 `filterwarnings = error::…DeprecatedKeyWarning` 守住没改完的旧名。
+  更正：0.2.0 的 CHANGELOG 与 ROADMAP 写"示例 04 / 08 / 09"会变，实为 08 / 09（04 打印的 `derived.pa60_obo_at_evm_limit_db` 是 mmw60 本地键）。
+
 - 用户确认了新名表（ROADMAP 里拟的那张），照表改了 17 个键，分布：energy 5、ieee80211 6、liu2025 3、frontend60 2、pa60 1。值、单位、标签都没变。
 - 旧名写进各数据文件的 `aliases:`（since 0.2.0），读取时发 `DeprecatedKeyWarning`，返回的条目 `.key` 是新名。`keys.lock` 97 行：80 个活键，17 个 `aliased=0.2.0`。
 - 条目里引用旧名的交叉引用有 3 处，跟着改（登记在 `CHANGED`）：一条 note、两条 cite（`derived.cfo_liu2025_hz` → `liu2025.cfo_from_ppm_hz`）。文件头里的前缀说明重写。

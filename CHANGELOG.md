@@ -6,7 +6,7 @@
 ## 0.2.0 —— 17 个旧前缀键改名（2026-11-13）
 
 **下游重新 pin**（铁律 4；`consumers.yaml` 的 `vendored:` 核对）：
-- `mmw60_trx` 需重新 pin：它 vendor 的 5 个数据文件里有 17 个键改了名，`__init__.py` 里多了版本号，`reader.py` 少了版本号。旧键名在 0.2.x 仍能读，但会发 `DeprecatedKeyWarning`，读出来的条目 `.key` 是新名，所以示例 04 / 08 / 09 打印的键名会变；数值不变，指纹应逐位不变。0.3.0 之前要把调用改成新名。见 mmw60_trx 的 issue。
+- `mmw60_trx` 需重新 pin：它 vendor 的 5 个数据文件里有 17 个键改了名，`__init__.py` 里多了版本号，`reader.py` 少了版本号。旧键名在 0.2.x 仍能读，但会发 `DeprecatedKeyWarning`，读出来的条目 `.key` 是新名，所以示例 08 / 09 打印的键名会变（更正：原写 04 / 08 / 09，04 打印的是 mmw60 本地的键，不在改名之列）；数值不变，指纹应逐位不变。0.3.0 之前要把调用改成新名。见 mmw60_trx 的 issue。
 - `fmcw_radar` 需重新 pin：它 vendor 的 `data/frontend60.yaml` 里改名的两条（`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`）它不读，`reader.py` 只少了一行版本号。读到的 5 个数不变，可以择机重新 pin。
 - `d2d_link` 需重新 pin：`reader.py` 只少了一行版本号，`data/ucie.yaml` 与 `legacy_keys/d2d_link.yaml` 都没变。可以择机重新 pin。
 

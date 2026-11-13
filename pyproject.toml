@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spec_sources"
+version = "0.1.0"
+description = "Numbers about the outside world (specification clauses, paper and datasheet figures) with their provenance, a reader and the guards. No simulation."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+# the package is vendored by its consumers: PyYAML is its only dependency
+dependencies = ["pyyaml>=6"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+dev = ["ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+spec_sources = ["data/*.yaml", "legacy_keys/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

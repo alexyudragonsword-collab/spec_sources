@@ -1,0 +1,23 @@
+version: 0.1
+project:
+  name: "spec_sources"
+  summary: "带出处的规范 / 文献数字表 + 读取器 + 守卫，不做任何仿真；mmw60_trx、fmcw_radar、d2d_link 等按完整 SHA vendor 它。"
+cairn:
+  knowledge_dir: "cairn"
+  # Date of the skill spec this instance was initialized against (stamped by
+  # init from references/upgrade.md's "Current spec date"; not a user decision).
+  skill_spec_date: "2026-08-07"
+  # git_policy: track | ignore | private_sync — 本仓库公开，cairn/ 随仓库提交
+  # （迁移说明 cairn/migration-*.md 是要转给消费方的交付物）
+  git_policy: "track"
+  # cairn/Reference/ 也跟踪（原文摘录、读书笔记），但出版方的 PDF 只放本地：
+  # .gitignore 有 cairn/Reference/*.pdf。
+  # language: en | zh | ...
+  language: "zh"
+graduation:
+  # (c) Deferred — no knowledge base connected yet; provider decisions are
+  #     collected at the first graduation (references/graduation.md).
+  provider: none
+history:
+  # migration_mode: start_fresh | inventory_only | selective_migrate
+  migration_mode: "start_fresh"

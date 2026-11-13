@@ -23,6 +23,7 @@
 - `pyproject.toml` 的 package-data 加 `"vendor/spec_sources/data/*.yaml"`（装好的包也要找得到）。
 - `src/mmw60/vendor/__init__.py` 的 Pins 节加一条 spec_sources @ `<PIN>`。
 - `tools/vendor_check.py` 的 `vendored_files()` 现在只收 `*.py`：照 fmcw_radar 的写法加上 `VENDOR.rglob("*.yaml")`，否则 6 个数据文件不被核对。
+- `tools/example_drift.py::spec_values` 按路径只读 `src/mmw60/data/spec/survey.yaml`：迁移后那里少了 63 条，文档里引用这些规范数的地方会被 accept 闸门当成"过期引用"。改成读本地表 + `src/mmw60/vendor/spec_sources/data/*.yaml`（d2d_link 的演练里同一个函数让 `test_example_drift` 红过）。
 - CI 的 vendor-drift 作业加一个 checkout（公开库，不要 token）：`repository: alexyudragonsword-collab/spec_sources`，`ref: <PIN>`，`path: _siblings/spec_sources`，命令行加 `--siblings spec_sources=${{ github.workspace }}/_siblings/spec_sources`。本地默认根 `/home/user` 下有 `spec_sources/` 即可。
 
 ## 2. 本地表：`src/mmw60/data/spec/survey.yaml`
@@ -105,7 +106,11 @@ def ref(reference: str):
 
 ## 6. 验收
 
-1. `python tools/fingerprint.py record` 迁移前后各一次，`compare` 逐位相同；提交信息不带 `(numbers-move`。
+1. `python tools/fingerprint.py record` 迁移前后各一次，`compare` 逐位相同；提交信息不带 `(numbers-move`。指纹只覆盖 Liu 的两份配置（68 个值），所以再比一次**表本身**：迁移前后各把 `spec.all_entries()` 的每条 `repr`（8 个字段全在里面）写成 JSON，比较——旧的 125 个键必须逐条相同，只多出 `isolation.tx_rx_tue2018_no_ebg_min_db`：
+   ```python
+   from mmw60 import spec
+   json.dump({k: repr(e) for k, e in spec.all_entries().items()}, open(out, "w"), ensure_ascii=False)
+   ```
 2. `examples/expected/` 不动（键名没改，04 / 08 / 09 打印的键名照旧）。
 3. `python tools/vendor_check.py --strict` 绿，spec_sources 的 8 个文件都是 verbatim。
 4. `pytest` 与 `ruff check .` 绿。

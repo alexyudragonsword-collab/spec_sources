@@ -53,8 +53,11 @@ LEGACY_DIR = PACKAGE_DIR / "legacy_keys"
 #: dots, digits and d2d_link's ``@lo-hi`` rate-range suffix)
 KEY_PATTERN = re.compile(r"[a-z][a-z0-9_]*\.[A-Za-z0-9_.@+-]+")
 _FIELD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|[-+]?[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)?")
-#: the only line shape allowed to contain the tag word followed by a colon
+#: an entry's own tag line; any other line holding ``source: <tag>`` changes a grep count
 _TAG_LINE = re.compile(r"\s+source: (" + "|".join(SOURCES) + r")\s*")
+_TAG_WORD = re.compile(r"source: (" + "|".join(SOURCES) + r")")
+#: the prose fields of an entry: no "source:" in them at all (iron rule 5)
+_PROSE_FIELD = re.compile(r"\s+(cite|note|quote|section|unit):")
 
 
 class DeprecatedKeyWarning(FutureWarning):
@@ -243,8 +246,15 @@ def by_source(source: str) -> dict[str, SpecNumber]:
 
 # ----------------------------------------------------------------------------- references
 def _scalar(text: str):
-    """``40`` -> 40, ``x`` -> 'x' (YAML's reading of a plain scalar)."""
-    return yaml.safe_load(text)
+    """``40`` -> 40, ``x`` -> 'x' (YAML's reading of a plain scalar); a number
+    YAML 1.1 leaves as a string (``4e1``, no dot) is still a number."""
+    v = yaml.safe_load(text)
+    if isinstance(v, str):
+        try:
+            return float(v)
+        except ValueError:
+            return v
+    return v
 
 
 def _same(a, b) -> bool:
@@ -311,15 +321,25 @@ def legacy_keys(repo: str) -> dict[str, str]:
 
 
 # ----------------------------------------------------------------------------- the grep guard
+def _misplaced_tag(line: str) -> bool:
+    if "source:" not in line or _TAG_LINE.fullmatch(line):
+        return False
+    _, hash_, after = line.partition("#")
+    in_comment = bool(hash_) and "source:" in after
+    return bool(_TAG_WORD.search(line)) or in_comment or bool(_PROSE_FIELD.match(line))
+
+
 def audit_tags(path: Path | str) -> list[str]:
     """What breaks ``grep -c "source: <tag>"`` on one table file ([] when
-    nothing does): for each of the four tags the grep count must equal the
-    number of entries carrying it, and no line other than an entry's own tag
-    line may hold the tag word followed by a colon (iron rule 5)."""
+    nothing does), iron rule 5: for each of the four tags the grep count must
+    equal the number of entries carrying it; no line but an entry's own tag
+    line may hold ``source: <tag>``; and no comment or prose field (cite,
+    note, quote, section, unit) may hold ``source:`` at all.  A ``source:``
+    key inside a value mapping is data, not prose, and breaks no count."""
     p = Path(path)
     lines = p.read_text(encoding="utf-8").splitlines()
-    problems = [f"{p.name}:{i}: not an entry's tag line: {line.strip()!r}"
-                for i, line in enumerate(lines, 1) if "source:" in line and not _TAG_LINE.fullmatch(line)]
+    problems = [f"{p.name}:{i}: tag word outside an entry's tag line: {line.strip()!r}"
+                for i, line in enumerate(lines, 1) if _misplaced_tag(line)]
     entries = _entries_of(p)
     for tag in SOURCES:
         grep = sum(f"source: {tag}" in line for line in lines)

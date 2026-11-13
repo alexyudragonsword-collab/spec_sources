@@ -93,6 +93,7 @@ def test_ref_forms():
     assert ss.ref("rx60.radar_iwr6843_fig7_2#p1db_inband_dbm@gain_db=40") == -34.0       # a point of a curve
     assert ss.ref("rx60.radar_iwr6843_fig7_2#p1db_inband_dbm@gain_db=48.0") == -42.0
     assert ss.ref("rx60.radar_iwr6843_fig7_2#nf_db@gain_db=30") == 15.6
+    assert ss.ref("rx60.radar_iwr6843_fig7_2#nf_db@gain_db=3e1") == 15.6                 # YAML 1.1 reads 3e1 as text
     assert ss.ref("liu2025.table1_scs_hz#8") == 2.5e6                                     # a numeric field name
     assert ss.ref("pa60.wu_asscc2012#vpa_1v0") == {"psat_dbm": 13.2, "p1db_dbm": 10.2, "pae_peak": 0.150}
 
@@ -168,6 +169,21 @@ def test_audit_tags_flags_a_comment_and_a_note_that_spell_the_tag(shared_tables)
     problems = ss.audit_tags(bad)
     assert any("bad.yaml:1:" in p for p in problems) and any("bad.yaml:8:" in p for p in problems)
     assert any("grep -c 'source: spec' = 2, entries = 0" in p for p in problems)
+
+
+def test_audit_tags_allows_a_source_key_inside_a_value_but_not_in_prose(shared_tables):
+    """mmw60_trx's assumed.pa60_surveyed_pick has ``value: {source: "pa60...", ...}``:
+    a mapping key, breaks no count (its dry run found it).  The same word in a
+    note, or ``source: <tag>`` anywhere but a tag line, is flagged."""
+    data_key = _LIVE.replace("value: 7", 'value: {source: "pa60.asada_eumc2011", p: 1}')
+    assert ss.audit_tags(shared_tables("ok.yaml", "entries:\n" + data_key)) == []
+    in_note = _LIVE.replace('cite: "f"', 'cite: "f"\n    note: "its source: the datasheet"')
+    assert len(ss.audit_tags(shared_tables("note.yaml", "entries:\n" + in_note))) == 1
+    tag_value = _LIVE.replace("value: 7", "value: {source: spec}")
+    assert any("grep -c 'source: spec' = 1, entries = 0" in p
+               for p in ss.audit_tags(shared_tables("tag.yaml", "entries:\n" + tag_value)))
+    inline = _LIVE.replace("value: 7", "value: 7   # was source: x")
+    assert len(ss.audit_tags(shared_tables("inline.yaml", "entries:\n" + inline))) == 1
 
 
 def test_legacy_keys_are_one_to_one_onto_live_keys():

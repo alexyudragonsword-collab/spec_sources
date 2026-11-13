@@ -6,7 +6,8 @@
 # 都恰好等于该标签的条目数（tests/test_iron_rules.py 跑真的 grep）。
 #
 # 出处：条目从 d2d_link@6789810ccb6328324673222b2f64cc21f748451e src/d2d_link/data/spec/ucie_survey.yaml
-# 迁入，键名加了 ucie. 前缀，其余每个字段逐字相等（tests/test_extraction.py）。d2d_link 的裸键名到这里的键名
+# 迁入，键名加了 ucie. 前缀，其余字段逐字相等；只有 rx_eye_width_ui@24-32 的 note 改了一处：原文把
+# "标签词 + 冒号"写进了说明（铁律 5；tests/test_extraction.py::CHANGED）。d2d_link 的裸键名到这里的键名
 # 是 legacy_keys/d2d_link.yaml，给它的垫片用。cite / note 里的"本库"指 d2d_link，"示例 02"、ClockingConfig、
 # TxConfig、lanes.spare_count、0.14.x 都是它的；下一次因核实改动这条时改成明确的库名（ROADMAP）。
 # 键名里的 @lo-hi 是 d2d_link 的速率区间档（它的 survey_tiered 按数据速率挑）。

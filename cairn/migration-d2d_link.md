@@ -24,7 +24,10 @@
 
 - **删** `src/d2d_link/data/spec/ucie_survey.yaml`；`model_presets.yaml`（`source: model` 的 30 条估计）不动，仍用 d2d 自己的 `load_survey(..., allowed=("model",))` 读——`model` 不是 spec_sources 的标签，那是 d2d 自己的取舍。
 - `pyproject.toml` 的 package-data 加 `"vendor/spec_sources/data/*.yaml"`、`"vendor/spec_sources/legacy_keys/*.yaml"`。
-- `tools/vendor_check.py` 只扫 `*.py`（第 176、254 行的 `VENDOR.rglob("*.py")`）：照 fmcw_radar 的写法加上 `*.yaml`，否则两个 YAML 不被核对。
+- `tools/vendor_check.py` 两处照 fmcw_radar 的写法改（演练里两处都要，否则 YAML 要么不被核对、要么报 DRIFT）：
+  - 第 176、254 行 `VENDOR.rglob("*.py")` 只扫 `.py`：改成 `[*VENDOR.rglob("*.py"), *VENDOR.rglob("*.yaml")]`；
+  - `_strip_header` 去掉**所有**开头的 `# ` 行：vendored YAML 的第一行正文就是 `# ucie —— …` 注释，会被一起去掉。改成只去两行归属头（`Vendored from` 那行与紧跟的 `Adapted-copy policy` 那行）。
+- `tools/example_drift.py::spec_values` 按路径读 `src/d2d_link/data/spec/ucie_survey.yaml`；文件删了它返回空集，`tests/test_example_drift.py::test_accept_gate_reads_history_releases_and_spec_numbers_as_no_quote` 就红（演练里查到的）。改成读 `src/d2d_link/vendor/spec_sources/data/*.yaml` 的全部条目。
 - CI 的 vendor-drift：加 `repository: alexyudragonsword-collab/spec_sources`、`ref: <PIN>`、`path: _siblings/spec_sources` 与对应的 `--siblings`。
 
 ## 2. 垫片：`src/d2d_link/spec/__init__.py`
@@ -62,9 +65,22 @@ def _table() -> dict[str, SpecNumber]:
 - 加一条：垫片的键就是旧键名——`list(spec.all_entries()) == list(ss.legacy_keys("d2d_link"))`，且每条 `spec.survey(old).value == ss.value(new)`。
 - 其余（`test_package_lookup`、`test_targets_resolve_with_their_source`、`test_code_does_not_hardcode_the_table`、`test_tag_format`、`test_bundled_configs_stay_inside_the_survey_envelope`）不改。
 
-## 4. 验收
+## 4. 文档
+
+还写着 `src/d2d_link/data/spec/ucie_survey.yaml` 的地方（6789810）：`README.md` 第 102、107 行，`docs/USAGE.md` 第 61 行，`CONTRIBUTING.md` 第 24 行（"规范数字只改 ucie_survey.yaml"——改成：改 spec_sources、重新 pin），`ROADMAP.md` 第 14 行，`cairn/spec-sources.md` 第 16 行，`cairn/architecture-invariants.md` 第 57 行，`src/d2d_link/spec/__init__.py` 的模块说明，`src/d2d_link/config/schema.py` 第 11、54 行。grep 命令改成对 vendored 的 `ucie.yaml`。
+
+## 5. 验收
 
 1. `python tools/fingerprint.py record` 迁移前后逐位相同（0.65 UI、0.75 UI、40 mV、1e-27、25 mm……一个都不该动）。
 2. 示例输出不动（键名、数值、单位、标签都没变）。
 3. `python tools/vendor_check.py --strict` 绿。
 4. `pytest` 与 `ruff check .` 绿。
+
+## 演练（2026-11-13，本会话在 d2d_link@6789810 的临时 worktree 上按本说明做了一遍；没有推到 d2d_link）
+
+PIN 用的是本库分支提交 `522e1e7d570c181e4986ef4d9ac591a76e6ce56a`（合并后换成 main 的）。
+
+- 指纹：迁移前后各记一次，**3345 个值逐位相同**（`tools/fingerprint.py compare`）。
+- `pytest`：250 passed，12 skipped（dash、scikit-rf 没装的 9 条，Halo / pllsim 检出不在的 2 条，`test_structure` 原本就跳的 1 条），1 deselected（slow）。
+- `vendor_check.py --strict`：spec_sources 的 `reader.py`、`data/ucie.yaml`、`legacy_keys/d2d_link.yaml` 三个 verbatim；Halo / pllsim 的 6 个因检出不在而 skip（与本迁移无关）。
+- 演练中查到的两处已写进上面第 1 节：`_strip_header`、`example_drift.spec_values`。

@@ -65,6 +65,7 @@ def upstream_value(ref: str) -> float:
 - `test_in_band_compression_follows_the_gain`：同样换 import。
 - 加一条：vendored 的表四个标签都数得准——`for f in ss.data_files(): assert ss.audit_tags(f) == []`。
 - `test_grep_lists_every_sourced_number`（数本库自己的表）不改。
+- `tests/test_vendor_check.py`：`PINS` 加 `"spec_sources": "<PIN>"`；`test_every_file_has_a_full_sha_header_pinned_to_its_sibling` 按路径挑 pin 的那一行加上 `"spec_sources" if "spec_sources" in f.parts`（演练里这条先红了）。
 - 以后新加 `upstream:` 要报回 spec_sources，登记进它的 `consumers.yaml`（spec_sources 看不到这张表）。
 
 ## 4. 验收
@@ -72,6 +73,15 @@ def upstream_value(ref: str) -> float:
 1. `python tools/fingerprint.py record` 迁移前后逐位相同；5 个数照旧是 12.0 / 12.0 / −12.0 / −34.0 / 20.0 dB(m)。
 2. `python tools/vendor_check.py --strict` 绿：spec_sources 的 `reader.py` 与 `data/frontend60.yaml` verbatim，mmw60 只剩剖面文件。
 3. `pytest` 与 `ruff check .` 绿。
+
+## 演练（2026-11-13，本会话在 fmcw_radar@2e5cbb6 的临时 worktree 上按本说明做了一遍；没有推到 fmcw_radar）
+
+PIN 用的是本库分支提交 `522e1e7d570c181e4986ef4d9ac591a76e6ce56a`（合并后换成 main 的）。
+
+- 指纹：迁移前后 **1979 个值逐位相同**。
+- `pytest`：197 passed，2 skipped（polar_tx / array_tx 检出不在）。
+- `vendor_check.py --strict`：spec_sources 的 `reader.py`、`data/frontend60.yaml` 与 mmw60 的 LO 剖面文件都 verbatim；polar_tx / array_tx 的 30 个因检出不在而 skip（与本迁移无关）。
+- 演练中查到的一处已写进第 3 节：`tests/test_vendor_check.py` 的 `PINS`。
 
 ## 5. 里程碑 2 再迁的 14 条（本轮只列清单）
 

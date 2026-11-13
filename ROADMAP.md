@@ -11,16 +11,19 @@
 ### mmw60_trx（第一个迁）
 - 按 `cairn/migration-mmw60_trx.md` 迁：vendor `src/spec_sources/` 的读取器与 6 个数据文件，`mmw60/spec.py` 留成薄垫片，本地 `data/spec/survey.yaml` 只剩 62 条（assumed 56、derived 3、survey 3）。验收：指纹逐位不变，`tools/vendor_check.py --strict` 绿。
 - `tools/vendor_check.py` 现在只扫 `*.py`（`vendored_files()`），vendored 的 YAML 表不被核对。照 fmcw_radar 的改法（它的 `vendored_files()` 也收 `*.yaml`）补上，否则数据表漂了也绿。
+- `tools/example_drift.py::spec_values` 按路径只读本地表，迁移后要连 vendored 的数据表一起读（迁移说明第 1 节）。
 - 本地表第 636 行的注释与表头第 9–10 行写着"标签词 + 冒号"，`grep -c "source: spec"` 得 11、实际 10。迁移时那条注释随 spec 条目一起走了；表头两行要改写，否则 `audit_tags` 报错。
 - 留在本地的 3 条 survey（两条 clock_profile、dsp_ip 综合估计）不进共享表，理由在 `tests/test_extraction.py::MMW60_STAYS`。如果 mmw60 认为其中哪条该进，回一句，本库改判。
 
 ### fmcw_radar（第二个）
 - 按 `cairn/migration-fmcw_radar.md` 迁：vendor 读取器与 `data/frontend60.yaml`；`upstream:` 改成 `spec_sources:<引用>`，`upstream_value` 换成 `ref()`，自己解析 `@` 与 `-` 的代码删掉。减法那条读 `isolation.tx_rx_tue2018_no_ebg_min_db`。`vendor/mmw60/` 只留 LO 剖面文件。验收同上。
+- `tests/test_vendor_check.py` 的 `PINS` 与按路径挑 pin 的那行要加 spec_sources（演练里先红了这一条）。
 - 以后新加的 `upstream:` 引用要报回本库登记进 `consumers.yaml`（本库看不到 fmcw 的表）。
 
 ### d2d_link（第三个）
 - 按 `cairn/migration-d2d_link.md` 迁：vendor 读取器、`data/ucie.yaml`、`legacy_keys/d2d_link.yaml`；`d2d_link/spec` 用别名表把共享条目按旧的裸键名接住。验收同上。
-- `tools/vendor_check.py` 同 mmw60：只扫 `*.py`，要补上 YAML。
+- `tools/vendor_check.py` 两处：只扫 `*.py`，要补上 YAML；`_strip_header` 去掉**所有**开头的 `# ` 行，会把 vendored YAML 正文的第一行注释也去掉、报 DRIFT——改成 mmw60 / fmcw 那样只去两行归属头。
+- `tools/example_drift.py::spec_values` 按路径读 `data/spec/ucie_survey.yaml`；文件删掉后返回空集，`test_example_drift` 的一条会红（演练里红过）。
 - 它的表头注释与 `rx_eye_width_ui@24-32` 的 note 都写着"改 source: spec"，`grep -c "source: spec"` 得 2、实际 0（它的守卫只数 survey，没发现）。共享表里已改写；它删本地表时这个问题一起消失。
 
 ## 里程碑 2：核实轮

@@ -178,6 +178,9 @@ def test_rule5_grep_counts_every_tag_exactly(name):
         out = subprocess.run(["grep", "-c", f"source: {tag}", str(path)], capture_output=True, text=True)
         assert int(out.stdout.strip() or 0) == sum(e.source == tag for e in entries.values()), (name, tag)
     assert ss.audit_tags(path) == []
+    # the shared tables are stricter than audit_tags: the word with a colon only on tag lines, nowhere else
+    out = subprocess.run(["grep", "-c", "source:", str(path)], capture_output=True, text=True)
+    assert int(out.stdout.strip()) == len(entries), name
 
 
 def test_rule5_holds_over_the_whole_data_directory():

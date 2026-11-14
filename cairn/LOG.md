@@ -3,6 +3,16 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 4 批完：窗函数，Harris 1978 表 I（feat/m2-batch4-car-corner，未发布）
+
+- 用户下载 Harris, Proc. IEEE 66(1), 1978（33 页，文字层是 OCR）。表 I 在 p. 55，渲染出来读。
+- 新文件 `data/windows.yaml`，5 条 spec（`harris1978.rect / hann / hamming / exact_blackman / blackman`），每条是表 I 一整行 10 列。3-dB 宽 0.89 / 1.44 / 1.30 / 1.52 / 1.68 bins。
+- 复算（DFT-even，N = 1024，补零到 2^22）：rect 0.886、Hann 1.441、Hamming 1.303 与表相符，其余列也相符（Hamming 扇贝 1.75 对表 1.78）。
+- Blackman（0.42 / 0.5 / 0.08）：3-dB 宽 1.644（表 1.68），6-dB 宽 2.299（表 2.35），其余 7 列相符。
+- Exact Blackman（7938 / 9240 / 1430 ÷ 18608）：旁瓣 −68.2（表 −51）、相干增益 0.427（表 0.46；原文 p. 64 说相干增益就是 a0）、ENBW 1.694（表 1.57）、3-dB 宽 1.609（表 1.52）。照原文登记，note 写明。
+- fmcw 的 4 个本地值 = `ref("harris1978.<窗>#bw_3db_bins")`；它的 Blackman cite 写成 exact，值与代码都是 Blackman。
+- 共享表 111 条：spec 61、survey 40、derived 10。测试 81 个（79 通过，2 跳过）。fmcw 的 6 条都有了条目，待开 issue。
+
 ## 2026-11-14 · 第 4 批续：乘用车 RCS 与三面角反射器（feat/m2-batch4-car-corner，未发布）
 
 - PR #23 已合并（main `e0540f3`）。用户定先做 fmcw 剩下的 6 条。放行 rosap.ntl.bts.gov、www.osti.gov（用户批准）。

@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 106
+    assert len(table) == 111
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -145,6 +145,7 @@ FILE_PREFIXES = {
     "regulatory.yaml": {"fcc15255"},
     "tdc.yaml": {"tdc"},
     "ucie.yaml": {"ucie"},
+    "windows.yaml": {"harris1978"},
 }
 
 
@@ -229,7 +230,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 56, "survey": 40, "assumed": 0, "derived": 10}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 61, "survey": 40, "assumed": 0, "derived": 10}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

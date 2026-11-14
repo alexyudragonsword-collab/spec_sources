@@ -2,17 +2,18 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。现在没有等对方回报的 issue（mmw60_trx #27、d2d_link #2 已验收）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目（未发布），fmcw_radar 的 6 条 survey 都有了出处，待开 issue。现在没有等对方回报的 issue（mmw60_trx #27、d2d_link #2 已验收）。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 0.4.0（`8e5f2e2`），#27 已验收
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
-### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `e49979f`，#17 已验收）
-- 车辆 RCS 与角反射器已建条目（未发布）：`target_rcs.iso19206_3_car_*`、`target_rcs.trihedral_peak`。等 4 条窗函数（Harris 1978，要用户下载）做完，一起开 issue。issue 里要告诉它：
+### fmcw_radar —— 6 条都有了条目，待开 issue（现在 pin 在 `e49979f`，#17 已验收）
+- 车辆 RCS、角反射器、窗函数已建条目（未发布）：`target_rcs.iso19206_3_car_*`、`target_rcs.trihedral_peak`、`harris1978.*`。一个 issue 开齐，要它重新 pin、多 vendor `data/windows.yaml`、把 6 条 survey 改成引用或改成它自己的 assumed。issue 里要告诉它：
   - 乘用车 10 dBsm 是 ISO 19206-3 车尾远距离带子的下界（可引 `target_rcs.iso19206_3_car_rear_far_lower_dbsm`），中心是 20 dBsm；
-  - 角反射器"10 cm 边、60 GHz、约 20 dBsm"按三角形公式只有 12.2 dBsm，20 dBsm 对应方形；尺寸与形状是它自己的取舍。
+  - 角反射器"10 cm 边、60 GHz、约 20 dBsm"按三角形公式只有 12.2 dBsm，20 dBsm 对应方形；尺寸与形状是它自己的取舍，本库只有公式（`target_rcs.trihedral_peak`），要数得它自己算或在本地表写 assumed；
+  - 窗函数 4 条可引 `harris1978.<窗>#bw_3db_bins`，值与它本地的相同；它的 `window.blackman_3db_bins` cite 写成 exact Blackman，实为 Blackman 一行（exact 是 1.52）；表里 Blackman 的 1.68 比按定义复算的 1.644 宽 2.2 %，在它 5 % 的对照容差之内。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收
@@ -29,7 +30,7 @@
 3. **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（📥，期刊论文不受规范许可约束）。
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
    - 5 条前端数已经读本库并登记（`consumers.yaml`）：`60g_sensing.tx_power_dbm`、`60g_sensing.nf_db`、`60g_sensing.p1db_oob_dbm`、`60g_sensing.p1db_inband_dbm`、`60g_sensing.tx_rx_isolation_db`。
-   - 9 条只在 fmcw 的 survey，要迁进本库并核实，fmcw 再改成引用。氧气两条与人体 RCS 已在 fmcw#15 改成引用并登记（`consumers.yaml`）。剩 6 条：RCS `rcs.car_dbsm`、`rcs.corner_reflector_dbsm`；窗函数主瓣宽度 `window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`（Harris 1978 Table I）。原文下载后建条目，再在 fmcw_radar 开 issue。
+   - 9 条只在 fmcw 的 survey，要迁进本库并核实，fmcw 再改成引用。氧气两条与人体 RCS 已在 fmcw#15 改成引用并登记（`consumers.yaml`）。剩下 6 条（`rcs.car_dbsm`、`rcs.corner_reflector_dbsm`、`window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`）的原文都读了、建了条目（未发布），只差在 fmcw_radar 开 issue（见上面"报回上游"）。
 5. **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 6. **Halo_Serdes #11 的 4 条条文**。
 7. 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
@@ -42,6 +43,7 @@
 - **读取器给合并表也解析别名**：`ref(..., table)` 与消费方垫片在合并表上的查找都不认 `aliases:`。mmw60_trx 在 #23 里自己在垫片里补了一份（`_resolve`：先查表，再查 `aliases()`，警告指向调用方）。把这段做成读取器的公开函数（如 `resolve(key, table)`，`ref` 带 `table` 时也走它），垫片就能更薄。改 `reader.py` 会让三个库都需重新 pin，等下一次必须动 `reader.py` 时一起做。
 - **迁入条目 note 里的"本库"**指 mmw60_trx 或 d2d_link（各文件头写明）。条目下一次因核实而改时，把"本库"与它们仓库里的路径改成明确的库名，记进 `CHANGED`。
 - 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。
+- **Harris 1978 表 I 有两行对不上自己的定义**（`harris1978.blackman`、`harris1978.exact_blackman` 的 note 有复算数）：Blackman 的 3-dB / 6-dB 宽偏大约 2 %，Exact Blackman 一行旁瓣、相干增益、带宽都与式 (31a) 的系数不符。有没有勘误可查 Nuttall, IEEE Trans. ASSP 29(1), 1981（📥）。有消费方要用 Exact Blackman 的数时再做。
 - `liu2025.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。
 
 ## 开放问题

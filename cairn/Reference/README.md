@@ -76,7 +76,7 @@ MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-
 
 ### 第 4 批 · fmcw_radar 的 9 条
 - ~~✅ ITU-R P.676~~ 已读（见上表）。
-- 📥 F. J. Harris, "On the use of windows for harmonic analysis with the discrete Fourier transform", Proc. IEEE 66(1), 1978：Table I，4 条窗函数主瓣宽度。
+- ✅ F. J. Harris, "On the use of windows for harmonic analysis with the discrete Fourier transform", Proc. IEEE 66(1), pp. 51–83, 1978（2026-11-14 用户从 Xplore 下载，本地 `harris_procieee1978_windows.pdf`，33 页；文字层是 OCR，表要渲染出来读）：Table I（p. 55）的矩形、Hann（α = 2）、Hamming、Exact Blackman、Blackman 五行；DFT-even 的定义在 Sec. II（p. 52），Blackman 系数式 (31) 与"相干增益就是 a0"在 Sec. V-E（pp. 63–64） → `harris1978.*`。数值复算：前三行相符（Hamming 扇贝损失差 0.03 dB），Blackman 的 3-dB / 6-dB 宽偏大约 2 %，Exact Blackman 一行与原文的系数不符。可选 📥 A. H. Nuttall, "Some windows with very good sidelobe behavior", IEEE Trans. ASSP 29(1), 1981：讨论过 Harris 的这几族余弦和窗，是否勘误了这几行没读。
 - 人体 RCS：arXiv 1910.13706 已读，但只有仿真。要实测值 📥 Belgiovane et al., IEEE Radar Conf. 2014（76–77 GHz 人体 RCS 实测），或 🌐 EC JRC 报告 JRC78619（publications.jrc.ec.europa.eu）。
 - ✅ 车辆 RCS：NHTSA DOT HS 813 648（rosap.ntl.bts.gov，2026-11-14 放行后取到，本地 `nhtsa_dot_hs_813648.pdf`，65 页）。两颗 76–77 GHz 雷达（Bosch、Continental），ISO 19206-3:2021 的方法；Table 8（车尾固定角：P_FAR 20、ΔP 10、D_FAR 40 m、K_DEC 0.013）、Table 9（30 m 一周的上下界）是转引 ISO 的；实测的乘用车都在界内，报告不给单车的 RCS 数 → `target_rcs.iso19206_3_car_*`。标定用的两个三面角反射器在 77 GHz 是 10 与 −3.6 dBsm（Eravant SAJ-043-S1、SAJ-020-S1-1.97）。可选 📥 SAE 2021-01-5103、ISO 19206-3 原文（要购买）。
 - ✅ 角反射器：A. W. Doerry, "Reflectors for SAR Performance Testing", Sandia SAND2008-0396（www.osti.gov，2026-11-14 放行后取到，本地 `doerry_sand2008_0396.pdf`，57 页）：式 1 / 4 / 7（三角形、方形、四分之一圆），Table 1 复核到 0.1 dB 以内 → `target_rcs.trihedral_peak`。2014 年有第二版（SAND2014-0882），没读。
@@ -103,7 +103,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 
 ## 合计
 
-- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），又下 2 篇（[9] [11]），还剩 20 篇。
+- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），又下 2 篇（[9] [11]），又下 1 篇（Harris），还剩 19 篇（含因许可不能用的 UCIe 规范）。
 - 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。（TU Delft 那篇实为只有元数据，2026-11-14 由用户从 Xplore 下载）
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 

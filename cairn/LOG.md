@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 1 批（部分）：[9] Kuo、[11] Jin 对上原文（feat/m2-batch1-kuo-jin，未发布）
+
+- PR #12 已合并（main `500710b`）。这两行在已读 5 篇的对比表里都没出现过，先读。
+- [9] Kuo（MWCL 2009）：Table I This Work 的 1.8 V 一行是 30 / 10.3 / 13.8 / 12.6 %、178 mW，与 Asada 相同。2.4 V 是 31.3 / 11.7 / 16.2 / 14 %，3 V 是 32.4 / 12 / 18 / 15 %。Psat − P1dB 依次 3.5 / 4.5 / 6.0 dB，同一颗 PA 漏压越高压缩越平缓。2.4 V 的 PAE 正文写 15、表写 14。文本层丢了斜体符号，引文按渲染页补，逐段核过。
+- [11] Jin（ESSCIRC 2007）：**不是 60 GHz 的数**。增益峰值 25 dB 在 52 GHz，60 GHz 时 11 dB（摘要写 10），-3 dB 带宽 46–53 GHz。Psat 8 / P1dB 5 dBm / PAE 7 % 是 48 GHz 的扫描，Fig. 9 只有 6 个点，读出的增益是 22 → 21 → 20 → 19 → 17.4 → 13 dB，从最低一点就在降，P1dB 5 dBm 在图上读不出来。Asada 的 110 mW 就是 1.5 V × 73 mA。
+- 出处线索：Kuo 的 Table I 把 Tanomura 写成 15.2 / 10 / 11 / 8.2 / 150 mW / 1 V，与 Asada [13] 一字不差，Asada 那格 15.2 看来转抄自 Kuo。
+- 剩 6 行（[5] [7] [8] [10] [12] [14]），在已读原文的对比表里都至少出现过一次且与 Asada 相符（Kuo 表写 [5] 1.2 V，Asada 写 1.0 V），优先级降到第 2、3 批之后。
+- 共享表 97 条：spec 34、survey 55、derived 8；`pa60.yaml` 的 grep 计数 spec 12、derived 1。测试 76 个（74 通过，2 跳过）。
+
 ## 2026-11-14 · 第 1 批（部分）：[15] Martineau 对上原文（feat/m2-batch1-martineau，未发布）
 
 - PR #11 已合并（main `31fe48b`）。用户下了 [15] Martineau（ISSCC 2010 paper 23.8，IEEE Xplore 5433879）。

@@ -33,7 +33,7 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "itu_p676.gamma_o_dry_sea_level_peak", "target_rcs.deep2019_pedestrian_77g",
        # milestone 2 batch 1, read in four of the originals Asada's Table I quotes (rows [1], [2], [6], [13])
        "pa60.chan_isscc2009", "pa60.lai_isscc2010", "pa60.law_isscc2010", "pa60.tanomura_isscc2008",
-       "pa60.martineau_isscc2010"}
+       "pa60.martineau_isscc2010", "pa60.kuo_mwcl2009", "pa60.jin_esscirc2007"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -55,16 +55,22 @@ CHANGED = {
         "表里其他各行是它转引的、本库没有读各自的原文；用来看量级与分布，不用作基准档。"
         "14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3），"
         "只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB。",
-        "表里其他各行是它转引的。spec_sources 读了其中 5 行的原文（里程碑 2 第 1 批）：[1] pa60.chan_isscc2009、"
-        "[2] pa60.lai_isscc2010、[6] pa60.law_isscc2010、[13] pa60.tanomura_isscc2008、[15] pa60.martineau_isscc2010，"
-        "P1dB、Psat、峰值 PAE "
-        "都与原文各自的对比表逐格相同；只有增益两格不同：[1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 "
-        "60 GHz 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3）。其余 8 行 mmw60_trx 与 spec_sources "
-        "都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB"
-        "（中位 3.3）。只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P1dB "
-        "偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是 [15] 的 5.6 dB，而它的 Psat 是"
-        "功率扫描终点（Pin = 10 dBm）的输出、曲线仍在上升，真实的差只会更大，同一颗 PA 在 1.8 V 时是 6.6 dB"
-        "（pa60.martineau_isscc2010）。")},
+        "表里其他各行是它转引的。spec_sources 读了其中 7 行的原文（里程碑 2 第 1 批）：[1"
+        "] pa60.chan_isscc2009、[2] pa60.lai_isscc2010、[6] pa6"
+        "0.law_isscc2010、[13] pa60.tanomura_isscc2008、[15] pa"
+        "60.martineau_isscc2010、[9] pa60.kuo_mwcl2009、[11] pa"
+        "60.jin_esscirc2007，P1dB、Psat、峰值 PAE 都与原文相同；增益有两格不同：["
+        "1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 60 GHz"
+        " 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3），这格看来转抄自 [9]"
+        " 的对比表。[11] 四格都在原文里，但不是 60 GHz 的：增益是 52 GHz 的峰值，功率是 4"
+        "8 GHz 的，60 GHz 时增益只有 11 dB。其余 6 行 mmw60_trx 与 spec_s"
+        "ources 都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（"
+        "中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3）。只有 [1] 一行（9"
+        ".0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P"
+        "1dB 偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是"
+        " [15] 的 5.6 dB，而它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍"
+        "在上升，真实的差只会更大，同一颗 PA 在 1.8 V 时是 6.6 dB（pa60.martineau"
+        "_isscc2010）。")},
 }
 
 
@@ -133,7 +139,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 16 == 95
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 18 == 97
     assert set(CHANGED) <= set(ss.all_entries())
 
 

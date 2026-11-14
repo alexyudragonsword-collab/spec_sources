@@ -133,3 +133,13 @@ tdc.henzler_isscc2008  added=0.4.0
 tdc.henzler_isscc2008_single_shot_s  added=0.4.0
 # radar_targets.yaml
 target_rcs.deep2019_pedestrian_77g  added=0.4.0
+target_rcs.iso19206_3_car_rear  added=unreleased
+target_rcs.iso19206_3_car_30m  added=unreleased
+target_rcs.iso19206_3_car_rear_far_lower_dbsm  added=unreleased
+target_rcs.trihedral_peak  added=unreleased
+# windows.yaml
+harris1978.rect  added=unreleased
+harris1978.hann  added=unreleased
+harris1978.hamming  added=unreleased
+harris1978.exact_blackman  added=unreleased
+harris1978.blackman  added=unreleased

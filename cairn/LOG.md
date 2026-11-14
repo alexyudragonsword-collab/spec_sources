@@ -3,6 +3,26 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 4 批完：窗函数，Harris 1978 表 I（feat/m2-batch4-car-corner，未发布）
+
+- 用户下载 Harris, Proc. IEEE 66(1), 1978（33 页，文字层是 OCR）。表 I 在 p. 55，渲染出来读。
+- 新文件 `data/windows.yaml`，5 条 spec（`harris1978.rect / hann / hamming / exact_blackman / blackman`），每条是表 I 一整行 10 列。3-dB 宽 0.89 / 1.44 / 1.30 / 1.52 / 1.68 bins。
+- 复算（DFT-even，N = 1024，补零到 2^22）：rect 0.886、Hann 1.441、Hamming 1.303 与表相符，其余列也相符（Hamming 扇贝 1.75 对表 1.78）。
+- Blackman（0.42 / 0.5 / 0.08）：3-dB 宽 1.644（表 1.68），6-dB 宽 2.299（表 2.35），其余 7 列相符。
+- Exact Blackman（7938 / 9240 / 1430 ÷ 18608）：旁瓣 −68.2（表 −51）、相干增益 0.427（表 0.46；原文 p. 64 说相干增益就是 a0）、ENBW 1.694（表 1.57）、3-dB 宽 1.609（表 1.52）。照原文登记，note 写明。
+- fmcw 的 4 个本地值 = `ref("harris1978.<窗>#bw_3db_bins")`；它的 Blackman cite 写成 exact，值与代码都是 Blackman。
+- 共享表 111 条：spec 61、survey 40、derived 10。测试 81 个（79 通过，2 跳过）。fmcw 的 6 条都有了条目，待开 issue。
+
+## 2026-11-14 · 第 4 批续：乘用车 RCS 与三面角反射器（feat/m2-batch4-car-corner，未发布）
+
+- PR #23 已合并（main `e0540f3`）。用户定先做 fmcw 剩下的 6 条。放行 rosap.ntl.bts.gov、www.osti.gov（用户批准）。
+- NHTSA DOT HS 813 648（2025-01，65 页）：76–77 GHz 两颗车载雷达，ISO 19206-3:2021 方法。转引的 ISO 边界：车尾固定角 P_FAR 20 dBsm ± 10、D_FAR 40 m、K_DEC 0.013 dB/m²（5 m 处中心约 4.1）；30 m 一周车尾 2–25、车头 1–19、侧面 13–30。轿车、两厢、MPV、SUV、轻卡都在界内；报告不给单车 RCS。建 2 条 spec、1 条 derived（下界 10 dBsm）。
+- fmcw 的乘用车 10 dBsm = 这条带子的下界；中心 20 dBsm。
+- Sandia SAND2008-0396（Doerry，57 页）：三角形 4πa⁴/(3λ²)、方形 12πa⁴/λ²、四分之一圆 15.6a⁴/λ²；Table 1 按 16.7 GHz 算得 20.5 / 25.5 / 29.4，表 20.5 / 25.5 / 29.3。建 1 条 spec（只登记公式）。
+- **发现**：fmcw 的角反射器"10 cm、60 GHz、约 20 dBsm"按三角形是 12.2 dBsm（77 GHz 14.4），方形才 21.8。
+- 4 条窗函数等 Harris 1978（Xplore，DOI 10.1109/PROC.1978.10837）。
+- 共享表 106 条：spec 56、survey 40、derived 10。测试 80 个（78 通过，2 跳过）。fmcw 需重新 pin（radar_targets.yaml 变了），等窗函数一起开 issue。
+
 ## 2026-11-14 · 验收 mmw60_trx#27；答复 #22（feat/accept-mmw60-27）
 
 - PR #21 合并即 0.4.0（main `8e5f2e2`），以它为 PIN 开了 mmw60 [#27](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/27)。mmw60 回报合并 `5de5b3a`。

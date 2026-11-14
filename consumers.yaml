@@ -95,7 +95,7 @@ consumers:
     was: ""
 
 # 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。之后同日验收的重新 pin：
-#   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）
+#   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）→ 0.4.0（8e5f2e2，mmw60_trx#27，2026-11-14）
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
@@ -103,9 +103,9 @@ consumers:
 vendored:
 
   - repo: mmw60_trx
-    at: b16b6a005fd1c47affbc51d3283de9c6ddd39f7e
-    pin: 9a443ba73655591665df003bd9a863769cf81bdf
-    issue: "mmw60_trx#25"
+    at: 5de5b3a7bb57acc5868fecefeb0898b3c0ed146c
+    pin: 8e5f2e26bc2084d324aaaabea49fab18174ecaf8
+    issue: "mmw60_trx#27"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 

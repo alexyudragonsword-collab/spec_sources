@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 验收 mmw60_trx#27；答复 #22（feat/accept-mmw60-27）
+
+- PR #21 合并即 0.4.0（main `8e5f2e2`），以它为 PIN 开了 mmw60 [#27](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/27)。mmw60 回报合并 `5de5b3a`。
+- 复核：8 个 vendor 文件与 `8e5f2e2` 逐字节相同（去两行头），`vendor_check --strict` 无 stale；指纹 b16b6a0 对 5de5b3a 69 个值逐位相同（两边同有一项因没装 numba 报错）；`all_entries()` 130 → 137，新增的就是 7 条 `pa60.*`，未核实 42 不变；它的 spec 相关测试 15 过 2 跳过。两处文档只加了说明文字。
+- d2d_link 在本库开了 #22，要 `ucie.standard.raw_ber_target@12-32`、`ucie.advanced.raw_ber_target@16-32` = 1e-15，让 28 GT/s 不退回 1e-27。查了教程 slide 53、71、概览篇，2022 / 1.1 / 2.0 / 4.0 白皮书：BER 只按离散速率给，UCIe 速率本身只有 6 档。答复"原文没说，不加"，以 not planned 关闭；建议它若要按邻档判，写成本地 assumed。
+- 三个下游库都在最新的相关提交上。数据未动，共享表 102 条；测试 80 个（78 通过，2 跳过）。
+
 ## 2026-11-14 · 发布 0.4.0（feat/release-0.4.0）
 
 - PR #20 已合并（main `b59898b`）。用户定：发版，再给 mmw60 开 issue。

@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 2 批：60 GHz ADPLL 的 TDC（feat/m2-batch2-tdc，未发布）
+
+- PR #13 已合并（main `8c63b09`）。用户从 Xplore 下了 Wu、Staszewski、Long（JSSC 2014，16 页）。原文清单说 TU Delft 机构库有免费全文，实际只有元数据，已更正。
+- VI.A：TDC（伪差分延迟链，Wu 文 [23]）平均分辨率 12.2 ps @ 1.2 V，随 PVT 自校准；100 MHz 参考。公式 ℒ = (2π)²/12 · (Δtres/TV)² / fR 是嵌入对象，渲染第 12 页读：60 GHz 下 −78 dBc/Hz（复算 −77.54）。实测带内 −77 dBc/Hz（约 1.5 MHz 带宽），原文说由 TDC 量化主导。分辨率降到 4 ps 可低 9.7 dB。
+- **没有 TDC 自身的输入参考抖动**。−77 对 −78 只差 1 dB、都是整数 dB，推不出抖动的值，所以不建 derived。fmcw 的 `tdc_res_s`（占位 5 ps）有原文数 12.2 ps 可引，`tdc_jitter_s`（1 ps）仍没有出处。摘要的 590.2 fs 是合成器输出 10 kHz–10 MHz 的积分抖动，不是 TDC 的。
+- 新文件 `data/adpll60.yaml`（前缀 `adpll60`，登记进 `FILE_PREFIXES` 与 AGENTS.md），没有库 vendor 它，不涉及重新 pin。
+- 共享表 98 条：spec 35、survey 55、derived 8。测试 77 个（75 通过，2 跳过，多出的 1 个是新文件的 grep 守卫）。
+
 ## 2026-11-14 · 第 1 批（部分）：[9] Kuo、[11] Jin 对上原文（feat/m2-batch1-kuo-jin，未发布）
 
 - PR #12 已合并（main `500710b`）。这两行在已读 5 篇的对比表里都没出现过，先读。

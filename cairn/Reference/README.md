@@ -21,6 +21,7 @@
 | Table I [11] Jin et al., ESSCIRC 2007 | 同上，`asada_t1_11_jin_esscirc2007.pdf` | 增益峰值 25 dB @ 52 GHz、60 GHz 时 11 dB（摘要写 10），-3 dB 带宽 46–53 GHz；Psat 8、P1dB 5 dBm、PAE 7 % 是 48 GHz 的功率扫描（Fig. 9，只有 6 个点）；1.5 V、73 mA。Asada 四格都在原文里，但不是 60 GHz 的 → `pa60.jin_esscirc2007` |
 | 第 2 批 W. Wu, R. B. Staszewski, J. R. Long, IEEE JSSC 49(5) 2014 | 用户从 IEEE Xplore 下载（2026-11-14），`wu_jssc2014_adpll.pdf` | VI.A：TDC 平均分辨率 12.2 ps（1.2 V），100 MHz 参考，带内相噪公式（嵌入对象，渲染第 12 页读）给 −78 dBc/Hz，实测 −77 dBc/Hz（约 1.5 MHz 环路带宽），由 TDC 量化主导。**没有给 TDC 自身的抖动** → `adpll60.wu_jssc2014_tdc` |
 | 第 2 批 Wu 文 [23]：R. B. Staszewski, S. Vemulapalli, P. Vallur, J. Wallberg, P. T. Balsara, IEEE TCAS-II 53(3) 2006, pp. 220–224 | 用户从 IEEE Xplore 下载（2026-11-14），`staszewski_tcas2_2006_tdc.pdf` | 90 nm、GSM 用的伪差分延迟链 TDC：分辨率 17–21 ps（1.3 V，随工艺角），DNL / INL < 0.7 LSB，0.01 ps/°C，5.3 mA（加电源管理 1.3 mA）@ 1.3 V；Fig. 15 分辨率随电压从 1.0 V 约 34.5 ps 降到 1.5 V 约 15.4 ps（读图）。**也没有 TDC 自身的抖动**：Table I 只比工艺、电源、功耗、面积、分辨率；最接近的是"metastability resolution window is less than 1 ps"，那是触发器的判决窗口，不是抖动。没有库读这些数，不建条目 |
+| 第 2 批 Wu 文 [35]：S. Henzler, S. Koeppe, W. Kamp, H. Mulatz, D. Schmitt-Landsiedel, ISSCC 2008 paper 30.5, pp. 548–549 | 用户从 IEEE Xplore 下载（2026-11-14），`henzler_isscc2008_tdc.pdf` | 90 nm 局部无源插值 TDC：分辨率 4.7 ps（1.2 V）/ 3.9 ps（1.4 V），INL ±1.2、DNL ±0.6 LSB，19 pJ/次。**单次精度 0.7 LSB**（Fig. 30.5.4 与对比表；定义为反复测同一间隔时输出码字的标准差）≈ 3.29 ps → `tdc.henzler_isscc2008`、`tdc.henzler_isscc2008_single_shot_s`。对比表里 Staszewski 2006 那栏没有单次精度，Dudek 2000 的 Vernier 是 0.7 LSB（30 ps） |
 
 ## 待取清单（按里程碑 2 的顺序）
 
@@ -65,7 +66,7 @@ MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-
 
 ### 第 2 批 · TDC 抖动（fmcw_radar 的 1 ps 占位）
 - ✅ W. Wu, R. B. Staszewski, J. R. Long, "A 56.4-to-63.4 GHz Multi-Rate All-Digital Fractional-N PLL for FMCW Radar Applications in 65 nm CMOS", IEEE JSSC 49(5), pp. 1081–1096, 2014, doi 10.1109/JSSC.2014.2301764。~~TU Delft 机构库有免费全文（repository.tudelft.nl）~~；**更正（2026-11-14）**：那条记录只有元数据，没有全文。用户从 Xplore 下了，已读（见上面"已读"表）。
-- 原文只给分辨率不给 TDC 自身的抖动。fmcw 若要 `tdc_jitter_s` 的出处，下一篇是 Wu 文的 [23]：📥 R. B. Staszewski, S. Vemulapalli, P. Vallur, J. Wallberg, P. T. Balsara, "1.3 V 20 ps Time-to-Digital Converter for Frequency Synthesis in 90-nm CMOS", IEEE TCAS-II 53(3), pp. 220–224, 2006（同一种伪差分延迟链 TDC；有没有抖动数要读了才知道）。**2026-11-14 补记**：[23] 已读（见上面"已读"表），也没有抖动数。两篇都只给分辨率，`tdc_jitter_s` 在读得到的原文里找不到出处，不再找。
+- 原文只给分辨率不给 TDC 自身的抖动。fmcw 若要 `tdc_jitter_s` 的出处，下一篇是 Wu 文的 [23]：📥 R. B. Staszewski, S. Vemulapalli, P. Vallur, J. Wallberg, P. T. Balsara, "1.3 V 20 ps Time-to-Digital Converter for Frequency Synthesis in 90-nm CMOS", IEEE TCAS-II 53(3), pp. 220–224, 2006（同一种伪差分延迟链 TDC；有没有抖动数要读了才知道）。**2026-11-14 补记**：[23] 已读（见上面"已读"表），也没有抖动数。两篇都只给分辨率，`tdc_jitter_s` 在读得到的原文里找不到出处，不再找。**2026-11-14 再补记**：fmcw 在 #17 里报回鬼目标数随抖动剧变（1 / 3 ps → 每帧 2.75 / 0.16 个），于是又读了 Wu 文 [35] Henzler ISSCC 2008（见"已读"表）：它给的单次精度 0.7 LSB × 4.7 ps ≈ 3.29 ps 是能找到的唯一一个 TDC 自身随机误差的量级，但结构不同、且含离散化与测试脉冲的抖动。JSSC 2008 的期刊版（"A Local Passive Time Interpolation Concept ..."，Xplore 4550638）没读。
 
 ### 第 3 批 · UCIe 眼罩（d2d_link 的判定全悬在 0.65 UI 上）
 - 📥 UCIe 规范 2.0 或 3.0（uciexpress.org，免费注册；3.0 加了 48 / 64 GT/s）。拿到它，其余 16 条 `ucie.*` 都能对原文核。

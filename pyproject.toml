@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spec_sources"
-version = "0.3.0"
+version = "0.4.0"
 description = "Numbers about the outside world (specification clauses, paper and datasheet figures) with their provenance, a reader and the guards. No simulation."
 readme = "README.md"
 license = { file = "LICENSE" }

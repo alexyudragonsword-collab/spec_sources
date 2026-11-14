@@ -84,9 +84,20 @@ consumers:
     value: -10.0
     was: ""
 
+  # 里程碑 2 第 2 批，fmcw_radar#17（验收于 2026-11-14）：原是它自己表里的 assumed 占位（5 ps），没有引用，was 留空。
+  # 它在 60 GHz 档改用原文的 12.2 ps 并标 spec；77 GHz 档仍是 5 ps 占位，不读本库。
+  - repo: fmcw_radar
+    at: 0d32179a94d3f098091ad386242c4a0ba53329ec
+    local: 60g_sensing.tdc_res_s
+    key: adpll60.wu_jssc2014_tdc
+    field: tdc_res_s
+    value: 1.22e-11
+    was: ""
+
 # 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。之后同日验收的重新 pin：
 #   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
+#              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 # d2d_link 仍在 d7b4d1e（择机重新 pin）。
 vendored:
 
@@ -98,10 +109,10 @@ vendored:
             data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 
   - repo: fmcw_radar
-    at: ffc703ed2208ac5c5b59ac1666537520619125c5
-    pin: dfaa36b67a144eb53acf692727efd431c4ac34e4
-    issue: "fmcw_radar#15"
-    files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml]
+    at: 0d32179a94d3f098091ad386242c4a0ba53329ec
+    pin: e49979f4358476fc120de0045a013663613f67c1
+    issue: "fmcw_radar#17"
+    files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml]
 
   - repo: d2d_link
     at: 0cbd4e9e0d2533a97b949dca47eeffb62df326d6

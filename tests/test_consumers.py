@@ -14,7 +14,9 @@ from conftest import PACKAGE, REPO, fixture_entries, fixture_header
 import spec_sources as ss
 
 FMCW = "fmcw_radar.sources.yaml"
-FMCW_15 = "fmcw_radar.sources.ffc703e.yaml"   # its table when fmcw_radar#15 was accepted
+FMCW_LAST = "fmcw_radar.sources.0d32179.yaml"   # its table at its last acceptance (fmcw_radar#17)
+ACCEPTED = {"2e5cbb61cef62819804fad89a197b0412b2eb84d", "ffc703ed2208ac5c5b59ac1666537520619125c5",  # milestone 1, #15
+            "0d32179a94d3f098091ad386242c4a0ba53329ec"}                                            # #17
 M1 = "2e5cbb61cef62819804fad89a197b0412b2eb84d"   # fmcw_radar when milestone 1 registered its five references
 REQUIRED = {"repo", "at", "local", "key", "value", "was"}
 OPTIONAL = {"field", "select"}
@@ -38,7 +40,7 @@ def _ref(r: dict) -> str:
 
 def test_registrations_are_well_formed():
     regs = _registrations()
-    assert len(regs) == 8
+    assert len(regs) == 9
     for r in regs:
         assert REQUIRED <= set(r) <= REQUIRED | OPTIONAL, r
         assert re.fullmatch(r"[0-9a-f]{40}", r["at"]), r
@@ -80,18 +82,19 @@ def test_fmcw_references_are_all_registered_and_agree_with_its_table():
 
 
 def test_fmcw_references_at_its_last_acceptance_are_all_registered():
-    """fmcw_radar#15 (accepted at ffc703e): every ``upstream:`` in its table --
-    the five front-end figures and the three read since (oxygen at 60 and 77.5
-    GHz, the pedestrian RCS) -- is a registration here, spelled as the
-    reference, with the same value."""
-    src = fixture_entries(FMCW_15)
+    """fmcw_radar#17 (accepted at 0d32179): every ``upstream:`` in its table --
+    the five front-end figures, the three of #15 (oxygen at 60 and 77.5 GHz,
+    the pedestrian RCS) and the 60 GHz TDC resolution -- is a registration
+    here, spelled as the reference, with the same value."""
+    src = fixture_entries(FMCW_LAST)
     upstream = {k: e for k, e in src.items() if e.get("upstream")}
     regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar"}
-    assert set(regs) == set(upstream) and len(regs) == 8
+    assert set(regs) == set(upstream) and len(regs) == 9
+    assert fixture_header(FMCW_LAST)["sha"] in ACCEPTED
     for local, r in regs.items():
         assert upstream[local]["upstream"] == f"spec_sources:{_ref(r)}", local
         assert upstream[local]["value"] == r["value"] == ss.ref(_ref(r)), local
-        assert r["at"] in (M1, fixture_header(FMCW_15)["sha"]), local
+        assert r["at"] in ACCEPTED, local
 
 
 def test_fmcws_own_spec_and_survey_entries_are_listed_for_milestone_2():

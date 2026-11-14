@@ -3,6 +3,17 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 验收 fmcw_radar#17：60 GHz 档的 TDC 分辨率改读本库（feat/accept-fmcw-17）
+
+- PR #16 已合并（main `e49979f`），以它为 PIN 开了 fmcw [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17)。fmcw 回报合并 `0d32179`（0.2.12，`ffc703e` 上的一个提交）。
+- 复核：
+  - 5 个 vendor 文件去掉出处头后与 `e49979f` 逐字节相同，`vendor_check --strict` 无 stale；
+  - 它的测试 200 过 2 跳过；
+  - 加载后 `60g_sensing.tdc_res_s` = 1.22e-11（spec，upstream 对），`77g_automotive.tdc_res_s` 仍 5e-12 assumed；来源计数 24 / 7 / 6 / 2，与回报一致。
+- 指纹：`ffc703e` → `0d32179` 动了 720 / 2035（值的总数 1979 → 2035，多出的是新检出的鬼目标）。在 `ffc703e` 上只改这一个数，再用 `tools/export_lo_profile.py` 重新导出剖面：剖面与它提交的逐字节相同，2035 个值与 `0d32179` 逐位相同。它另改的 `lo.py` 只是文档字符串，示例 01 只是打印格式。
+- 它报回的后果：1 ps 抖动在 12.2 ps 步长下只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标（原来 0）。所以 TDC 抖动的出处有分量了，ROADMAP 第 2 项加了候选原文（Wu 文 [35]，Henzler ISSCC 2008，题名写 0.7-LSB single-shot precision）。
+- 登记 1 条引用（`consumers.yaml` 共 9 条）。fmcw 的验收快照换成 `0d32179` 那份（`ffc703e` 那份在 git 历史里）。共享表仍 98 条，测试 79 个（77 通过，2 跳过：多出的 2 个是新登记那条的两项检查）。
+
 ## 2026-11-14 · `adpll60.wu_jssc2014_tdc` 的分辨率改按秒记（feat/adpll60-tdc-res-seconds，未发布）
 
 - PR #15 已合并（main `465152b`）。准备给 fmcw 开 issue 时发现：它的加载器要求本地值与 `upstream` 读到的值完全相等，而它的 `60g_sensing.tdc_res_s` 以秒为单位（5.0e-12）。本库条目原来是 `tdc_res_ps: 12.2`，它引用时得做换算，铁律 6 不许。

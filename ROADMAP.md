@@ -2,12 +2,12 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 4 篇（未发布），剩 9 篇等用户下载。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。mmw60_trx #25、fmcw_radar #15 已验收关闭，现在没有等对方回报的 issue。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 5 篇（未发布），剩 8 篇等用户下载。第 4 批里本库能直接取的两篇已读，建了 `itu_p676.*`、`target_rcs.*`（未发布）。mmw60_trx #25、fmcw_radar #15 已验收关闭，现在没有等对方回报的 issue。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— 下次开 issue 时重新 pin（现在 pin 在 0.3.0 `9a443ba`）
-- 还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
+- 还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；去掉 [1]，正常偏置里最软的是 [15]（5.6 dB，1.8 V 时 6.6 dB，且 Psat 是扫描终点，真实的差更大）；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
 
 ### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `dfaa36b`）
 - 车辆 RCS、角反射器、4 条窗函数主瓣宽度：原文下载、建好条目后另开 issue（见里程碑 2 第 4 项）。
@@ -20,7 +20,7 @@
 
 每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序：
 
-1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 4 行（[1]、[2]、[6]、[13]，未发布），P1dB / Psat / PAE 逐格相同。剩 9 行（[5] [7] [8] [9] [10] [11] [12] [14] [15]）要用户下载，题名见 `cairn/Reference/README.md`；下一步建议先下 [15]（去掉 [1] 后 Psat − P1dB 最大的 5.6 dB）。
+1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 5 行（[1]、[2]、[6]、[13]、[15]，未发布），P1dB / Psat / PAE 逐格相同。剩 8 行（[5] [7] [8] [9] [10] [11] [12] [14]）要用户下载，题名见 `cairn/Reference/README.md`；下一步建议先下 [9] Kuo 与 [11] Jin：5 篇原文的对比表都没有转引这两行。
 2. **TDC 抖动**（fmcw_radar 的 1 ps 占位，`60g_sensing.tdc_jitter_s`）：找 60 GHz FMCW ADPLL 的 TDC 输入参考抖动，进本库成 survey / spec 条目，fmcw 再引用。
 3. **UCIe 眼罩**（d2d_link 的判定全悬在 0.65 UI 上）：`ucie.rx_eye_width_ui@24-32`、`ucie.rx_eye_width_ui`、`ucie.rx_eye_height_mv`，然后是其余 13 条 ucie.*。
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：

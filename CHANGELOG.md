@@ -7,7 +7,7 @@
 
 不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
 
-- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 4 条。
+- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 5 条。
 - fmcw_radar 已在 [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 里 pin 到 `dfaa36b`（已验收），它 vendor 的 4 个文件之后没动。d2d_link vendor 的文件这一节也没动。
 
 ### 验收：mmw60_trx#25、fmcw_radar#15
@@ -24,18 +24,19 @@
     - `target_rcs.deep2019_pedestrian_77g#co_pol_min_dbsm` = -10.0
   - fmcw 自己加了第四个标签 derived（必须带 upstream，note 写公式）。氧气两条标 derived，人体 RCS 标 spec。
 
-### 里程碑 2 第 1 批（部分）：Asada Table I 的 4 行对上原文
+### 里程碑 2 第 1 批（部分）：Asada Table I 的 5 行对上原文
 - 用户从 IEEE Xplore 下了 4 篇 ISSCC 文摘，是 Table I 里 Psat − P1dB 的两端（[1]、[13]）与 Psat 的两端（[6]、[2]）。`data/pa60.yaml` 新增 4 条 spec：
   - `pa60.chan_isscc2009`（[1]）：P1dB 2.5、Psat 11.5 dBm，差 9.0 dB；
   - `pa60.lai_isscc2010`（[2]）：0.9 / 1.0 V 两档；
   - `pa60.law_isscc2010`（[6]）：P1dB 18.2、Psat 19.9 dBm，差 1.7 dB；
-  - `pa60.tanomura_isscc2008`（[13]）：0.7 / 1.0 V 两档，带汇总表的 ± 范围。
-- **4 行里 P1dB、Psat、峰值 PAE 与原文各自的对比表逐格相同**，`pa60.eumc2011_table1` 的值不动。不同之处：
+  - `pa60.tanomura_isscc2008`（[13]）：0.7 / 1.0 V 两档，带汇总表的 ± 范围；
+  - `pa60.martineau_isscc2010`（[15]，第五篇，2026-11-14）：1.2 / 1.8 V 两档，P1dB 11.0 / 11.5、Psat 16.6 / 18.1 dBm，差 5.6 / 6.6 dB。
+- **5 行里 P1dB、Psat、峰值 PAE 与原文各自的对比表逐格相同**，`pa60.eumc2011_table1` 的值不动。不同之处：
   - 增益有两格不同：[1] 原文表是 15.8（Asada 写 16.0）；[13] 的 15.2 是 0.7 V 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 是 14.3）。
   - [2] 原文前后不一：正文与题名是 Psat 17.9 / OP1dB 15.4 dBm、PAE 11.7 %，它自己的汇总表是 17.7 / 15.1、11.1 %。Asada 抄的是汇总表，条目两套都记。
-- **发现**：Table I 里唯一接近 TGad Rapp 9.5 dB 的 [1]（9.0 dB），原作者自己说 P1dB 偏低可能是各级偏置不当造成的提前压缩。去掉这一行，13 行里最大是 [15] 的 5.6 dB（原文未读）。`pa60.eumc2011_table1` 的 note 写明了这几点，并把"本库"改成库名（`CHANGED` 登记）。
-- 顺带核了 Asada [8] 的页码：Lai 与 Law 的参考文献都写 Bohsali RFIC 2009 pp. 31–34，Asada 的 39–42 是笔误。
-- 共享表 94 条：spec 31、survey 55、derived 8。账本新增 4 个键，记 `added=unreleased`。
+- **发现**：Table I 里唯一接近 TGad Rapp 9.5 dB 的 [1]（9.0 dB），原作者自己说 P1dB 偏低可能是各级偏置不当造成的提前压缩。去掉这一行，13 行里最大是 [15] 的 5.6 dB。[15] 的原文读了：这 5.6 dB 是正常的 A 类 cascode 平缓压缩，而且它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍在上升，真实的差只会更大；同一颗 PA 在 1.8 V 时是 6.6 dB。`pa60.eumc2011_table1` 的 note 写明了这几点，并把"本库"改成库名（`CHANGED` 登记）。
+- 顺带核了 Asada 参考文献表的两处笔误：[8] 的页码，Lai 与 Law 都写 Bohsali RFIC 2009 pp. 31–34，Asada 写 39–42；[15] 的题名，原文是 "18dBm Power Amplifier"（1.8 V 时的 Psat），Asada 写成 "18 dB"。
+- 共享表 95 条：spec 32、survey 55、derived 8。账本新增 5 个键，记 `added=unreleased`。
 
 ### 里程碑 2 第 4 批（部分）：大气衰减与行人 RCS
 - `data/atmosphere.yaml`（新，前缀 `itu_p676`）：ITU-R P.676-13 的逐线法，只录氧气 / 干空气这一支。

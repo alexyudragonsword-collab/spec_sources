@@ -124,5 +124,7 @@ itu_p676.method  added=unreleased
 itu_p676.figure1_conditions  added=unreleased
 itu_p676.gamma_o_dry_sea_level  added=unreleased
 itu_p676.gamma_o_dry_sea_level_peak  added=unreleased
+# adpll60.yaml
+adpll60.wu_jssc2014_tdc  added=unreleased
 # radar_targets.yaml
 target_rcs.deep2019_pedestrian_77g  added=unreleased

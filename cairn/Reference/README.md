@@ -19,6 +19,7 @@
 | Table I [15] Martineau et al., ISSCC 2010 paper 23.8 | 用户从 IEEE Xplore 下载（2026-11-14），`asada_t1_15_martineau_isscc2010.pdf` | Fig. 23.8.5 两列 This work：1.2 V 增益 14.3、P1dB 11、Psat 16.6、PAE 4.9 %，与 Asada 四格相同；1.8 V 15.5 / 11.5 / 18.1 / 3.6 %。Fig. 23.8.4 扫到 Pin = 10 dBm 时 Pout 仍在上升，Psat 是扫描终点 → `pa60.martineau_isscc2010` |
 | Table I [9] Kuo et al., IEEE MWCL 19(1) 2009 | 用户从 IEEE Xplore 下载（2026-11-14），`asada_t1_09_kuo_mwcl2009.pdf` | Table I This Work 三行：1.8 V 30 / 10.3 / 13.8 / 12.6 %、178 mW，与 Asada 相同；2.4 V 31.3 / 11.7 / 16.2 / 14 %；3 V 32.4 / 12 / 18 / 15 %。文本层丢了斜体符号，按渲染页补 → `pa60.kuo_mwcl2009` |
 | Table I [11] Jin et al., ESSCIRC 2007 | 同上，`asada_t1_11_jin_esscirc2007.pdf` | 增益峰值 25 dB @ 52 GHz、60 GHz 时 11 dB（摘要写 10），-3 dB 带宽 46–53 GHz；Psat 8、P1dB 5 dBm、PAE 7 % 是 48 GHz 的功率扫描（Fig. 9，只有 6 个点）；1.5 V、73 mA。Asada 四格都在原文里，但不是 60 GHz 的 → `pa60.jin_esscirc2007` |
+| 第 2 批 W. Wu, R. B. Staszewski, J. R. Long, IEEE JSSC 49(5) 2014 | 用户从 IEEE Xplore 下载（2026-11-14），`wu_jssc2014_adpll.pdf` | VI.A：TDC 平均分辨率 12.2 ps（1.2 V），100 MHz 参考，带内相噪公式（嵌入对象，渲染第 12 页读）给 −78 dBc/Hz，实测 −77 dBc/Hz（约 1.5 MHz 环路带宽），由 TDC 量化主导。**没有给 TDC 自身的抖动** → `adpll60.wu_jssc2014_tdc` |
 
 ## 待取清单（按里程碑 2 的顺序）
 
@@ -62,7 +63,8 @@
 MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-AB Power Amplifier in 22 nm FD-SOI CMOS", Microwave 2026）**不取**：它只有版图后仿真，查到的内容里也没有 OFDM 的 EVM，给不了 mmw60 想要的 OFDM 工作点。
 
 ### 第 2 批 · TDC 抖动（fmcw_radar 的 1 ps 占位）
-- 🌐 W. Wu, R. B. Staszewski, J. R. Long, "A 56.4-to-63.4 GHz Multi-Rate All-Digital Fractional-N PLL for FMCW Radar Applications in 65 nm CMOS", IEEE JSSC 49(5), pp. 1081–1096, 2014, doi 10.1109/JSSC.2014.2301764。TU Delft 机构库有免费全文（repository.tudelft.nl）；不放行就 📥 从 Xplore 下。
+- ✅ W. Wu, R. B. Staszewski, J. R. Long, "A 56.4-to-63.4 GHz Multi-Rate All-Digital Fractional-N PLL for FMCW Radar Applications in 65 nm CMOS", IEEE JSSC 49(5), pp. 1081–1096, 2014, doi 10.1109/JSSC.2014.2301764。~~TU Delft 机构库有免费全文（repository.tudelft.nl）~~；**更正（2026-11-14）**：那条记录只有元数据，没有全文。用户从 Xplore 下了，已读（见上面"已读"表）。
+- 原文只给分辨率不给 TDC 自身的抖动。fmcw 若要 `tdc_jitter_s` 的出处，下一篇是 Wu 文的 [23]：📥 R. B. Staszewski, S. Vemulapalli, P. Vallur, J. Wallberg, P. T. Balsara, "1.3 V 20 ps Time-to-Digital Converter for Frequency Synthesis in 90-nm CMOS", IEEE TCAS-II 53(3), pp. 220–224, 2006（同一种伪差分延迟链 TDC；有没有抖动数要读了才知道）。
 
 ### 第 3 批 · UCIe 眼罩（d2d_link 的判定全悬在 0.65 UI 上）
 - 📥 UCIe 规范 2.0 或 3.0（uciexpress.org，免费注册；3.0 加了 48 / 64 GT/s）。拿到它，其余 16 条 `ucie.*` 都能对原文核。
@@ -99,7 +101,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 ## 合计
 
 - 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），又下 2 篇（[9] [11]），还剩 20 篇。
-- 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。
+- 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。（TU Delft 那篇实为只有元数据，2026-11-14 由用户从 Xplore 下载）
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 
 下载后把文件放进本目录，文件名用表里的编号或第一作者加年份（如 `asada_t1_01_chan_isscc2009.pdf`）。`*.pdf` / `*.doc` 不入库。

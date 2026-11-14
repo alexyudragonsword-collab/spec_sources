@@ -35,6 +35,7 @@
 - **原文没有给 TDC 自身的输入参考抖动**：fmcw_radar 的两个占位里，`tdc_res_s`（5 ps）有原文数 12.2 ps 可引，`tdc_jitter_s`（1 ps）没有。摘要的 590.2 fs 是合成器输出的积分抖动，不是 TDC 的。
 - 更正：原文清单说这篇在 TU Delft 机构库有免费全文，实际那条记录只有元数据。
 - 又读了 Wu 文引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006，90 nm GSM 用）：分辨率 17–21 ps、INL < 0.7 LSB，也没有 TDC 自身的抖动。没有库读这些数，不建条目，只记在 `cairn/Reference/README.md`。
+- `data/tdc.yaml`（新，前缀 `tdc`，没有库 vendor 它）：读了 Wu 文 [35] Henzler et al., ISSCC 2008（90 nm 局部无源插值 TDC）。`tdc.henzler_isscc2008`（spec）：分辨率 4.7 ps（1.2 V），单次精度 0.7 LSB（反复测同一间隔时输出码字的标准差），INL ±1.2、DNL ±0.6 LSB。`tdc.henzler_isscc2008_single_shot_s`（derived）= 0.7 × 4.7 ps = 3.29e-12 s，在 `RECOMPUTE` 里复算。它是能找到的唯一一个 TDC 自身随机误差的量级，但结构不同、含离散化与测试脉冲的抖动，note 写明是上界量级。
 
 ### 里程碑 2 第 1 批（部分）：Asada Table I 的 7 行对上原文
 - 用户从 IEEE Xplore 下了 4 篇 ISSCC 文摘，是 Table I 里 Psat − P1dB 的两端（[1]、[13]）与 Psat 的两端（[6]、[2]）。`data/pa60.yaml` 新增 4 条 spec：
@@ -52,7 +53,7 @@
   - [2] 原文前后不一：正文与题名是 Psat 17.9 / OP1dB 15.4 dBm、PAE 11.7 %，它自己的汇总表是 17.7 / 15.1、11.1 %。Asada 抄的是汇总表，条目两套都记。
 - **发现**：Table I 里唯一接近 TGad Rapp 9.5 dB 的 [1]（9.0 dB），原作者自己说 P1dB 偏低可能是各级偏置不当造成的提前压缩。去掉这一行，13 行里最大是 [15] 的 5.6 dB。[15] 的原文读了：这 5.6 dB 是正常的 A 类 cascode 平缓压缩，而且它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍在上升，真实的差只会更大；同一颗 PA 在 1.8 V 时是 6.6 dB。`pa60.eumc2011_table1` 的 note 写明了这几点，并把"本库"改成库名（`CHANGED` 登记）。
 - 顺带核了 Asada 参考文献表的两处笔误：[8] 的页码，Lai 与 Law 都写 Bohsali RFIC 2009 pp. 31–34，Asada 写 39–42；[15] 的题名，原文是 "18dBm Power Amplifier"（1.8 V 时的 Psat），Asada 写成 "18 dB"。
-- 共享表 97 条：spec 34、survey 55、derived 8。账本新增 7 个键，记 `added=unreleased`。（加上第 2 批：98 条，spec 35；账本再加 1 个键。）
+- 共享表 97 条：spec 34、survey 55、derived 8。账本新增 7 个键，记 `added=unreleased`。（加上第 2 批：100 条，spec 36、derived 9；账本再加 3 个键。）
 
 ### 里程碑 2 第 4 批（部分）：大气衰减与行人 RCS
 - `data/atmosphere.yaml`（新，前缀 `itu_p676`）：ITU-R P.676-13 的逐线法，只录氧气 / 干空气这一支。

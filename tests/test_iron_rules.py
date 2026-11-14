@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 98
+    assert len(table) == 100
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -91,6 +91,9 @@ def _cfo(v):
 #: reader's value()): a derived entry that needs a library's own choice cannot
 #: be written here, so it cannot live in the shared tables.  (value, abs tolerance)
 RECOMPUTE = {
+    # single-shot precision in seconds: LSB count times the resolution
+    "tdc.henzler_isscc2008_single_shot_s": (
+        lambda v: v("tdc.henzler_isscc2008")["single_shot_precision_lsb"] * v("tdc.henzler_isscc2008")["res_s"], 1e-16),
     "liu2025.cfo_from_ppm_hz": (lambda v: _cfo(v), 1.0),
     # 312.5 kHz: the 802.11 (VHT, 20 MHz) subcarrier spacing; L-STF repeats every 4 subcarriers
     "liu2025.k_threshold_stf": (lambda v: 2 * _cfo(v) / (4 * 312.5e3), 0.01),
@@ -136,6 +139,7 @@ FILE_PREFIXES = {
     "pa60.yaml": {"pa60"},
     "radar_targets.yaml": {"target_rcs"},
     "regulatory.yaml": {"fcc15255"},
+    "tdc.yaml": {"tdc"},
     "ucie.yaml": {"ucie"},
 }
 
@@ -221,7 +225,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 35, "survey": 55, "assumed": 0, "derived": 8}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 36, "survey": 55, "assumed": 0, "derived": 9}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

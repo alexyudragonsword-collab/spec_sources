@@ -126,5 +126,8 @@ itu_p676.gamma_o_dry_sea_level  added=unreleased
 itu_p676.gamma_o_dry_sea_level_peak  added=unreleased
 # adpll60.yaml
 adpll60.wu_jssc2014_tdc  added=unreleased
+# tdc.yaml
+tdc.henzler_isscc2008  added=unreleased
+tdc.henzler_isscc2008_single_shot_s  added=unreleased
 # radar_targets.yaml
 target_rcs.deep2019_pedestrian_77g  added=unreleased

@@ -35,7 +35,7 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "pa60.chan_isscc2009", "pa60.lai_isscc2010", "pa60.law_isscc2010", "pa60.tanomura_isscc2008",
        "pa60.martineau_isscc2010", "pa60.kuo_mwcl2009", "pa60.jin_esscirc2007",
        # milestone 2 batch 2, read in Wu, Staszewski, Long, JSSC 2014 (not migrated from a table)
-       "adpll60.wu_jssc2014_tdc"}
+       "adpll60.wu_jssc2014_tdc", "tdc.henzler_isscc2008", "tdc.henzler_isscc2008_single_shot_s"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -141,7 +141,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 19 == 98
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 21 == 100
     assert set(CHANGED) <= set(ss.all_entries())
 
 

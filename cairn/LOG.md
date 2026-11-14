@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 2 批再补：Henzler ISSCC 2008 的单次精度（feat/m2-batch2-tdc-henzler，未发布）
+
+- PR #17 已合并（main `bb70a66`）。fmcw 报回 TDC 抖动决定鬼目标数，于是读 Wu 文 [35]：Henzler et al., ISSCC 2008 paper 30.5（3 页），用户从 Xplore 下载。
+- 90 nm 局部无源插值 TDC：4 倍插值，分辨率 4.7 ps @ 1.2 V（3.9 ps @ 1.4 V），INL ±1.2、DNL ±0.6 LSB，180 MHz 时 3 mA、19 pJ/次。原文说比较器输入的 kT/C 噪声可忽略。
+- **单次精度 0.7 LSB**：原文定义为反复测同一恒定间隔时输出码字的标准差（Fig. 30.5.4 标注、Fig. 30.5.6 对比表）。按秒 3.29 ps，建 derived 条目（`RECOMPUTE` 复算 0.7 × 4.7e-12）。原文还明说有限的单次精度给输出加了 dither，多次平均可降低量化误差，正是 fmcw 模型里抖动的角色。
+- 限制写进 note：标准差里含码字离散化与片上表征单元产生起止脉冲的抖动，所以是上界量级；Sheppard 修正 √(0.7² − 1/12) 粗算噪声本身约 0.64 LSB ≈ 3.0 ps（近似，不登记）。结构与 Wu 2014 的延迟链 TDC 不同。对比表里 Staszewski 2006 那栏没有单次精度，与上一条的结论一致。
+- 新文件 `data/tdc.yaml`（前缀 `tdc`，登记进 `FILE_PREFIXES` 与 AGENTS.md），没有库 vendor 它。共享表 100 条：spec 36、survey 55、derived 9。测试 80 个（78 通过，2 跳过）。
+
 ## 2026-11-14 · 验收 fmcw_radar#17：60 GHz 档的 TDC 分辨率改读本库（feat/accept-fmcw-17）
 
 - PR #16 已合并（main `e49979f`），以它为 PIN 开了 fmcw [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17)。fmcw 回报合并 `0d32179`（0.2.12，`ffc703e` 上的一个提交）。

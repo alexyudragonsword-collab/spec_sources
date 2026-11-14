@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 2 批收尾：Wu 文 [23] 也没有 TDC 抖动（feat/m2-batch2-tdc-ref23）
+
+- PR #14 已合并（main `bc08b36`）。用户下了 Wu 文 [23]：Staszewski et al., TCAS-II 53(3) 2006，5 页，TI 的 90 nm GSM ADPLL 用的伪差分延迟链 TDC。
+- 有的：分辨率 17–21 ps（1.3 V，15 片 × 工艺角，强弱角差 3 ps），DNL / INL < 0.7 LSB，0.01 ps/°C，5.3 mA（电源管理后 1.3 mA）。Fig. 15 读图：1.0 / 1.2 / 1.5 V 时约 34.5 / 22.4 / 15.4 ps。
+- 没有的：TDC 自身的抖动。Table I 只比工艺、电源、功耗、面积、分辨率。"metastability resolution window is less than 1 ps" 是触发器的判决窗口，不是抖动，不能拿来当 `tdc_jitter_s`。
+- 结论：两篇原文都只给分辨率。fmcw 的 `tdc_jitter_s`（1 ps）保持 assumed，不再找。`tdc_res_s` 有 Wu 2014 的 12.2 ps 可引。90 nm 这篇的数没有库要读，不建条目，只记在 `cairn/Reference/README.md`。
+- 只改文档，共享表仍 98 条，测试 77 个（75 通过，2 跳过）。
+
 ## 2026-11-14 · 第 2 批：60 GHz ADPLL 的 TDC（feat/m2-batch2-tdc，未发布）
 
 - PR #13 已合并（main `8c63b09`）。用户从 Xplore 下了 Wu、Staszewski、Long（JSSC 2014，16 页）。原文清单说 TU Delft 机构库有免费全文，实际只有元数据，已更正。

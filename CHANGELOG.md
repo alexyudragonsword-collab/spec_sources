@@ -3,13 +3,13 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
-## 未发布
+## 0.4.0 —— 里程碑 2：PA、TDC、UCIe、大气与行人 RCS 对上原文（2026-11-14）
 
-不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
+版本号随 `__init__.py` 变；`reader.py` 没动。共享表 102 条（0.3.0 是 84 条）：spec 53、survey 40、derived 9。
 
-- **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 7 条。
-- fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`（已验收），它 vendor 的 5 个文件之后没动。
-- d2d_link 已在 [#2](https://github.com/alexyudragonsword-collab/d2d_link/issues/2) 里 pin 到 `bbc0ccb`（已验收），它 vendor 的 3 个文件之后没动。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里变了 `__init__.py`（版本号）与 `data/pa60.yaml`（第 1 批新增 7 条、`pa60.eumc2011_table1` 的 note）。读到的已有的数一个不变，它的 `all_entries()` 会多 7 条。
+- fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`，d2d_link 已在 [#2](https://github.com/alexyudragonsword-collab/d2d_link/issues/2) 里 pin 到 `bbc0ccb`（都已验收）。它们 vendor 的文件之后都没动，也都不 vendor `__init__.py`，不用为 0.4.0 重新 pin。
+- 新数据文件：`data/atmosphere.yaml`、`data/radar_targets.yaml`、`data/adpll60.yaml`、`data/tdc.yaml`。账本新增 18 个键（大气 5、行人 RCS 1、PA 7、ADPLL 1、TDC 2、UCIe 2），记 `added=0.4.0`。
 
 ### 验收：d2d_link#2（UCIe 第 3 批）
 - d2d_link 从 `0cbd4e9` 快进到 `d5d34a6`（0.17.0），5 个提交：重新 pin `bd1e087`，再按 issue 的 4 点各一个提交。3 个 vendor 文件去掉出处头后与 `bbc0ccb` 逐字节相同，`vendor_check --strict` 里它们都是 verbatim。它的测试 267 个通过、4 个跳过。

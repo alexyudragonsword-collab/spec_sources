@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 发布 0.4.0（feat/release-0.4.0）
+
+- PR #20 已合并（main `b59898b`）。用户定：发版，再给 mmw60 开 issue。
+- 0.4.0 收进里程碑 2 第 1–4 批（部分）：PA 7 行原文、TDC 3 篇、UCIe 15 条对上联盟公开材料、大气与行人 RCS。共享表 84 → 102 条（spec 23 → 53，survey 55 → 40，derived 6 → 9）。
+- 改了 `__init__.py` 与 `pyproject.toml` 的版本号；CHANGELOG"未发布"一节改成 0.4.0；`keys.lock` 18 个键 `added=unreleased` → `added=0.4.0`（文件头说明里的 "added=unreleased" 字样一度被一起换掉，已改回）。
+- 只有 mmw60_trx 要为 0.4.0 重新 pin（`__init__.py` 与 `pa60.yaml`）；fmcw、d2d 不 vendor `__init__.py`，它们的文件在各自 pin 之后没动。
+- 测试 80 个（78 通过，2 跳过）。
+
 ## 2026-11-14 · 验收 d2d_link#2（feat/accept-d2d-2）
 
 - PR #19 已合并（main `bbc0ccb`），以它为 PIN 开了 d2d [#2](https://github.com/alexyudragonsword-collab/d2d_link/issues/2)。d2d 回报：main 从 `0cbd4e9` 快进到 `d5d34a6`（0.17.0），5 个提交。

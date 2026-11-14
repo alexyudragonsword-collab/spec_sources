@@ -45,7 +45,7 @@ VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
     "tgad_em.pa_ampm_beta", "tgad_em.pa_ampm_q1", "tgad_em.pa_ampm_q2", "tgad_em.pa_model_shape",
     "tgad_em.pn_model_shape")}
 # milestone 2 batch 3: read in the UCIe consortium's public Hot Chips 2023 tutorial and 2022 white paper
-VERIFIED.update({k: "unreleased (Hot Chips 2023 UCIe tutorial; UCIe white paper 2022)" for k in (
+VERIFIED.update({k: "0.4.0 (Hot Chips 2023 UCIe tutorial; UCIe white paper 2022)" for k in (
     "ucie.data_rates_gtps", "ucie.forwarded_clock", "ucie.raw_ber_target", "ucie.raw_ber_with_retry",
     "ucie.rx_eye_height_mv", "ucie.rx_eye_width_ui", "ucie.rx_eye_width_ui@24-32", "ucie.tx_swing_vpp",
     "ucie.standard.bump_pitch_um", "ucie.standard.reach_mm", "ucie.standard.module_width_lanes",

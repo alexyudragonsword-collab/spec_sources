@@ -28,6 +28,7 @@
 - `data/adpll60.yaml`（新，前缀 `adpll60`，没有库 vendor 它）：`adpll60.wu_jssc2014_tdc`（spec，Wu、Staszewski、Long，JSSC 2014）。TDC 平均时间分辨率 12.2 ps（1.2 V），100 MHz 参考；按原文公式 ℒ = (2π)²/12 · (Δtres/TV)² / fR，60 GHz 下理论带内相噪 −78 dBc/Hz（复算 −77.54），实测 −77 dBc/Hz（环路带宽约 1.5 MHz），由 TDC 量化主导。
 - **原文没有给 TDC 自身的输入参考抖动**：fmcw_radar 的两个占位里，`tdc_res_s`（5 ps）有原文数 12.2 ps 可引，`tdc_jitter_s`（1 ps）没有。摘要的 590.2 fs 是合成器输出的积分抖动，不是 TDC 的。
 - 更正：原文清单说这篇在 TU Delft 机构库有免费全文，实际那条记录只有元数据。
+- 又读了 Wu 文引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006，90 nm GSM 用）：分辨率 17–21 ps、INL < 0.7 LSB，也没有 TDC 自身的抖动。没有库读这些数，不建条目，只记在 `cairn/Reference/README.md`。
 
 ### 里程碑 2 第 1 批（部分）：Asada Table I 的 7 行对上原文
 - 用户从 IEEE Xplore 下了 4 篇 ISSCC 文摘，是 Table I 里 Psat − P1dB 的两端（[1]、[13]）与 Psat 的两端（[6]、[2]）。`data/pa60.yaml` 新增 4 条 spec：

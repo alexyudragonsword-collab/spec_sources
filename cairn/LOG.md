@@ -3,6 +3,16 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 3 批：UCIe 对上联盟公开材料（feat/m2-batch3-ucie，未发布）
+
+- PR #18 已合并（main `e7be6b3`）。用户定 fmcw 暂不换 TDC 抖动。
+- **规范不能读**：uciexpress.org 的规范下载页附最终用户许可协议，第 (ii) 款禁止把规范输入任何 AI 系统、也禁止用 AI 分析或提取。改读联盟公开材料；在环境 "rf design" 放行 www.uciexpress.org、uciexpress.org、hc2023.hotchips.org、www.hc2023.hotchips.org（用户批准）。
+- 读的：Hot Chips 2023 UCIe 教程 "Electrical, Form-Factor, and Compliance"（30 页，slides 52–81）；UCIe 1.0 白皮书（2022-02，7 页，Table 1 是图片，渲染读）。两份都没有 AI 使用限制。
+- 结果：16 条里 15 条值相同，改 spec（`VERIFIED`）；`ucie.standard.lane_repair` 的"x16 → x8"没找到，仍 survey，note 改了（`CHANGED`）。新增 `ucie.raw_ber_by_rate`、`ucie.advanced.spare_lanes_per_32`。
+- 发现：眼罩（40 mV、0.75 / 0.65 UI）是无噪声、无抖动行为级模型下的**信道合规**眼罩；原始 BER 分速率，1e-27 只到先进 12 / 标准 8 Gb/s，之上 1e-15 加 CRC / 重传；迁入时说白皮书有"BER < 1e-27"，白皮书里没有；TX 0.4 V 是最小值；24 / 32 GT/s 前向时钟另有速率 / 4 一档；先进封装每 32 位 2 条备用。
+- 引文里的句子都在幻灯片 / 白皮书文本层里逐字找到（白皮书一处"single-ended"在换行处被抽成"singleended"）。
+- 共享表 102 条：spec 53、survey 40、derived 9。测试 80 个（78 通过，2 跳过）。d2d_link 需重新 pin，issue 待用户定。
+
 ## 2026-11-14 · 第 2 批再补：Henzler ISSCC 2008 的单次精度（feat/m2-batch2-tdc-henzler，未发布）
 
 - PR #17 已合并（main `bb70a66`）。fmcw 报回 TDC 抖动决定鬼目标数，于是读 Wu 文 [35]：Henzler et al., ISSCC 2008 paper 30.5（3 页），用户从 Xplore 下载。

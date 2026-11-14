@@ -69,7 +69,7 @@ def test_the_whole_package_works_from_a_temporary_copy(tmp_path):
     dest = _vendor(tmp_path)
     out = _probe(tmp_path)
     assert Path(out["file"]).resolve().is_relative_to(dest.resolve())
-    assert out["n"] == len(ss.all_entries()) == 100
+    assert out["n"] == len(ss.all_entries()) == 102
     assert out["tags"] == {t: len(ss.by_source(t)) for t in ss.SOURCES}
     assert out["audit"] == []                         # the attribution headers do not break the grep guard
     assert out["ucie"] == 1.0e-27 and out["ref"] == -34.0
@@ -79,14 +79,15 @@ def test_a_consumer_may_copy_only_the_tables_it_reads(tmp_path):
     """d2d_link's cut: the reader, its table and its old-key map."""
     _vendor(tmp_path, only={"__init__.py", "reader.py", "data/ucie.yaml", "legacy_keys/d2d_link.yaml"})
     out = _probe(tmp_path)
-    assert out["n"] == 16 and out["tags"]["survey"] == 16 and out["ucie"] == 1.0e-27 and "ref" not in out
+    assert out["n"] == 18 and out["tags"]["spec"] == 17 and out["tags"]["survey"] == 1
+    assert out["ucie"] == 1.0e-27 and "ref" not in out
 
 
 def test_the_copy_survives_being_moved(tmp_path):
     """Nothing in the package remembers where it was: copy, then move the copy."""
     _vendor(tmp_path / "a")
     shutil.move(str(tmp_path / "a"), str(tmp_path / "b"))
-    assert _probe(tmp_path / "b")["n"] == 100
+    assert _probe(tmp_path / "b")["n"] == 102
 
 
 def test_the_reader_imports_only_the_standard_library_and_pyyaml():

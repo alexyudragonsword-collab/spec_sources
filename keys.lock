@@ -118,6 +118,8 @@ ucie.advanced.bump_pitch_um  added=0.1.0
 ucie.advanced.reach_mm  added=0.1.0
 ucie.advanced.module_width_lanes  added=0.1.0
 ucie.advanced.lane_repair  added=0.1.0
+ucie.raw_ber_by_rate  added=unreleased
+ucie.advanced.spare_lanes_per_32  added=unreleased
 # atmosphere.yaml
 itu_p676.oxygen_lines  added=unreleased
 itu_p676.method  added=unreleased

@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 验收 d2d_link#2（feat/accept-d2d-2）
+
+- PR #19 已合并（main `bbc0ccb`），以它为 PIN 开了 d2d [#2](https://github.com/alexyudragonsword-collab/d2d_link/issues/2)。d2d 回报：main 从 `0cbd4e9` 快进到 `d5d34a6`（0.17.0），5 个提交。
+- 复核：3 个 vendor 文件与 `bbc0ccb` 逐字节相同（去头后）；它的测试 267 过 4 跳过；加载后共享条目 18 条，spec 17、survey 1。
+- 指纹逐提交（3597 值，装了 scikit-rf）：`bd1e087`（重新 pin）、`2aefc99`（眼罩标注）、`b129196`（TX 文档）、`d5d34a6`（QDR 显示）都逐位不变；`f868f3c`（BER）动了 974 个，全在统计引擎（眼、BER、采样相位、游标、时域样本），`src/` 只改了垫片 23 行。
+- BER 目标逐格查：12 格与 `ucie.raw_ber_by_rate` 相同；5 个 32 GT/s 配置 1e-27 → 1e-15；表外 28 GT/s 退回 1e-27（查表这层不告警，它说告警在引擎层）。
+- 它报的余量：32 GT/s 下 x1 +0.091 → +0.205、x16 模块 +0.066 → +0.175、x16 repair +0.028 → +0.144、x64 spare +0.093 → +0.195、x5 耦合 −0.121 → −0.010（仍不过）。
+- `consumers.yaml` 里 d2d 的 pin 改为 `bbc0ccb`。共享表仍 102 条，测试 80 个（78 通过，2 跳过）。
+
 ## 2026-11-14 · 第 3 批：UCIe 对上联盟公开材料（feat/m2-batch3-ucie，未发布）
 
 - PR #18 已合并（main `e7be6b3`）。用户定 fmcw 暂不换 TDC 抖动。

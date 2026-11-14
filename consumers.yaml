@@ -98,7 +98,8 @@ consumers:
 #   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
-# d2d_link 仍在 d7b4d1e（择机重新 pin）。
+#   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
+#              （只查找，不抄数，所以不按条登记）。
 vendored:
 
   - repo: mmw60_trx
@@ -115,7 +116,7 @@ vendored:
     files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml]
 
   - repo: d2d_link
-    at: 0cbd4e9e0d2533a97b949dca47eeffb62df326d6
-    pin: d7b4d1eb510617d69784622c593c8ed31ab32b8b
-    issue: "d2d_link#1"
+    at: d5d34a62aa581a1f5a8d9db486703038ae6b7d39
+    pin: bbc0ccb49de4e0071e0bc21ea6bbe73fd92e1428
+    issue: "d2d_link#2"
     files: [reader.py, data/ucie.yaml, legacy_keys/d2d_link.yaml]

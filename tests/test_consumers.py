@@ -14,9 +14,10 @@ from conftest import PACKAGE, REPO, fixture_entries, fixture_header
 import spec_sources as ss
 
 FMCW = "fmcw_radar.sources.yaml"
-FMCW_LAST = "fmcw_radar.sources.0d32179.yaml"   # its table at its last acceptance (fmcw_radar#17)
+FMCW_LAST = "fmcw_radar.sources.4495310.yaml"   # its table at its last acceptance (fmcw_radar#19)
 ACCEPTED = {"2e5cbb61cef62819804fad89a197b0412b2eb84d", "ffc703ed2208ac5c5b59ac1666537520619125c5",  # milestone 1, #15
-            "0d32179a94d3f098091ad386242c4a0ba53329ec"}                                            # #17
+            "0d32179a94d3f098091ad386242c4a0ba53329ec",                                            # #17
+            "44953106404592e6644df0334b428491219c6a9b"}                                            # #19
 M1 = "2e5cbb61cef62819804fad89a197b0412b2eb84d"   # fmcw_radar when milestone 1 registered its five references
 REQUIRED = {"repo", "at", "local", "key", "value", "was"}
 OPTIONAL = {"field", "select"}
@@ -40,7 +41,7 @@ def _ref(r: dict) -> str:
 
 def test_registrations_are_well_formed():
     regs = _registrations()
-    assert len(regs) == 9
+    assert len(regs) == 14
     for r in regs:
         assert REQUIRED <= set(r) <= REQUIRED | OPTIONAL, r
         assert re.fullmatch(r"[0-9a-f]{40}", r["at"]), r
@@ -82,14 +83,15 @@ def test_fmcw_references_are_all_registered_and_agree_with_its_table():
 
 
 def test_fmcw_references_at_its_last_acceptance_are_all_registered():
-    """fmcw_radar#17 (accepted at 0d32179): every ``upstream:`` in its table --
+    """fmcw_radar#19 (accepted at 4495310): every ``upstream:`` in its table --
     the five front-end figures, the three of #15 (oxygen at 60 and 77.5 GHz,
-    the pedestrian RCS) and the 60 GHz TDC resolution -- is a registration
-    here, spelled as the reference, with the same value."""
+    the pedestrian RCS), the 60 GHz TDC resolution of #17, and the car RCS
+    and four window widths of #19 -- is a registration here, spelled as the
+    reference, with the same value."""
     src = fixture_entries(FMCW_LAST)
     upstream = {k: e for k, e in src.items() if e.get("upstream")}
     regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar"}
-    assert set(regs) == set(upstream) and len(regs) == 9
+    assert set(regs) == set(upstream) and len(regs) == 14
     assert fixture_header(FMCW_LAST)["sha"] in ACCEPTED
     for local, r in regs.items():
         assert upstream[local]["upstream"] == f"spec_sources:{_ref(r)}", local
@@ -97,19 +99,21 @@ def test_fmcw_references_at_its_last_acceptance_are_all_registered():
         assert r["at"] in ACCEPTED, local
 
 
-def test_fmcws_own_spec_and_survey_entries_are_listed_for_milestone_2():
+def test_fmcws_own_spec_and_survey_entries_were_all_settled_in_milestone_2():
     """Not migrated in milestone 1: the 14 spec / survey entries of fmcw_radar's
     table (5 of them the registered front-end figures, 9 its own: oxygen, RCS,
-    window widths).  Each is either registered here (read from this library
-    since) or still listed under milestone 2 in ROADMAP.md."""
-    src = fixture_entries(FMCW)
-    own = [k for k, e in src.items() if e["source"] in ("spec", "survey")]
-    assert len(own) == 14 and sum(bool(src[k].get("upstream")) for k in own) == 5
+    window widths).  By fmcw_radar#19, 13 read this library through a
+    registered reference; the corner reflector became fmcw's own assumed (the
+    original gives a formula, target_rcs.trihedral_peak, and the size is its
+    choice).  Its table has no survey entry left."""
+    own = [k for k, e in fixture_entries(FMCW).items() if e["source"] in ("spec", "survey")]
+    assert len(own) == 14
     registered = {r["local"] for r in _registrations() if r["repo"] == "fmcw_radar"}
-    note = (REPO / "ROADMAP.md").read_text(encoding="utf-8")
-    for k in own:
-        assert k in registered or f"`{k}`" in note, k
-    assert len(set(own) - registered) == 6
+    assert set(own) - registered == {"rcs.corner_reflector_dbsm"}
+    last = fixture_entries(FMCW_LAST)
+    assert last["rcs.corner_reflector_dbsm"]["source"] == "assumed"
+    assert "target_rcs.trihedral_peak" in last["rcs.corner_reflector_dbsm"]["cite"]
+    assert not [k for k, e in last.items() if e["source"] == "survey"]
 
 
 # ------------------------------------------------------------------- consumers that vendor whole files

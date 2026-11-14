@@ -2,38 +2,33 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目（未发布），fmcw_radar 的 6 条 survey 都有了出处，待开 issue。现在没有等对方回报的 issue（mmw60_trx #27、d2d_link #2 已验收）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。现在没有等对方回报的 issue（mmw60_trx #27、d2d_link #2、fmcw_radar #19 已验收）。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 0.4.0（`8e5f2e2`），#27 已验收
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
-### fmcw_radar —— 6 条都有了条目，待开 issue（现在 pin 在 `e49979f`，#17 已验收）
-- 车辆 RCS、角反射器、窗函数已建条目（未发布）：`target_rcs.iso19206_3_car_*`、`target_rcs.trihedral_peak`、`harris1978.*`。一个 issue 开齐，要它重新 pin、多 vendor `data/windows.yaml`、把 6 条 survey 改成引用或改成它自己的 assumed。issue 里要告诉它：
-  - 乘用车 10 dBsm 是 ISO 19206-3 车尾远距离带子的下界（可引 `target_rcs.iso19206_3_car_rear_far_lower_dbsm`），中心是 20 dBsm；
-  - 角反射器"10 cm 边、60 GHz、约 20 dBsm"按三角形公式只有 12.2 dBsm，20 dBsm 对应方形；尺寸与形状是它自己的取舍，本库只有公式（`target_rcs.trihedral_peak`），要数得它自己算或在本地表写 assumed；
-  - 窗函数 4 条可引 `harris1978.<窗>#bw_3db_bins`，值与它本地的相同；它的 `window.blackman_3db_bins` cite 写成 exact Blackman，实为 Blackman 一行（exact 是 1.52）；表里 Blackman 的 1.68 比按定义复算的 1.644 宽 2.2 %，在它 5 % 的对照容差之内。
+### fmcw_radar —— pin 在 `f87cc9b`，#19 已验收；它的表里没有 survey 了
+- 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
+- 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收
 - 它定了：眼罩保留含抖动的比法并标明"比规范严"；BER 按 `ucie.raw_ber_by_rate` 分档；TX 0.4 V 作最坏情况默认值；QDR 有了出处。
-- 下次要它动的只有 `ucie.standard.lane_repair` 若查到"降到 x8"的原文（见里程碑 2 第 3 项）。
+- 下次要它动的只有 `ucie.standard.lane_repair` 若查到"降到 x8"的原文（见里程碑 2 第 3 批）。
 - 它在本库开的 #22（原始 BER 的速率区间条目）已答复：原文只有离散速率，不加；它维持表外速率退回 1e-27 并告警。
 
 ## 里程碑 2：核实轮
 
-每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序：
+每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序，批号与 `cairn/Reference/README.md` 一致（第 4 批 fmcw_radar 的 14 条已在 #19 了结）：
 
-1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）要用户下载，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 项。
-2. **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。fmcw 已在 #17 改引 `tdc_res_s`（12.2 ps）并验收。**抖动的出处现在有分量了**：fmcw 报回，12.2 ps 步长下 1 ps 抖动只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标；抖动 1 / 1.8 / 2.44 / 3 ps 对应 2.75 / 2.08 / 0.92 / 0.16 个。Wu 文 [35] Henzler et al.（ISSCC 2008）已读，建了 `tdc.henzler_isscc2008`（spec）与 `tdc.henzler_isscc2008_single_shot_s`（derived，3.29e-12 s，未发布）：单次精度 0.7 LSB × 4.7 ps，定义为反复测同一间隔时输出码字的标准差。它是 90 nm 局部无源插值 TDC，结构与 Wu 2014 不同，且含离散化与测试脉冲的抖动，只能当量级（上界）。**用户 2026-11-14 定：暂不给 fmcw 开 issue**，它的 `tdc_jitter_s` 仍是 1 ps 占位。日后要换时，issue 里写明：1 ps → 3.29 ps 按它报回的扫描会让鬼目标从每帧 2.75 降到 0.16 左右（3 ps 时），而 3.29 ps 是别的结构的 TDC、且是上界量级；用不用由它定。
-3. **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（📥，期刊论文不受规范许可约束）。
-4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
-   - 5 条前端数已经读本库并登记（`consumers.yaml`）：`60g_sensing.tx_power_dbm`、`60g_sensing.nf_db`、`60g_sensing.p1db_oob_dbm`、`60g_sensing.p1db_inband_dbm`、`60g_sensing.tx_rx_isolation_db`。
-   - 9 条只在 fmcw 的 survey，要迁进本库并核实，fmcw 再改成引用。氧气两条与人体 RCS 已在 fmcw#15 改成引用并登记（`consumers.yaml`）。剩下 6 条（`rcs.car_dbsm`、`rcs.corner_reflector_dbsm`、`window.rect_3db_bins`、`window.hann_3db_bins`、`window.hamming_3db_bins`、`window.blackman_3db_bins`）的原文都读了、建了条目（未发布），只差在 fmcw_radar 开 issue（见上面"报回上游"）。
-5. **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
-6. **Halo_Serdes #11 的 4 条条文**。
-7. 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
+- 第 1 批 · **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）要用户下载，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 批。
+- 第 2 批 · **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。fmcw 已在 #17 改引 `tdc_res_s`（12.2 ps）并验收。**抖动的出处现在有分量了**：fmcw 报回，12.2 ps 步长下 1 ps 抖动只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标；抖动 1 / 1.8 / 2.44 / 3 ps 对应 2.75 / 2.08 / 0.92 / 0.16 个。Wu 文 [35] Henzler et al.（ISSCC 2008）已读，建了 `tdc.henzler_isscc2008`（spec）与 `tdc.henzler_isscc2008_single_shot_s`（derived，3.29e-12 s，未发布）：单次精度 0.7 LSB × 4.7 ps，定义为反复测同一间隔时输出码字的标准差。它是 90 nm 局部无源插值 TDC，结构与 Wu 2014 不同，且含离散化与测试脉冲的抖动，只能当量级（上界）。**用户 2026-11-14 定：暂不给 fmcw 开 issue**，它的 `tdc_jitter_s` 仍是 1 ps 占位。日后要换时，issue 里写明：1 ps → 3.29 ps 按它报回的扫描会让鬼目标从每帧 2.75 降到 0.16 左右（3 ps 时），而 3.29 ps 是别的结构的 TDC、且是上界量级；用不用由它定。
+- 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（📥，期刊论文不受规范许可约束）。
+- 第 5 批 · **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
+- 第 6 批 · **Halo_Serdes #11 的 4 条条文**。
+- 第 7 批 · 其余 survey：`liu2025.*`（刊出版）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
 
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 

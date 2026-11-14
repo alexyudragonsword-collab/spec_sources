@@ -22,8 +22,9 @@ FIXTURE_FILES = {
                                   "src/d2d_link/data/spec/ucie_survey.yaml"),
     "fmcw_radar.sources.yaml": ("fmcw_radar", "2e5cbb61cef62819804fad89a197b0412b2eb84d",
                                 "src/fmcw_radar/data/sources.yaml"),
-    # not a source table: fmcw_radar's table when fmcw_radar#15 was accepted (its references, test_consumers.py)
-    "fmcw_radar.sources.ffc703e.yaml": ("fmcw_radar", "ffc703ed2208ac5c5b59ac1666537520619125c5",
+    # not a source table: fmcw_radar's table at its last acceptance, fmcw_radar#17 (its references, test_consumers.py;
+    # the fmcw_radar#15 snapshot at ffc703e it replaces is in git history)
+    "fmcw_radar.sources.0d32179.yaml": ("fmcw_radar", "0d32179a94d3f098091ad386242c4a0ba53329ec",
                                         "src/fmcw_radar/data/sources.yaml"),
 }
 #: 0.2.0 renamed mmw60_trx's 17 keys whose prefix was a tag (survey. / derived.), not a domain;

@@ -9,7 +9,7 @@
 ### mmw60_trx —— 下次开 issue 时重新 pin（现在 pin 在 0.3.0 `9a443ba`）
 - 还要再 pin 一次：未发布一节改了它 vendor 的 `data/pa60.yaml`（第 1 批新增 4 条、`pa60.eumc2011_table1` 的 note），读到的已有的数不变。等下一次发版或下一批一起开 issue。issue 里要告诉它：它迁来的 note 拿 [1]（9.0 dB）对照 TGad Rapp 的 9.5 dB，而原作者自己把 [1] 的 P1dB 偏低归于偏置不当；去掉 [1]，正常偏置里最软的是 [15]（5.6 dB，1.8 V 时 6.6 dB，且 Psat 是扫描终点，真实的差更大）；[9] 在 3 V 时也到 6.0 dB；[11] 一行是 48 GHz 的数，不该算进 60 GHz 的分布；它的文档或结论里如果用 [1] 说明 9.5 dB 有实测佐证，由它决定改不改。
 
-### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `dfaa36b`）
+### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `e49979f`，#17 已验收）
 - 车辆 RCS、角反射器、4 条窗函数主瓣宽度：原文下载、建好条目后另开 issue（见里程碑 2 第 4 项）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
@@ -21,7 +21,7 @@
 每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序：
 
 1. **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）要用户下载，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 项。
-2. **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。`tdc_jitter_s` 在读得到的原文里没有出处，不再找，fmcw 那条保持 assumed。给 fmcw 开 issue 让它引 `tdc_res_s` 时说明：12.2 ps 是 60 GHz ADPLL 在 65 nm 里的反相器延迟，它自己的架构（15 GHz DCO）用不用这个数由它定。
+2. **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。fmcw 已在 #17 改引 `tdc_res_s`（12.2 ps）并验收。**抖动的出处现在有分量了**：fmcw 报回，12.2 ps 步长下 1 ps 抖动只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标；抖动 1 / 1.8 / 2.44 / 3 ps 对应 2.75 / 2.08 / 0.92 / 0.16 个。候选原文：Wu 文 [35] S. Henzler et al., "90 nm 4.7 ps-resolution 0.7-LSB single-shot precision and 19 pJ-per-shot local passive interpolation time-to-digital converter with on-chip characterization", ISSCC 2008, pp. 548–549。题名里的 single-shot precision 可能就是单次测量的 rms 误差（0.7 LSB ≈ 3.3 ps），但它是另一种 TDC（局部无源插值），能不能当 fmcw 的抖动，读了才知道。要不要读由用户定。
 3. **UCIe 眼罩**（d2d_link 的判定全悬在 0.65 UI 上）：`ucie.rx_eye_width_ui@24-32`、`ucie.rx_eye_width_ui`、`ucie.rx_eye_height_mv`，然后是其余 13 条 ucie.*。
 4. **fmcw_radar 的 14 条**（fmcw_radar@2e5cbb6 自己表里的 spec / survey）：
    - 5 条前端数已经读本库并登记（`consumers.yaml`）：`60g_sensing.tx_power_dbm`、`60g_sensing.nf_db`、`60g_sensing.p1db_oob_dbm`、`60g_sensing.p1db_inband_dbm`、`60g_sensing.tx_rx_isolation_db`。

@@ -8,7 +8,13 @@
 不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
 
 - **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 7 条。
-- fmcw_radar 已在 [#15](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/15) 里 pin 到 `dfaa36b`（已验收），它 vendor 的 4 个文件之后没动。d2d_link vendor 的文件这一节也没动。
+- fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`（已验收），它 vendor 的 5 个文件之后没动。d2d_link vendor 的文件这一节也没动。
+
+### 验收：fmcw_radar#17（TDC 分辨率）
+- fmcw_radar 合并 `0d32179`，pin `e49979f`，多 vendor `data/adpll60.yaml`。5 个文件去掉出处头后与 pin 逐字节相同，`vendor_check --strict` 没有 stale。它的测试 200 个通过、2 个跳过。
+- 登记 1 条引用：`adpll60.wu_jssc2014_tdc#tdc_res_s` = 1.22e-11（60 GHz 档；77 GHz 档仍是它自己的 5 ps 占位，不读本库）。
+- 指纹：相对 `ffc703e` 动了 720 / 2035 个值（值的总数随检出的鬼目标变多）。在 `ffc703e` 上只改这一个数、用它的工具重新导出时钟剖面：剖面与它提交的逐字节相同，2035 个值与 `0d32179` 逐位相同，变化全部来自这一个数。
+- **它报回的后果**：步长 5 → 12.2 ps 后，1 ps 的 TDC 抖动只有 0.08 LSB，打不散周期性量化误差。默认 60 GHz 配置下每帧检出 2.75 个鬼目标（原来 0），ISLR −28.6 → −22.6 dB。扫抖动 1 / 1.8 / 2.44 / 3 ps 得每帧 2.75 / 2.08 / 0.92 / 0.16 个。TDC 自身抖动的出处因此直接决定它的鬼目标结论，见 ROADMAP 第 2 项。
 
 ### 验收：mmw60_trx#25、fmcw_radar#15
 - mmw60_trx 重新 pin 到 0.3.0：合并 `b16b6a0`。

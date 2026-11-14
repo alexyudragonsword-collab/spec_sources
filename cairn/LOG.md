@@ -3,6 +3,12 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · `adpll60.wu_jssc2014_tdc` 的分辨率改按秒记（feat/adpll60-tdc-res-seconds，未发布）
+
+- PR #15 已合并（main `465152b`）。准备给 fmcw 开 issue 时发现：它的加载器要求本地值与 `upstream` 读到的值完全相等，而它的 `60g_sensing.tdc_res_s` 以秒为单位（5.0e-12）。本库条目原来是 `tdc_res_ps: 12.2`，它引用时得做换算，铁律 6 不许。
+- 条目未发布、没人读，直接把字段改成 `tdc_res_s: 1.22e-11`（unit 跟着改为 s）。YAML 里 1.22e-11 与 12.2e-12 解析成同一个 double，fmcw 写哪种都能逐位相等。
+- 共享表仍 98 条，测试 77 个（75 通过，2 跳过）。
+
 ## 2026-11-14 · 第 2 批收尾：Wu 文 [23] 也没有 TDC 抖动（feat/m2-batch2-tdc-ref23）
 
 - PR #14 已合并（main `bc08b36`）。用户下了 Wu 文 [23]：Staszewski et al., TCAS-II 53(3) 2006，5 页，TI 的 90 nm GSM ADPLL 用的伪差分延迟链 TDC。

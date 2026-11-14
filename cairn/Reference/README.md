@@ -69,9 +69,10 @@ MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-
 - 原文只给分辨率不给 TDC 自身的抖动。fmcw 若要 `tdc_jitter_s` 的出处，下一篇是 Wu 文的 [23]：📥 R. B. Staszewski, S. Vemulapalli, P. Vallur, J. Wallberg, P. T. Balsara, "1.3 V 20 ps Time-to-Digital Converter for Frequency Synthesis in 90-nm CMOS", IEEE TCAS-II 53(3), pp. 220–224, 2006（同一种伪差分延迟链 TDC；有没有抖动数要读了才知道）。**2026-11-14 补记**：[23] 已读（见上面"已读"表），也没有抖动数。两篇都只给分辨率，`tdc_jitter_s` 在读得到的原文里找不到出处，不再找。**2026-11-14 再补记**：fmcw 在 #17 里报回鬼目标数随抖动剧变（1 / 3 ps → 每帧 2.75 / 0.16 个），于是又读了 Wu 文 [35] Henzler ISSCC 2008（见"已读"表）：它给的单次精度 0.7 LSB × 4.7 ps ≈ 3.29 ps 是能找到的唯一一个 TDC 自身随机误差的量级，但结构不同、且含离散化与测试脉冲的抖动。JSSC 2008 的期刊版（"A Local Passive Time Interpolation Concept ..."，Xplore 4550638）没读。
 
 ### 第 3 批 · UCIe 眼罩（d2d_link 的判定全悬在 0.65 UI 上）
-- 📥 UCIe 规范 2.0 或 3.0（uciexpress.org，免费注册；3.0 加了 48 / 64 GT/s）。拿到它，其余 16 条 `ucie.*` 都能对原文核。
-- 🌐 Hot Chips 2023 的 UCIe 教程 "Electrical Form Factor and Compliance"（www.hc2023.hotchips.org）。它写了 24–32 GT/s 的 40 mV / 0.65 UI，用来替代 ResearchGate 那篇二手转述（那篇不再找）。
-- 可选 📥 D. Das Sharma et al., IEEE Trans. CPMT 2022。有了规范就用不着。
+- ~~📥 UCIe 规范 2.0 或 3.0（uciexpress.org，免费注册；3.0 加了 48 / 64 GT/s）。拿到它，其余 16 条 `ucie.*` 都能对原文核。~~ **不能用（2026-11-14）**：规范下载页的最终用户许可协议第 (ii) 款禁止把规范（全部或部分）"upload, submit, transmit, disclose, provide access to, or otherwise input ... into any artificial-intelligence, machine-learning, large-language-model, generative-AI, or similar automated system"，包括用它 "analyze, evaluate, interpret, transform, ... extract from"。用户不要把规范发给 Claude。
+- ✅ Hot Chips 2023 的 UCIe 教程 "Electrical, Form-Factor, and Compliance"（slides 52–81，hc2023.hotchips.org，放行后本库自己取，本地 `ucie_hc2023_electrical.pdf`）：slide 53 速率 / BER 表 / reach，54 宽度与前向时钟，56 TX 摆幅最小 0.4 V，57 时钟频率表，60 每 32 位 2 条备用，61 信道眼罩，69 电气汇总，71 两种封装对照。没有 AI 使用限制的字样。
+- ✅ UCIe 1.0 白皮书 "Building an open chiplet ecosystem"（D. Das Sharma，2022-02，www.uciexpress.org/ucie-resources，本地 `ucie_wp2022_1.0.pdf`）：Table 1（速率、宽度、凸点间距、reach、FIT 期望约 1e-10）与"spare lanes / width degradation"一段。**没有"BER < 1e-27"这句**，迁入时的 cite 有误。同页另有 1.1、2.0、4.0 规范的白皮书，取了没读。
+- 可选 📥 D. Das Sharma et al., IEEE Trans. CPMT 2022：标准封装降宽是否到 x8 只剩它可查。
 
 ### 第 4 批 · fmcw_radar 的 9 条
 - ~~✅ ITU-R P.676~~ 已读（见上表）。

@@ -8,7 +8,8 @@
 不升版本号。`__init__.py` 与 `reader.py` 没动；vendor 过的文件里只动了 `data/pa60.yaml`（第 1 批），读到的已有的数一个不变。
 
 - **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 7 条。
-- fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`（已验收），它 vendor 的 5 个文件之后没动。d2d_link vendor 的文件这一节也没动。
+- fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`（已验收），它 vendor 的 5 个文件之后没动。
+- **`d2d_link` 需重新 pin**：它 vendor 的 `data/ucie.yaml` 在第 3 批改了：15 条由 survey 改为 spec（值和单位一个不变），新增 2 条。读到的已有的数不变；要它重新看的是几条 note 的含义（眼罩是信道合规的、BER 分速率、TX 0.4 V 是最小值、每 32 位 2 条备用），见下面第 3 批一节。
 
 ### 验收：fmcw_radar#17（TDC 分辨率）
 - fmcw_radar 合并 `0d32179`，pin `e49979f`，多 vendor `data/adpll60.yaml`。5 个文件去掉出处头后与 pin 逐字节相同，`vendor_check --strict` 没有 stale。它的测试 200 个通过、2 个跳过。
@@ -29,6 +30,18 @@
     - `itu_p676.gamma_o_dry_sea_level#db_per_km@f_ghz=77.5` = 0.091
     - `target_rcs.deep2019_pedestrian_77g#co_pol_min_dbsm` = -10.0
   - fmcw 自己加了第四个标签 derived（必须带 upstream，note 写公式）。氧气两条标 derived，人体 RCS 标 spec。
+
+### 里程碑 2 第 3 批：UCIe 对上联盟公开的教程与白皮书
+- **UCIe 规范本身不能读**：规范下载页的最终用户许可协议禁止把规范（全部或部分）输入任何 AI 系统，包括用它分析、解读或提取。本库因此不读规范，读联盟公开的两份材料：Hot Chips 2023 的 UCIe 教程 "Electrical, Form-Factor, and Compliance"（slides 52–81）与 2022 年 2 月的 UCIe 1.0 白皮书 "Building an open chiplet ecosystem"（为此在环境 "rf design" 里放行了 www.uciexpress.org、uciexpress.org、hc2023.hotchips.org、www.hc2023.hotchips.org，用户批准）。
+- `data/ucie.yaml` 16 条里 15 条值与原文相同，由 survey 改为 spec（`VERIFIED`），值和单位一个不变：速率、前向时钟、两条 BER、三条眼罩、TX 摆幅、两种封装的凸点间距 / reach / 宽度、先进封装的修复方式。`ucie.standard.lane_repair` 仍是 survey：原文只写降宽，没写降到 x8；它的 note 写明读到了什么（`CHANGED` 一次替换）。
+- 新增 2 条 spec：`ucie.raw_ber_by_rate`（分速率、分封装的原始 BER 表）、`ucie.advanced.spare_lanes_per_32` = 2。
+- **发现**（写进各条 note）：
+  - 三条眼罩（40 mV；0.75 UI @ 4–16 Gb/s；0.65 UI @ 24–32 Gb/s 开均衡）是**信道合规的眼罩**：用无噪声、无抖动的行为级 TX / RX 模型仿真信道，不是收端含抖动的眼图规格。d2d_link 的判定落在 0.65 UI 上，若把它当成含抖动的收端判据，就比原文更严。
+  - **原始 BER 分速率**：1e-27 只到先进封装 12 Gb/s、标准封装 8 Gb/s，更高速率是 1e-15，靠 CRC 与重传。迁入时 cite 说 2022 白皮书有"BER < 1e-27"，那份白皮书里没有这句。
+  - TX 摆幅 0.4 V 是**最小值**，不是标称值；另建议最高 < 0.85 V。
+  - 前向时钟：每个速率都有时钟 = 速率 / 2 一档，24 / 32 GT/s 另有速率 / 4 一档。
+  - 先进封装每 32 条数据通道 2 条备用，x64 模块即 4 条。
+- 共享表 102 条：spec 53、survey 40、derived 9。账本新增 2 个键。
 
 ### 里程碑 2 第 2 批：60 GHz ADPLL 的 TDC
 - `data/adpll60.yaml`（新，前缀 `adpll60`，没有库 vendor 它）：`adpll60.wu_jssc2014_tdc`（spec，Wu、Staszewski、Long，JSSC 2014）。TDC 平均时间分辨率 12.2 ps（1.2 V；字段 `tdc_res_s` 按秒记为 1.22e-11，fmcw_radar 按秒读，引用不做换算），100 MHz 参考；按原文公式 ℒ = (2π)²/12 · (Δtres/TV)² / fR，60 GHz 下理论带内相噪 −78 dBc/Hz（复算 −77.54），实测 −77 dBc/Hz（环路带宽约 1.5 MHz），由 TDC 量化主导。
@@ -53,7 +66,7 @@
   - [2] 原文前后不一：正文与题名是 Psat 17.9 / OP1dB 15.4 dBm、PAE 11.7 %，它自己的汇总表是 17.7 / 15.1、11.1 %。Asada 抄的是汇总表，条目两套都记。
 - **发现**：Table I 里唯一接近 TGad Rapp 9.5 dB 的 [1]（9.0 dB），原作者自己说 P1dB 偏低可能是各级偏置不当造成的提前压缩。去掉这一行，13 行里最大是 [15] 的 5.6 dB。[15] 的原文读了：这 5.6 dB 是正常的 A 类 cascode 平缓压缩，而且它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍在上升，真实的差只会更大；同一颗 PA 在 1.8 V 时是 6.6 dB。`pa60.eumc2011_table1` 的 note 写明了这几点，并把"本库"改成库名（`CHANGED` 登记）。
 - 顺带核了 Asada 参考文献表的两处笔误：[8] 的页码，Lai 与 Law 都写 Bohsali RFIC 2009 pp. 31–34，Asada 写 39–42；[15] 的题名，原文是 "18dBm Power Amplifier"（1.8 V 时的 Psat），Asada 写成 "18 dB"。
-- 共享表 97 条：spec 34、survey 55、derived 8。账本新增 7 个键，记 `added=unreleased`。（加上第 2 批：100 条，spec 36、derived 9；账本再加 3 个键。）
+- 共享表 97 条：spec 34、survey 55、derived 8。账本新增 7 个键，记 `added=unreleased`。（加上第 2 批：100 条，spec 36、derived 9；账本再加 3 个键。第 3 批后见上面。）
 
 ### 里程碑 2 第 4 批（部分）：大气衰减与行人 RCS
 - `data/atmosphere.yaml`（新，前缀 `itu_p676`）：ITU-R P.676-13 的逐线法，只录氧气 / 干空气这一支。

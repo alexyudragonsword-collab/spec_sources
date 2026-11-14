@@ -37,7 +37,10 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        # milestone 2 batch 2, read in Wu, Staszewski, Long, JSSC 2014 (not migrated from a table)
        "adpll60.wu_jssc2014_tdc", "tdc.henzler_isscc2008", "tdc.henzler_isscc2008_single_shot_s",
        # milestone 2 batch 3, read in the UCIe consortium's Hot Chips 2023 tutorial
-       "ucie.raw_ber_by_rate", "ucie.advanced.spare_lanes_per_32"}
+       "ucie.raw_ber_by_rate", "ucie.advanced.spare_lanes_per_32",
+       # milestone 2 batch 4, read in NHTSA DOT HS 813 648 (ISO 19206-3 boundaries) and Sandia SAND2008-0396
+       "target_rcs.iso19206_3_car_rear", "target_rcs.iso19206_3_car_30m",
+       "target_rcs.iso19206_3_car_rear_far_lower_dbsm", "target_rcs.trihedral_peak"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -157,7 +160,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 23 == 102
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 27 == 106
     assert set(CHANGED) <= set(ss.all_entries())
 
 

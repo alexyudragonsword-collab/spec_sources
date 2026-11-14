@@ -10,7 +10,9 @@
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— 剩 6 条等原文（现在 pin 在 `e49979f`，#17 已验收）
-- 车辆 RCS、角反射器、4 条窗函数主瓣宽度：原文下载、建好条目后另开 issue（见里程碑 2 第 4 项）。
+- 车辆 RCS 与角反射器已建条目（未发布）：`target_rcs.iso19206_3_car_*`、`target_rcs.trihedral_peak`。等 4 条窗函数（Harris 1978，要用户下载）做完，一起开 issue。issue 里要告诉它：
+  - 乘用车 10 dBsm 是 ISO 19206-3 车尾远距离带子的下界（可引 `target_rcs.iso19206_3_car_rear_far_lower_dbsm`），中心是 20 dBsm；
+  - 角反射器"10 cm 边、60 GHz、约 20 dBsm"按三角形公式只有 12.2 dBsm，20 dBsm 对应方形；尺寸与形状是它自己的取舍。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收

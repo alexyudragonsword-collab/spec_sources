@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 102
+    assert len(table) == 106
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -91,6 +91,10 @@ def _cfo(v):
 #: reader's value()): a derived entry that needs a library's own choice cannot
 #: be written here, so it cannot live in the shared tables.  (value, abs tolerance)
 RECOMPUTE = {
+    # ISO 19206-3 rear band, far range: its lower edge
+    "target_rcs.iso19206_3_car_rear_far_lower_dbsm": (
+        lambda v: v("target_rcs.iso19206_3_car_rear")["p_far_dbsm"]
+        - v("target_rcs.iso19206_3_car_rear")["half_width_db"], 1e-12),
     # single-shot precision in seconds: LSB count times the resolution
     "tdc.henzler_isscc2008_single_shot_s": (
         lambda v: v("tdc.henzler_isscc2008")["single_shot_precision_lsb"] * v("tdc.henzler_isscc2008")["res_s"], 1e-16),
@@ -225,7 +229,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 53, "survey": 40, "assumed": 0, "derived": 9}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 56, "survey": 40, "assumed": 0, "derived": 10}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

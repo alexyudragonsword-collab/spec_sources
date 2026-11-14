@@ -5,7 +5,22 @@
 
 ## 未发布
 
-数据与代码都没动；只记下游的验收与答复。三个库都在最新的相关提交上，没有库需要重新 pin。
+`reader.py` 没动。
+
+- **`fmcw_radar` 需重新 pin**：它 vendor 的 `data/radar_targets.yaml` 新增 4 条（第 4 批，车辆与角反射器），已有的数不变。等窗函数一并做完再开 issue。
+- mmw60_trx（0.4.0）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### 里程碑 2 第 4 批（续）：乘用车 RCS 与三面角反射器
+- 放行 rosap.ntl.bts.gov 与 www.osti.gov（环境 "rf design"，用户批准），取到两份公开的政府报告。
+- **乘用车**：NHTSA DOT HS 813 648（2025-01）。报告用两颗 76–77 GHz 车载雷达，按 ISO 19206-3:2021 的方法测了一个乘用车替身和轿车、两厢、MPV、SUV、轻卡；它转引了 ISO 的 RCS 边界，乘用车都落在边界内。新增：
+  - `target_rcs.iso19206_3_car_rear`（spec）：车尾直线接近，40 m 以外平均 20 dBsm、上下各 10 dB，更近按 0.013 dB/m² ·(D − 40 m)² 下降；
+  - `target_rcs.iso19206_3_car_30m`（spec）：30 m 一周各视角的上下界（车尾 2–25、车头 1–19、侧面 13–30 dBsm）；
+  - `target_rcs.iso19206_3_car_rear_far_lower_dbsm`（derived）= 20 − 10 = 10 dBsm，在 `RECOMPUTE` 里复算。
+
+  fmcw_radar 原记的乘用车 10 dBsm 正好是这条带子的下界，中心是 20 dBsm。ISO 19206-3 本身要购买，没读，读的是 NHTSA 报告里转引的表。
+- **三面角反射器**：Sandia SAND2008-0396（A. W. Doerry，2008）。`target_rcs.trihedral_peak`（spec）：三角形 4πa⁴/(3λ²)、方形 12πa⁴/λ²、四分之一圆 15.6a⁴/λ²，a 是内棱长，峰值方向与每块板成 35.26°。用原文 Table 1 复核到 0.1 dB 以内。
+  - **发现**：fmcw_radar 原记"10 cm 边、60 GHz、约 20 dBsm"，按三角形的式 1 实为 12.2 dBsm；接近 20 dBsm 的是方形（21.8 dBsm）。反射器尺寸与形状是用的人自己定的，本表只登记公式。
+- 共享表 106 条：spec 56、survey 40、derived 10。账本新增 4 个键，记 `added=unreleased`。
 
 ### 验收：mmw60_trx#27（0.4.0）
 - mmw60_trx 合并 `5de5b3a`，pin `8e5f2e2`（0.4.0）。8 个 vendor 文件去掉出处头后与 pin 逐字节相同，`vendor_check --strict` 无 stale。

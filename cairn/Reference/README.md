@@ -16,6 +16,7 @@
 | Table I [2] Lai, Valdes-Garcia, ISSCC 2010 paper 23.6 | 同上，`asada_t1_02_lai_isscc2010.pdf` | 正文 61.5 GHz、1.0 V：Psat 17.9、OP1dB 15.4、PAE 11.7 %；自己的汇总表 Fig. 23.6.7：17.7 / 15.1 / 11.1 %。Asada 抄汇总表，四格相同 → `pa60.lai_isscc2010`（两套都记） |
 | Table I [6] Law, Pham, ISSCC 2010 paper 23.7 | 同上，`asada_t1_06_law_isscc2010.pdf` | Fig. 23.7.6：P1dB 18.2、Max. Pout 19.9、PAE 14.2 %、增益 20.6，与 Asada 四格相同；正文取整为 +18 / 20 → `pa60.law_isscc2010` |
 | Table I [13] Tanomura et al., ISSCC 2008 paper 31.1 | 同上，`asada_t1_13_tanomura_isscc2008.pdf` | Fig. 31.1.6（嵌入字体，渲染读）60–64 GHz、1.0 V：Output RF power 11.0 ± 0.5、P-1dB 10.0 ± 0.5、PAE > 8.2 %、线性增益 14.3 ± 1.3。Asada 的 P1dB / Psat / PAE 是这三格，增益 15.2 却是正文 0.7 V、60 GHz 的线性增益 → `pa60.tanomura_isscc2008` |
+| Table I [15] Martineau et al., ISSCC 2010 paper 23.8 | 用户从 IEEE Xplore 下载（2026-11-14），`asada_t1_15_martineau_isscc2010.pdf` | Fig. 23.8.5 两列 This work：1.2 V 增益 14.3、P1dB 11、Psat 16.6、PAE 4.9 %，与 Asada 四格相同；1.8 V 15.5 / 11.5 / 18.1 / 3.6 %。Fig. 23.8.4 扫到 Pin = 10 dBm 时 Pout 仍在上升，Psat 是扫描终点 → `pa60.martineau_isscc2010` |
 
 ## 待取清单（按里程碑 2 的顺序）
 
@@ -37,7 +38,7 @@
 | [12] | S. Pinel et al., "A 90 nm CMOS 60 GHz Radio", ISSCC 2008, pp. 130–131 | 3.3 / 8.4 |
 | ✅ [13] | M. Tanomura et al., "TX and RX Front-Ends for 60 GHz Band in 90 nm Standard Bulk CMOS", ISSCC 2008, pp. 558–559 | **1.0 dB（最小）** / 11.0 |
 | [14] | D. Chowdhury, P. Reynaert, A. M. Niknejad, "A 60 GHz 1 V +12.3 dBm Transformer-Coupled Wideband PA in 90 nm CMOS", ISSCC 2008, pp. 560–561 | 3.3 / 12.3 |
-| [15] | B. Martineau et al., "A 53-to-68 GHz 18 dB Power Amplifier with an 8-Way Combiner in Standard 65 nm CMOS", ISSCC 2010, pp. 428–429 | 5.6 / 16.6 |
+| ✅ [15] | B. Martineau et al., "A 53-to-68 GHz 18 dB Power Amplifier with an 8-Way Combiner in Standard 65 nm CMOS", ISSCC 2010, pp. 428–429（原题是 "18dBm"，Asada 写成 18 dB） | 5.6 / 16.6 |
 
 **先下 4 篇**：[1]、[13]（Psat − P1dB 的两端）和 [6]、[2]（Psat 的两端）。表的分布（中位 3.3 dB）就是靠这几行撑起来的。[1] 和 [11] 出自 TU Delft 的 Long 组，机构库里可能有免费全文。
 
@@ -45,6 +46,11 @@
 - [8] 的页码：Lai 与 Law 的参考文献都写 Bohsali, Niknejad, RFIC 2009, pp. 31–34，Asada 的 39–42 是笔误。
 - 这 4 篇的对比表也转引了别的行，与 Asada 对得上：[5] Suzuki 8.3 / 8.2 / 10.6（Law 表，PAE 一格空）；[7] Kurita 10 / 8.8 / 12.6 / 6.9（Law 表）；[8] Bohsali 4.4 / 12.1 / 14.2 / 5.8（Law 表；Lai 表的增益是 4.5）；[12] Pinel 17 / 5.1 / 8.4 / 5.8（Chan 表）；[14] Chowdhury P1dB 9.0、Psat 12.3、PAE 8.8（Chan、Law 两表），增益两表都是 5.6，Asada 写 5.5。这些是二手对二手，不算核实，那几行仍要读原文。
 - 下一篇建议 [15] Martineau：去掉 [1] 以后，它的 5.6 dB 是 Psat − P1dB 的最大一格。
+
+**2026-11-14 补记**：[15] 已读，四格与 Asada 相同（1.2 V 一列），见上表。顺带得到的：
+- Asada 参考文献表把 [15] 的题名写成 "18 dB"，原题是 "18dBm"（1.8 V 时的 Psat 18.1）。
+- Martineau 的对比表也转引了别的行：[10] Dawn 20 / 8.2 / 12 / 9 与 Asada 相同；[12] Pinel 相同；[14] Chowdhury 的增益写 5.5，与 Asada 相同（Chan、Law 两表写 5.6）；[13] Tanomura 增益写 14.3（1.0 V 的值），Asada 写 15.2。仍是二手对二手。
+- 剩下 8 行里，[9] Kuo（MWCL 2009）与 [11] Jin（ESSCIRC 2007）是 5 篇原文的对比表都没有转引的两行，连二手的旁证都没有；下一步建议先下这两篇。[11] 出自 TU Delft 的 Long 组，机构库里可能有免费全文。
 
 MDPI 那篇 22 nm PA（Georgakopoulos et al., "A 60-GHz Current Combining Class-AB Power Amplifier in 22 nm FD-SOI CMOS", Microwave 2026）**不取**：它只有版图后仿真，查到的内容里也没有 OFDM 的 EVM，给不了 mmw60 想要的 OFDM 工作点。
 
@@ -85,7 +91,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 
 ## 合计
 
-- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），还剩 23 篇。
+- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），还剩 22 篇。
 - 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 

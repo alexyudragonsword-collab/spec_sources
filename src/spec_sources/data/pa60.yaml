@@ -10,7 +10,7 @@
 # 所以 cite / note 里的"本库"指 mmw60_trx，cairn/…、examples/…、tests/…、config.…、frontend.… 是它仓库里的路径，
 # assumed.* 是它本地表里的条目；这些写法在条目下一次因核实而改动时改成明确的库名（ROADMAP）。
 #
-# 例外：pa60.chan_isscc2009、pa60.lai_isscc2010、pa60.law_isscc2010、pa60.tanomura_isscc2008 四条不是迁入的，
+# 例外：pa60.chan_isscc2009、pa60.lai_isscc2010、pa60.law_isscc2010、pa60.tanomura_isscc2008、pa60.martineau_isscc2010 五条不是迁入的，
 # 是 spec_sources 在里程碑 2 第 1 批读 Asada Table I 转引的原文后新建的；它们的 cite / note 写明库名，不用"本库"。
 #
 # 前缀：pa60.*。
@@ -70,7 +70,7 @@ entries:
     cite: "pa60.asada_eumc2011 那篇的 Table I 'Performance comparison'；2026-11-12 读原文"
     section: "Table I. Performance comparison"
     quote: "TABLE I PERFORMANCE COMPARISON. Technology | Power Gain[dB] | P1dB [dBm] | Psat [dBm] | Peak PAE[%] | Power[mW] | VDD [V]"
-    note: "这张表是那篇论文对 2007–2011 年 60 GHz CMOS PA 的汇编，表里其他各行是它转引的。spec_sources 读了其中 4 行的原文（里程碑 2 第 1 批）：[1] pa60.chan_isscc2009、[2] pa60.lai_isscc2010、[6] pa60.law_isscc2010、[13] pa60.tanomura_isscc2008，P1dB、Psat、峰值 PAE 都与原文各自的对比表逐格相同；只有增益两格不同：[1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 60 GHz 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3）。其余 9 行 mmw60_trx 与 spec_sources 都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3）。只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P1dB 偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是 [15] 的 5.6 dB（原文未读）。峰值 PAE 4.9–16.3 %。"
+    note: "这张表是那篇论文对 2007–2011 年 60 GHz CMOS PA 的汇编，表里其他各行是它转引的。spec_sources 读了其中 5 行的原文（里程碑 2 第 1 批）：[1] pa60.chan_isscc2009、[2] pa60.lai_isscc2010、[6] pa60.law_isscc2010、[13] pa60.tanomura_isscc2008、[15] pa60.martineau_isscc2010，P1dB、Psat、峰值 PAE 都与原文各自的对比表逐格相同；只有增益两格不同：[1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 60 GHz 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3）。其余 8 行 mmw60_trx 与 spec_sources 都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3）。只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P1dB 偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是 [15] 的 5.6 dB，而它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍在上升，真实的差只会更大，同一颗 PA 在 1.8 V 时是 6.6 dB（pa60.martineau_isscc2010）。峰值 PAE 4.9–16.3 %。"
 
   pa60.wu_isscc2015:
     value: {tx_pout_at_evm_limit_dbm: 9.3, evm_limit_db: -21.0, pa_p1db_dbm: 7.0, tx_evm_best_db: -27.9}
@@ -84,6 +84,7 @@ entries:
   # ------------------------------------------------------------ Asada Table I 转引的原文（读过原文；里程碑 2 第 1 批）
   # 四篇都是 ISSCC 文摘，用户从 IEEE Xplore 下载、spec_sources 读（2026-11-13）。PDF 只放本地 cairn/Reference/。
   # 先读的是 Table I 里 Psat − P1dB 的两端（[1] 9.0 dB、[13] 1.0 dB）与 Psat 的两端（[6] 19.9、[2] 17.7 dBm）。
+  # 第五篇 [15] 是去掉 [1] 之后 Psat − P1dB 最大的一行（5.6 dB），2026-11-14 读。
   pa60.chan_isscc2009:
     value: {gain_db: 15.8, p1db_dbm: 2.5, psat_dbm: 11.5, pae_peak: 0.11, pdc_mw: 43.5, vdd_v: 1.0}
     unit: "dB, dBm, dBm, ratio, mW, V"
@@ -119,6 +120,15 @@ entries:
     section: "正文 PA 一段；Fig. 31.1.3（60 GHz，漏压 0.7 / 1.0 V）；Fig. 31.1.6 'Measured performance summary for transmitter, receiver and PA' 的 PA 一栏（60–64 GHz）"
     quote: "At drain voltage of 0.7V, the PA achieves an output power of 8.4dBm with a power gain of 10.3dB and power added efficiency (PAE) of 7.0%, and a linear gain of 15.2dB. [...] When the drain voltage is increased to 1.0V, the PA delivers an output power of 11.3dBm with a gain of 13.3dB and 1dB gain compression output power (P1dB) of 10.5dBm. [...] Fig. 31.1.6, PA: Frequency 60-64GHz; Output RF power 8.3±0.2dBm @ Vd=0.7V, 11.0±0.5dBm @ Vd=1.0V; P-1dB 5.2±0.3dBm @ Vd=0.7V, 10.0±0.5dBm @ Vd=1.0V; PAE (max) > 6.7% @ 0.7 V, > 8.2% @ 1.0V; Linear gain 13.9±1.4dB @ Vd=0.7V, 14.3 ± 1.3dB @ Vd=1.0V; Power dissipation 89mW @ 0.7V, 150mW @ 1.0V"
     note: "90 nm 三级单端共源，按热载流子寿命把工作漏压定在 0.7 V，1.0 V 另测一档。value 是汇总表 60–64 GHz 的值与 ± 范围；表里写的是 'Output RF power'，即扫描到 Pin = 0 dBm 时的最高输出（1.0 V 时增益已压缩约 5 dB），Asada、Chan、Lai 的对比表都把它列作 Psat，这里记作 psat_dbm；PAE 原文只给下限（'>'）。Asada Table I 的 [13] 一行：P1dB 10.0、Psat 11.0、PAE 8.2 是 1.0 V 的汇总值，增益 15.2 却是正文 0.7 V 时 60 GHz 的线性增益。Psat − P1dB：汇总表 1.0 dB（两项各有 ±0.5 dB），是 Table I 里最小的一格；正文在 60 GHz、1.0 V 给的 P1dB 10.5 dBm 与增益 13.3 dB 时的输出 11.3 dBm 只差 0.8 dB，Fig. 31.1.3 里 Pin = 0 dBm 时约 11.5 dBm（读图）。"
+
+  pa60.martineau_isscc2010:
+    value: {vdd_v: [1.2, 1.8], gain_db: [14.3, 15.5], p1db_dbm: [11.0, 11.5], psat_dbm: [16.6, 18.1], pae_peak: [0.049, 0.036], pdc_mw: [732.0, 1504.0]}
+    unit: "V, dB, dBm, dBm, ratio, mW"
+    source: spec
+    cite: "B. Martineau, V. Knopik, A. Siligaris, F. Gianesello, D. Belot, 'A 53-to-68GHz 18dBm Power Amplifier with an 8-Way Combiner in Standard 65nm CMOS', ISSCC 2010 Dig. Tech. Papers, paper 23.8, pp. 428–429（STMicroelectronics、ST-Ericsson、CEA-LETI），IEEE Xplore 5433879；Asada Table I 的 [15]；2026-11-14 读原文，图表渲染出来读"
+    section: "正文第 1 段与测量两段；Fig. 23.8.4（60 GHz 功率扫描，1.2 / 1.8 V）；Fig. 23.8.5 'Comparison of state-of-the-art 60GHz CMOS PAs' 的两列 This work"
+    quote: "The presented circuit operates at a standard supply of 1.2V or 1.8V, and achieves a saturated output power of 16.6dBm and 18.1dBm respectively. [...] For a supply voltage of 1.2V, S21 has a peak value of 14.3dB at 61GHz. [...] Using 1.2V and 1.8V supplies the 1dB compressed output powers are 11dBm and 11.5dBm respectively while the measured saturated output powers are 16.6dBm (1.2V) and 18.1dBm (1.8V) respectively. The PAE is less than 5% for both supply voltages which is a consequence of the Class-A amplifier configuration of each unit PA and the losses coming from the power combining. [...] Fig. 23.8.5, This work / This Work: Supply voltage [V] 1.2 / 1.8; Center Freq [GHz] 60.5 / 60.5; 3dB BW [GHz] 15 / 15; Psat [dBm] 16.6 / 18.1; P1dB [dBm] 11 / 11.5; Power Gain [dB] 14.3 / 15.5; Peak PAE [%] 4.9 / 3.6; PDC [mW] 732 / 1504"
+    note: "8 路零度分 / 合路，每路两级差分 cascode，A 类，ST 65 nm。Asada Table I 的 [15] 四格与 1.2 V 一列相同；题名的 18dBm 是 1.8 V 的 18.1（Asada 参考文献表把题名写成 '18 dB'，是笔误）。Psat − P1dB：1.2 V 5.6 dB，1.8 V 6.6 dB。Fig. 23.8.4 扫到 Pin = 10 dBm 为止，两条 Pout 曲线到终点仍在上升（1.2 V 时增益已从 14.3 压到约 6.6 dB，读图），所以这里的 Psat 是扫描终点的输出，真正的饱和只会更高，差只会更大。原作者没有把 P1dB 归于任何异常：A 类 cascode 加合路损耗，压缩是平缓的。"
 
   # ------------------------------------------------------------ 推导：tgad_em.pa_model_shape 的 modified Rapp 对上 pa60.asada_eumc2011 的 Psat − P1dB
   pa60.asada_eumc2011_rapp_p:

@@ -3,6 +3,16 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 第 1 批（部分）：[15] Martineau 对上原文（feat/m2-batch1-martineau，未发布）
+
+- PR #11 已合并（main `31fe48b`）。用户下了 [15] Martineau（ISSCC 2010 paper 23.8，IEEE Xplore 5433879）。
+- 对比表 Fig. 23.8.5 的 1.2 V 一列：增益 14.3、P1dB 11、Psat 16.6、PAE 4.9 %，与 Asada [15] 四格相同。1.8 V：15.5 / 11.5 / 18.1 / 3.6 %，直流 732 / 1504 mW。
+- Psat − P1dB：1.2 V 5.6 dB，1.8 V 6.6 dB。**Fig. 23.8.4 扫到 Pin = 10 dBm 为止，两条 Pout 曲线到终点仍在上升**（1.2 V 时增益从 14.3 压到约 6.6 dB，读图），所以 Psat 是扫描终点，真实的差只会更大。原作者没说有异常，是 A 类 cascode 加合路损耗的平缓压缩。
+- 对 mmw60 的含义：去掉作者自认偏置不当的 [1]（9.0 dB），表里最软的正常 PA 是 [15]，扫描范围内 5.6 dB（1.8 V 6.6 dB）。要到 TGad Rapp 的 9.5 dB，1.2 V 的 Psat 得到 20.5 dBm，而曲线末端每 dB 输入只涨约 0.2 dB（读图），不像能到。
+- 题名是"18dBm"（1.8 V 的 18.1），Asada 参考文献表写成"18 dB"。重新取了 Asada 原文核对，是 Asada 的笔误，不是本库抄错。
+- Martineau 的对比表旁证了 [10] [12] [14] 三行（[14] 增益 5.5，与 Asada 同）。剩 8 行里 [9]、[11] 在 5 篇原文的对比表里都没出现，建议下一步先下。
+- 共享表 95 条：spec 32、survey 55、derived 8；`pa60.yaml` 的 grep 计数 spec 10、derived 1。测试 76 个（74 通过，2 跳过）。
+
 ## 2026-11-13 · 验收 mmw60_trx#25、fmcw_radar#15（feat/accept-mmw60-25-fmcw-15）
 
 - PR #10 已合并（main `fff06a7`）。两边都回报了，在它们的 main 上独立复核。容器重建过，建了个 venv（numpy 2.5.4、scipy 1.18.1、itur 0.4.0）。

@@ -7,7 +7,7 @@
 
 `reader.py` 没动。
 
-- **`fmcw_radar` 需重新 pin**：它 vendor 的 `data/radar_targets.yaml` 新增 4 条（第 4 批，车辆与角反射器），已有的数不变；它若改引窗函数，还要多 vendor 新文件 `data/windows.yaml`。fmcw 剩下的 6 条 survey 都有了对应条目，一起开 issue。
+- fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
 - mmw60_trx（0.4.0）、d2d_link（`bbc0ccb`）vendor 的文件没动。
 
 ### 里程碑 2 第 4 批（续）：乘用车 RCS 与三面角反射器
@@ -21,6 +21,18 @@
 - **三面角反射器**：Sandia SAND2008-0396（A. W. Doerry，2008）。`target_rcs.trihedral_peak`（spec）：三角形 4πa⁴/(3λ²)、方形 12πa⁴/λ²、四分之一圆 15.6a⁴/λ²，a 是内棱长，峰值方向与每块板成 35.26°。用原文 Table 1 复核到 0.1 dB 以内。
   - **发现**：fmcw_radar 原记"10 cm 边、60 GHz、约 20 dBsm"，按三角形的式 1 实为 12.2 dBsm；接近 20 dBsm 的是方形（21.8 dBsm）。反射器尺寸与形状是用的人自己定的，本表只登记公式。
 - 共享表 106 条：spec 56、survey 40、derived 10。账本新增 4 个键，记 `added=unreleased`。
+
+### 验收：fmcw_radar#19（乘用车 RCS、角反射器、4 条窗函数）
+- fmcw_radar 合并 `4495310`（0.2.13），pin `f87cc9b`，多 vendor `data/windows.yaml`。6 个文件去掉出处头后与 pin 逐字节相同，`vendor_check --strict` 里都是 verbatim。它报测试 203 个，CI 3.10–3.13 绿。
+- 登记 5 条引用（它表里这 5 条原是 survey）：
+  - `target_rcs.iso19206_3_car_rear_far_lower_dbsm` = 10.0（它标 derived；它的场景都在 15 m 以内，ISO 中心在那里只有 4–12 dBsm，所以取下界不取中心 20）
+  - `harris1978.rect#bw_3db_bins` = 0.89
+  - `harris1978.hann#bw_3db_bins` = 1.44
+  - `harris1978.hamming#bw_3db_bins` = 1.3
+  - `harris1978.blackman#bw_3db_bins` = 1.68（它 cite 里的 "exact" 已改掉）
+- 角反射器它保持 20 dBsm，改记成自己的 assumed：15.6 cm 三角形三面角（60 GHz；77 GHz 档相当于 13.8 cm），cite 指向 Doerry 式 (1) 与 `target_rcs.trihedral_peak`。不是引用，不登记；原 cite 的"10 cm、~10² m²"已更正。
+- 指纹：`0d32179` 对 `4495310` 2035 个值逐位相同，本库在本地重跑复核过。它的表现在 assumed 25、spec 11、derived 3，**survey 0**：迁移时它自己表里的 14 条 spec / survey 全部了结（13 条经登记的引用读本库，角反射器归它自己）。
+- 它记下的后续（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接。
 
 ### 里程碑 2 第 4 批（完）：窗函数（Harris 1978 表 I）
 - 用户从 IEEE Xplore 下载 F. J. Harris, Proc. IEEE 66(1), 1978。新数据文件 `data/windows.yaml`，前缀 `harris1978.*`，一个窗一条（spec），value 是表 I 的一整行 10 列（最高旁瓣、衰减速率、相干增益、等效噪声带宽、3-dB 宽、扇贝损失、最坏处理损失、6-dB 宽、75 % / 50 % 重叠相关）：

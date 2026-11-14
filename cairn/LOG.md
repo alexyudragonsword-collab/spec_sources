@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-14 · 验收 fmcw_radar#19：最后 6 条 survey 了结（feat/accept-fmcw-19）
+
+- PR #24 合并（main `f87cc9b`），以它为 PIN 开了 fmcw [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19)。fmcw 回报合并 `4495310`（0.2.13）。
+- 复核：6 个 vendor 文件去两行头后与 `f87cc9b` 逐字节相同；`vendor_check --strict` 里 6 个都是 verbatim（本地缺 polar_tx，另 26 个跳过，与本库无关；它自己的环境 36 verbatim、0 skipped）。指纹 `0d32179` 对 `4495310` 本地重跑，2035 个值逐位相同。
+- 它的选择：乘用车保持 10.0，标 derived，引 `target_rcs.iso19206_3_car_rear_far_lower_dbsm`（场景都在 15 m 内，ISO 中心在那里只有 4–12 dBsm）；角反射器保持 20 dBsm，改记成自己的 assumed（15.6 cm 三角形；77 GHz 档相当于 13.8 cm），cite 指向 `target_rcs.trihedral_peak`；窗函数 4 条标 spec，值 0.89 / 1.44 / 1.3 / 1.68 与引用逐位相等，"exact" 已改掉。
+- 它的表：assumed 25、spec 11、derived 3、survey 0；14 条 `upstream:` 都已登记（新增 5 条）。迁移时它的 14 条 spec / survey：13 条读本库，角反射器归它自己。
+- 本库：fixture 换成 `fmcw_radar.sources.4495310.yaml`；`consumers.yaml` 按条登记 9 → 14，fmcw 的 pin `e49979f` → `f87cc9b`、文件加 `data/windows.yaml`；ROADMAP 删掉里程碑 2 第 4 批，其余按批号标。测试 91 个（89 通过，2 跳过）。
+- 它记下的后续：RCS 是常数，不随距离、视角、频段变（示例 05 的车 5.3 m，ISO 中心约 4.3 dBsm，低 5.7 dB）。
+
 ## 2026-11-14 · 第 4 批完：窗函数，Harris 1978 表 I（feat/m2-batch4-car-corner，未发布）
 
 - 用户下载 Harris, Proc. IEEE 66(1), 1978（33 页，文字层是 OCR）。表 I 在 p. 55，渲染出来读。

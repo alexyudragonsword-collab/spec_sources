@@ -10,6 +10,7 @@
 - **单次精度 0.7 LSB**：原文定义为反复测同一恒定间隔时输出码字的标准差（Fig. 30.5.4 标注、Fig. 30.5.6 对比表）。按秒 3.29 ps，建 derived 条目（`RECOMPUTE` 复算 0.7 × 4.7e-12）。原文还明说有限的单次精度给输出加了 dither，多次平均可降低量化误差，正是 fmcw 模型里抖动的角色。
 - 限制写进 note：标准差里含码字离散化与片上表征单元产生起止脉冲的抖动，所以是上界量级；Sheppard 修正 √(0.7² − 1/12) 粗算噪声本身约 0.64 LSB ≈ 3.0 ps（近似，不登记）。结构与 Wu 2014 的延迟链 TDC 不同。对比表里 Staszewski 2006 那栏没有单次精度，与上一条的结论一致。
 - 新文件 `data/tdc.yaml`（前缀 `tdc`，登记进 `FILE_PREFIXES` 与 AGENTS.md），没有库 vendor 它。共享表 100 条：spec 36、survey 55、derived 9。测试 80 个（78 通过，2 跳过）。
+- 用户定：fmcw 暂不换 `tdc_jitter_s`，不开 issue（ROADMAP 第 2 项记下了日后开 issue 时要写的话）。
 
 ## 2026-11-14 · 验收 fmcw_radar#17：60 GHz 档的 TDC 分辨率改读本库（feat/accept-fmcw-17）
 

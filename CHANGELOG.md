@@ -9,7 +9,13 @@
 
 - **`mmw60_trx` 需重新 pin**：它 vendor `data/pa60.yaml`。它已在 [#25](https://github.com/alexyudragonsword-collab/mmw60_trx/issues/25) 里 pin 到 0.3.0（`9a443ba`，已验收），这一节的改动等下一次重新 pin 再带过去，届时 `all_entries()` 多 7 条。
 - fmcw_radar 已在 [#17](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/17) 里 pin 到 `e49979f`（已验收），它 vendor 的 5 个文件之后没动。
-- **`d2d_link` 需重新 pin**：它 vendor 的 `data/ucie.yaml` 在第 3 批改了：15 条由 survey 改为 spec（值和单位一个不变），新增 2 条。读到的已有的数不变；要它重新看的是几条 note 的含义（眼罩是信道合规的、BER 分速率、TX 0.4 V 是最小值、每 32 位 2 条备用），见下面第 3 批一节。
+- d2d_link 已在 [#2](https://github.com/alexyudragonsword-collab/d2d_link/issues/2) 里 pin 到 `bbc0ccb`（已验收），它 vendor 的 3 个文件之后没动。
+
+### 验收：d2d_link#2（UCIe 第 3 批）
+- d2d_link 从 `0cbd4e9` 快进到 `d5d34a6`（0.17.0），5 个提交：重新 pin `bd1e087`，再按 issue 的 4 点各一个提交。3 个 vendor 文件去掉出处头后与 `bbc0ccb` 逐字节相同，`vendor_check --strict` 里它们都是 verbatim。它的测试 267 个通过、4 个跳过。
+- 指纹逐个提交复核（3597 个值）：重新 pin、眼罩标注（第 1 点）、TX 摆幅文档（第 3 点）、QDR 显示（第 4 点）都逐位不变；只有 BER 一个提交（第 2 点，`f868f3c`）动了 974 个值，全在统计引擎的眼、BER、采样相位和随之变化的游标、时域样本上。那个提交在 `src/` 下只改了垫片里用 `ref` 展开 `ucie.raw_ber_by_rate` 的 23 行。
+- 解析出的 BER 目标：表里 12 格（2 种封装 × 6 个速率）逐格与 `ucie.raw_ber_by_rate` 相同；5 个内置配置（都是 32 GT/s）从 1e-27 变成 1e-15。表外速率退回 1e-27。
+- 它的处理：眼罩保留"含抖动的眼对眼罩"的比法，在报表里写明比规范更严；BER 按表取（32 GT/s 的余量 x1 +0.091 → +0.205，x5 耦合 −0.121 → −0.010 仍不过）；TX 0.4 V 保留为最坏情况的默认值；QDR 有了出处，并修了把 QDR 印成"16 GHz DDR"的显示错误。它也把规范的许可约束写进了自己的 AGENTS 与 CONTRIBUTING。
 
 ### 验收：fmcw_radar#17（TDC 分辨率）
 - fmcw_radar 合并 `0d32179`，pin `e49979f`，多 vendor `data/adpll60.yaml`。5 个文件去掉出处头后与 pin 逐字节相同，`vendor_check --strict` 没有 stale。它的测试 200 个通过、2 个跳过。

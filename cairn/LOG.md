@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-15 · 验收 #26：mmw60_trx 重新 pin 到 7aae876（feat/accept-issue26）
+
+- PR #27 合并（main `7aae876`），在 #26 给了新 PIN。mmw60_trx 在 mmw60_trx#37 合并 `121b612`（重新 pin 的提交 `4d018e5`），回帖在 #26。
+- 复核：9 个 vendor 文件（多了 `ieee802153c.yaml`）去两行头后与 `7aae876` 逐字节相同；本地 `vendor_check --strict` 9 个 verbatim（241 个因缺 sibling 跳过；它带齐 sibling 是 250 verbatim）。指纹 `5e474e7` 对 `4d018e5` 69 个值逐位相同（`MMW60_NO_JIT=1`，两边同有 numba 一项报错）。合并表 147 → 155，未核实 43 → 22。
+- 它的两条本地 note 点名 3 个 `tg3c.*` 键，由它的守卫核对；"0396 与 TGad 同一颗 PA"的判断已在它那边撤回并追加更正。
+- `consumers.yaml`：mmw60_trx 的 pin `8e5f2e2` → `7aae876`、at `121b612`、文件 8 → 9；issue 一栏写 mmw60_trx#37（请求在本库 #26）。数据未动，共享表 119 条；测试 92 个（90 通过，2 跳过）。
+
 ## 2026-11-15 · #26：Liu 2025 刊出版与 802.15-06-0477 / 0396（feat/issue26-liu-journal-tg3c，未发布）
 
 - mmw60_trx 在本库开了 #26。用户从 Xplore 下载刊出版（7 页）；两份 802.15 文件从 mentor.ieee.org 取（17 页、15 页）。公式页与两张表渲染出来读；引文逐段对过文字层（× 是 Symbol 字体的私用码，渲染为 ×）。

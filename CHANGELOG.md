@@ -8,8 +8,14 @@
 `reader.py` 没动。
 
 - fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
-- **`mmw60_trx` 需重新 pin**：它 vendor 的 `data/liu2025.yaml` 按刊出版改了（#26，见下）。它代码里读的 12 个键值都没变；`table1_scs_hz`、`table1_bandwidth_hz`、`receiver_cfo_statement` 的值变了（它只在文档里引）。它若要 802.15 的模型，多 vendor 新文件 `data/ieee802153c.yaml`。
+- mmw60_trx 已在 mmw60_trx#37 里 pin 到 `7aae876`、多 vendor 了 `data/ieee802153c.yaml`（#26，已验收，见下）。
 - d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### 验收：#26（mmw60_trx 重新 pin 到 `7aae876`）
+- mmw60_trx 在 mmw60_trx#37 合并 `121b612`（重新 pin 的提交 `4d018e5`），vendor 9 个文件，比原来多了 `data/ieee802153c.yaml`。9 个文件去掉出处头后与 `7aae876` 逐字节相同，本库本地跑它的 `vendor_check --strict`：这 9 个都是 verbatim（另 241 个因本地缺它的其它 sibling 跳过）；它自己带上三个 sibling 跑：250 verbatim、0 skipped。
+- 指纹：本库在本地对 `5e474e7`（父提交）与 `4d018e5` 各录一次（`MMW60_NO_JIT=1`），69 个值逐位相同；两边同有一项因没装 numba 报错。它的合并表 147 → 155 条（多出 4 条 `liu2025.*`、4 条 `tg3c.*`），未核实 43 → 22。它报 pytest、ruff 绿。
+- 它有两条本地 note 点名 `tg3c.*`（`assumed.pn_apply_sides` → `tg3c.pn_model`、`tg3c.pn_psd0_examples_dbchz`；`assumed.pa_obo_reference` → `tg3c.pa_modified_rapp_shape`），由它的守卫核对键名，所以 vendor 了新文件。
+- 它撤回了"0396 的拟合与 TGad 那颗是同一颗 PA"的判断，在它的 `cairn/spec-sources.md`、`cairn/external-validation.md`、ROADMAP C4 与示例 12 的说明里追加更正；0396 印刷的公式缺指数也记进了它的 `cairn/spec-sources.md`。
 
 ### #26（mmw60_trx 请求）：Liu 2025 刊出版，及它引的两份 IEEE 802.15 文件
 - 用户从 IEEE Xplore 下载了刊出版（IEEE Commun. Mag. 63(3), pp. 69–75, 2025-03, doi 10.1109/MCOM.002.2400059），两份 802.15 文件取自 mentor.ieee.org（公开）。PDF 只放本地。

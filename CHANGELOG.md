@@ -8,7 +8,28 @@
 `reader.py` 没动。
 
 - fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
-- mmw60_trx（0.4.0）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的 `data/liu2025.yaml` 按刊出版改了（#26，见下）。它代码里读的 12 个键值都没变；`table1_scs_hz`、`table1_bandwidth_hz`、`receiver_cfo_statement` 的值变了（它只在文档里引）。它若要 802.15 的模型，多 vendor 新文件 `data/ieee802153c.yaml`。
+- d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### #26（mmw60_trx 请求）：Liu 2025 刊出版，及它引的两份 IEEE 802.15 文件
+- 用户从 IEEE Xplore 下载了刊出版（IEEE Commun. Mag. 63(3), pp. 69–75, 2025-03, doi 10.1109/MCOM.002.2400059），两份 802.15 文件取自 mentor.ieee.org（公开）。PDF 只放本地。
+- `liu2025.*`：21 条对上刊出版，survey → spec。
+  - 18 条值不变（`VERIFIED`）：TABLE 2 各行（MCS、PPDU、信道、1T1R、73.44 GHz、4096 bytes、40 ppm、相噪 1 MHz / 100 MHz / −93 dBc/Hz、OBO 8 dB）与 Simulation Configuration / Results 的 ±625 / ±156.25 kHz、±2.94 MHz、5.88 MHz、4.7，Introduction 的 14 GHz。
+  - **3 条按刊出版改了值**（新的 `CORRECTED` 类，`tests/test_extraction.py`）：
+    - `liu2025.table1_scs_hz` 16× 一列 1.25 MHz → **5 MHz**（刊出版三列都以 802.11ac 为基准，arXiv 版那一列是 802.11be）；
+    - `liu2025.table1_bandwidth_hz` 16× 一列去掉 5120 MHz，最高 2560 MHz；
+    - `liu2025.receiver_cfo_statement`："…for CFO and PN" → "…for CFO and used phase tracking only on the receiving end"（相噪在接收端做了相位跟踪）。
+  - `liu2025.per_target` 仍是 survey：刊出版没有"specified PER (10^-2)"这句，note 写明。
+  - 新增 4 条 spec：`liu2025.table1_idft_period_s`（800 / 400 / 200 ns）、`liu2025.table1_idft_size`（64/128/256/512）、`liu2025.cfo_algorithm_statement`（Discussion："CFO 估计补偿是算法问题"）、`liu2025.mlo_bf_training_statement`（60 GHz 扇区扫描可由 sub-7 GHz 触发、反馈）。
+- 新数据文件 `data/ieee802153c.yaml`，前缀 `tg3c.*`，4 条 spec：
+  - `tg3c.pn_model`：802.15-06-0477 slide 9 提出的 1 极点 1 零点模型，PSD(0) **−87** dBc/Hz、fp 1 MHz、fz 100 MHz；
+  - `tg3c.pn_psd0_examples_dbchz`：slide 10 的四档示例 −96 / −93 / −90 / −87。Liu 的 −93 是其中一档，不是 0477 提出的值；
+  - `tg3c.pa_modified_rapp_shape`：slide 5 的修正 Rapp 公式。**原文没给参数**（slide 13 自己也这么说），所以 Liu 的"modified Rapp model [15]"在 [15] 里查不到参数；
+  - `tg3c.pa_ghorbani_nec_gaas`：802.15-06-0396 slide 10 的 NEC GaAs pHEMT 60 GHz PA Ghorbani 拟合（x1–x4 = 10 / 0.71 / 4.66 / 0，y1–y4 = −5.4×10⁴ / 4 / 2980 / 0.11），slide 8 的输入 P1dB −11 dBm。
+- **发现**：
+  - 0396 slide 10 印的 Ghorbani 公式分子少了指数。按印的式子，u = 0.3 V 处 AM-PM 是 −644°；分子写成 x1·u^x2、y1·u^y2 才与图上的拟合曲线相符（1.43 V、−17.4°）。
+  - mmw60_trx 猜 TGad 的修正 Rapp 参数（g 4.65、α 2560、β 0.114）与这组 Ghorbani 参数是同一颗 PA 的拟合。复算不支持：几个相近的数在两个模型里是不同位置的参数；TGad 的 CMOS PA 在 0.58 V 饱和、AM-PM 为正（u = 0.3 V 时 +13.9°），NEC 的 GaAs PA 约 1.5 V、−17.4°。
+- 共享表 119 条：spec 90、survey 19、derived 10。账本新增 8 个键，记 `added=unreleased`。
 
 ### 里程碑 2 第 4 批（续）：乘用车 RCS 与三面角反射器
 - 放行 rosap.ntl.bts.gov 与 www.osti.gov（环境 "rf design"，用户批准），取到两份公开的政府报告。

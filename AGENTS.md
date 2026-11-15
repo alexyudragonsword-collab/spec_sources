@@ -33,7 +33,7 @@
 
 - `src/spec_sources/reader.py`：读取器（`SpecNumber`、`SOURCES`、`load_table`、`all_entries`、`survey`、`value`、`unverified`、`by_source` 与 mmw60_trx 的 `mmw60.spec` 同名同义，外加 `ref`、`aliases`、`legacy_keys`、`merge_tables`、`audit_tags`）。`__init__.py` 只转出。
 - `src/spec_sources/data/<领域>.yaml`：按**出处的领域**切，一个文件一组前缀；消费方只 vendor 它读的那几个文件。
-  `data/liu2025.yaml`（liu2025.\*，Liu 2025 论文）· `data/ieee80211.yaml`（tgad_em.\*、ieee80211.\*、ieee80211ac / be / ay.\*、dmg.\*：802.11 条文、TGad 评估方法学、ITU-R M.2003）· `data/regulatory.yaml`（fcc15255.\*）· `data/frontend60.yaml`（rx60.\*、isolation.\*、antenna60.\*：60 GHz 前端测量值）· `data/pa60.yaml`（pa60.\*：60 GHz PA 测量值）· `data/energy.yaml`（horowitz2014.\*、adc_survey.\*、deepscale.\*：运算能耗、ADC FoM、工艺缩放）· `data/adpll60.yaml`（adpll60.\*：60 GHz ADPLL 的 TDC 与带内相噪）· `data/atmosphere.yaml`（itu_p676.\*：大气衰减）· `data/radar_targets.yaml`（target_rcs.\*：雷达目标 RCS）· `data/tdc.yaml`（tdc.\*：TDC 自己的论文里的分辨率、单次精度）· `data/ucie.yaml`（ucie.\*）· `data/windows.yaml`（harris1978.\*：DFT 窗函数的品质因数）。
+  `data/liu2025.yaml`（liu2025.\*，Liu 2025 论文）· `data/ieee80211.yaml`（tgad_em.\*、ieee80211.\*、ieee80211ac / be / ay.\*、dmg.\*：802.11 条文、TGad 评估方法学、ITU-R M.2003）· `data/ieee802153c.yaml`（tg3c.\*：802.15.3c 的相噪与 PA 模型提案）· `data/regulatory.yaml`（fcc15255.\*）· `data/frontend60.yaml`（rx60.\*、isolation.\*、antenna60.\*：60 GHz 前端测量值）· `data/pa60.yaml`（pa60.\*：60 GHz PA 测量值）· `data/energy.yaml`（horowitz2014.\*、adc_survey.\*、deepscale.\*：运算能耗、ADC FoM、工艺缩放）· `data/adpll60.yaml`（adpll60.\*：60 GHz ADPLL 的 TDC 与带内相噪）· `data/atmosphere.yaml`（itu_p676.\*：大气衰减）· `data/radar_targets.yaml`（target_rcs.\*：雷达目标 RCS）· `data/tdc.yaml`（tdc.\*：TDC 自己的论文里的分辨率、单次精度）· `data/ucie.yaml`（ucie.\*）· `data/windows.yaml`（harris1978.\*：DFT 窗函数的品质因数）。
   新领域开新文件，并在 `tests/test_iron_rules.py::FILE_PREFIXES` 登记它的前缀。
 - `src/spec_sources/legacy_keys/<库>.yaml`：某个消费方的旧键名 → 本库键名，给它的垫片用（现在只有 d2d_link）。
 - `consumers.yaml`（根）：被下游读取的条目登记。`keys.lock`（根）：发布过的每个键的账本。
@@ -51,7 +51,7 @@
 ## 本仓库特有的硬规矩
 
 - **`src/spec_sources/` 单独拷出去就要能用**：只依赖 PyYAML，只用相对导入，数据挨着代码找。消费方 vendor 它、pin 完整 SHA、过 `vendor_check --strict`（`test_vendored_copy.py` 从临时拷贝里 import 并运行）。
-- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。核实后改成 spec 的条目列在 `VERIFIED`（值与单位仍等于源表）。原文清单与读书笔记在 `cairn/Reference/README.md`。
+- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。核实后改成 spec 的条目列在 `VERIFIED`（值与单位仍等于源表）；原文与源表不同、按原文改了值的列在 `CORRECTED`（旧值 → 新值）。原文清单与读书笔记在 `cairn/Reference/README.md`。
 - **不改消费方的仓库**：需要它们做的写进 ROADMAP 的"报回上游"节，并在那个库开 issue（标题以"spec_sources 收件："开头；对方迁完在 issue 里回报，本库验收后关）。
 - 提交信息写为什么，带实测数字。在 `feat/*` 分支上开 PR 合 main。
 

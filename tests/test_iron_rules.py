@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 111
+    assert len(table) == 119
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -138,6 +138,7 @@ FILE_PREFIXES = {
     "atmosphere.yaml": {"itu_p676"},
     "energy.yaml": {"horowitz2014", "adc_survey", "deepscale"},
     "frontend60.yaml": {"rx60", "isolation", "antenna60"},
+    "ieee802153c.yaml": {"tg3c"},
     "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg"},
     "liu2025.yaml": {"liu2025"},
     "pa60.yaml": {"pa60"},
@@ -230,7 +231,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 61, "survey": 40, "assumed": 0, "derived": 10}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 90, "survey": 19, "assumed": 0, "derived": 10}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

@@ -43,7 +43,11 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "target_rcs.iso19206_3_car_rear_far_lower_dbsm", "target_rcs.trihedral_peak",
        # milestone 2 batch 4, read in Harris, Proc. IEEE 1978, Table I
        "harris1978.rect", "harris1978.hann", "harris1978.hamming", "harris1978.exact_blackman",
-       "harris1978.blackman"}
+       "harris1978.blackman",
+       # issue #26 (mmw60_trx): Liu 2025's journal version and the two IEEE 802.15 documents its [15] points to
+       "liu2025.table1_idft_period_s", "liu2025.table1_idft_size", "liu2025.cfo_algorithm_statement",
+       "liu2025.mlo_bf_training_statement", "tg3c.pn_model", "tg3c.pn_psd0_examples_dbchz",
+       "tg3c.pa_modified_rapp_shape", "tg3c.pa_ghorbani_nec_gaas"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -57,9 +61,35 @@ VERIFIED.update({k: "0.4.0 (Hot Chips 2023 UCIe tutorial; UCIe white paper 2022)
     "ucie.standard.bump_pitch_um", "ucie.standard.reach_mm", "ucie.standard.module_width_lanes",
     "ucie.advanced.bump_pitch_um", "ucie.advanced.reach_mm", "ucie.advanced.module_width_lanes",
     "ucie.advanced.lane_repair")})
+# issue #26: read in Liu 2025's journal version (IEEE Commun. Mag. 63(3), 2025); the source table read arXiv v1 / v2
+VERIFIED.update({k: "issue #26 (Liu 2025, IEEE Commun. Mag. 63(3))" for k in (
+    "liu2025.mcs_list", "liu2025.ppdu_format", "liu2025.channel_model", "liu2025.antennas", "liu2025.carrier_hz",
+    "liu2025.packet_bytes", "liu2025.xo_ppm_tx", "liu2025.xo_ppm_rx", "liu2025.cfo_max_hz", "liu2025.stf_capture_hz",
+    "liu2025.ltf_capture_hz", "liu2025.scs_threshold_hz", "liu2025.k_threshold", "liu2025.pn_f_pole_hz",
+    "liu2025.pn_f_zero_hz", "liu2025.pn_psd0_dbchz", "liu2025.pa_obo_db", "liu2025.mmwave_spectrum_ghz")})
+#: migrated entries read in the original, which disagrees with the source table: survey -> spec, and the
+#: value (or unit) changed to the original's -- {key: {field: (source value, value now)}}
+CORRECTED = {
+    # issue #26: the journal's Table 1 bases all three columns on 802.11ac (arXiv's 16x column was 802.11be)
+    "liu2025.table1_scs_hz": {"value": ({4: 1.25e6, 8: 2.5e6, 16: 1.25e6}, {4: 1.25e6, 8: 2.5e6, 16: 5.0e6})},
+    "liu2025.table1_bandwidth_hz": {"value": (
+        {4: [80e6, 160e6, 320e6, 640e6], 8: [160e6, 320e6, 640e6, 1280e6], 16: [320e6, 640e6, 1280e6, 2560e6, 5120e6]},
+        {4: [80e6, 160e6, 320e6, 640e6], 8: [160e6, 320e6, 640e6, 1280e6], 16: [320e6, 640e6, 1280e6, 2560e6]})},
+    # issue #26: the journal tracks the phase at the receiver; arXiv said no estimation / compensation for CFO and PN
+    "liu2025.receiver_cfo_statement": {"value": (
+        "refrained from using estimation and compensation algorithms for CFO and PN",
+        "refrained from using estimation and compensation algorithms for CFO and used phase tracking"
+        " only on the receiving end")},
+}
 #: fields changed on the way in: {key: {field: (old text, new text)}}; each is
 #: a replacement applied to the source's field and nothing else
 CHANGED = {
+    # issue #26: still survey -- the journal version has no "specified PER (10^-2)" sentence
+    "liu2025.per_target": {"note": (
+        "未核实。本库 external_check 的比较点。",
+        "未核实。本库 external_check 的比较点。刊出版（2026-11-15 读）正文没有"
+        "'specified PER (10^-2)'这句，Simulation Results 只说"
+        "'the SNR required to achieve the same PER'；Fig. 3 纵轴 10^0–10^-3。")},
     # iron rule 5: the note spelled the tag word with a colon (d2d_link's grep counted 0 spec lines as 1)
     "ucie.rx_eye_width_ui@24-32": {"note": ("改 source: spec 或删去", "改成 spec 标签或删去")},
     # 0.2.0: cross-references to renamed keys follow the rename
@@ -114,6 +144,15 @@ def test_each_fixture_names_its_repo_and_full_sha(name):
 
 
 def _check_equal(new_key: str, src: dict, dst: dict):
+    if new_key in CORRECTED:
+        assert src["source"] == "survey" and dst["source"] == "spec" and dst["quote"] and dst["section"], new_key
+        for field in ("value", "unit"):
+            if field in CORRECTED[new_key]:
+                old, new = CORRECTED[new_key][field]
+                assert src[field] == old and dst[field] == new and new != old, (new_key, field)
+            else:
+                assert dst[field] == src[field], (new_key, field)
+        return
     if new_key in VERIFIED:
         assert src["source"] == "survey" and dst["source"] == "spec" and dst["quote"] and dst["section"], new_key
         assert (dst["value"], dst["unit"]) == (src["value"], src["unit"]), new_key
@@ -163,7 +202,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 32 == 111
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 40 == 119
     assert set(CHANGED) <= set(ss.all_entries())
 
 

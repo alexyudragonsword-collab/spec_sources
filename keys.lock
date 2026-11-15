@@ -81,6 +81,10 @@ liu2025.k_threshold_ltf_only  added=0.2.0
 derived.cfo_liu2025_hz  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.k_threshold_stf  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.k_threshold_ltf_only  added=0.1.0  aliased=0.2.0  retired=0.3.0
+liu2025.table1_idft_period_s  added=unreleased
+liu2025.table1_idft_size  added=unreleased
+liu2025.cfo_algorithm_statement  added=unreleased
+liu2025.mlo_bf_training_statement  added=unreleased
 # pa60.yaml
 pa60.asada_eumc2011  added=0.1.0
 pa60.wu_asscc2012  added=0.1.0
@@ -143,3 +147,8 @@ harris1978.hann  added=unreleased
 harris1978.hamming  added=unreleased
 harris1978.exact_blackman  added=unreleased
 harris1978.blackman  added=unreleased
+# ieee802153c.yaml
+tg3c.pn_model  added=unreleased
+tg3c.pn_psd0_examples_dbchz  added=unreleased
+tg3c.pa_modified_rapp_shape  added=unreleased
+tg3c.pa_ghorbani_nec_gaas  added=unreleased

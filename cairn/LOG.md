@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-15 · #26：Liu 2025 刊出版与 802.15-06-0477 / 0396（feat/issue26-liu-journal-tg3c，未发布）
+
+- mmw60_trx 在本库开了 #26。用户从 Xplore 下载刊出版（7 页）；两份 802.15 文件从 mentor.ieee.org 取（17 页、15 页）。公式页与两张表渲染出来读；引文逐段对过文字层（× 是 Symbol 字体的私用码，渲染为 ×）。
+- `liu2025.*` 29 条：18 条 VERIFIED（值不变）；3 条 CORRECTED：16× 子载波间距 1.25 → 5 MHz、16× 带宽去掉 5120 MHz、receiver 语句改成"CFO 不补偿、接收端做相位跟踪"；per_target 仍 survey（刊出版无那句）；新增 4 条（IDFT 周期 / 点数、两段原文语句）。
+- `tg3c.*` 4 条：相噪模型 −87 dBc/Hz、1 MHz、100 MHz（PSD(∞) 按式 −127）；示例档 −96 / −93 / −90 / −87；修正 Rapp 只有公式；NEC GaAs PA 的 Ghorbani 参数与输入 P1dB −11 dBm。
+- 发现：0396 印的 Ghorbani 公式分子缺指数（照印的算 u = 0.3 V 时 AM-PM −644°，加上指数 −17.4°、AM-AM 1.43 V，与图符）。mmw60 猜 TGad 参数与它同源：不支持（TGad 0.58 V 饱和、+13.9°；NEC 约 1.5 V、−17.4°）。
+- 测试机制：`tests/test_extraction.py` 新增 CORRECTED（迁入条目按原文改值：旧值 → 新值）；`test_reader.py` 的未核实示例改用 `liu2025.per_target`。
+- 共享表 111 → 119 条：spec 90、survey 19、derived 10。测试 92 个（90 通过，2 跳过）。mmw60 需重新 pin。
+
 ## 2026-11-14 · 验收 fmcw_radar#19：最后 6 条 survey 了结（feat/accept-fmcw-19）
 
 - PR #24 合并（main `f87cc9b`），以它为 PIN 开了 fmcw [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19)。fmcw 回报合并 `4495310`（0.2.13）。

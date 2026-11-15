@@ -92,7 +92,9 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - 🌐 OIF-CEI-112G-LINEAR-PAM4 实施协议（www.oiforum.com，免费）：CTLE 档位表 Table 29-2 / 29-8。
 
 ### 第 7 批 · 其余 survey（mmw60_trx 带来的）
-- 📥 X. Liu et al., "Wi-Fi 8: Embracing the Millimeter-Wave Era", IEEE Commun. Mag., Mar. 2025（刊出版；arXiv v1 / v2 已读）。
+- ✅ X. Liu et al., "Wi-Fi 8: Embracing the Millimeter-Wave Era", IEEE Commun. Mag. 63(3), pp. 69–75, Mar. 2025（刊出版，doi 10.1109/MCOM.002.2400059；2026-11-15 用户从 Xplore 下载，本地 `liu_commag2025_wifi8.pdf`，7 页，文字层可用、两张表渲染核对过）：TABLE 1（p. 72）、Simulation Configuration 与 TABLE 2（p. 73）、Simulation Results（pp. 73–74）、Discussion（p. 74）→ `liu2025.*` 21 条改 spec（3 条改了值），新收 4 条。mmw60_trx 在本库 #26 里请求。
+- ✅ IEEE 802.15-06-0477-01-003c，Choi et al.（NICT、NEC、NTT、Panasonic），"RF impairment models for 60GHz-band SYS/PHY simulation"，2006-11（mentor.ieee.org 公开，本地 `ieee802_15_06_0477r1_rf_impairment.pdf`，17 页；Liu 的 [15]）：slide 5 修正 Rapp（无参数）、slide 9 相噪模型（−87 dBc/Hz、1 MHz、100 MHz）、slide 10 四档示例、slide 15 转引 802.11n 比较准则 IM1 / IM4 → `tg3c.*`。
+- ✅ IEEE 802.15-06-0396-01-003c，Choi et al.（NICT、NEC、NTT），"Behavioral model of 60GHz-band power amplifier for SYS/PHY evaluation"，2006-09（mentor.ieee.org 公开，本地 `ieee802_15_06_0396r1_pa_model.pdf`，15 页）：slide 10 NEC GaAs pHEMT PA 的 Ghorbani 参数（印的公式分子少了指数）、slide 8 输入 P1dB −11 dBm → `tg3c.pa_ghorbani_nec_gaas`。
 - 📥 K. Okada et al., "Full Four-Channel 6.3-Gb/s 60-GHz CMOS Transceiver With Low-Power Analog and Digital Baseband Circuitry", IEEE JSSC 48(1), 2013（`antenna60.okada2013_dbi`；东工大实验室站点上可能有，先在那里找）。
 - 📥 "A 64 dB Gain 60 GHz Receiver with 7.1 dB Noise Figure for 802.11ad Applications in 90 nm CMOS", ISCAS 2015（`rx60.comm_iscas2015`）。
 - 📥 M. Horowitz, "1.1 Computing's energy problem (and what we can do about it)", ISSCC 2014（`horowitz2014.*`）。
@@ -103,7 +105,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 
 ## 合计
 
-- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），又下 2 篇（[9] [11]），又下 1 篇（Harris），还剩 19 篇（含因许可不能用的 UCIe 规范）。
+- 📥 要用户下载 27 篇：第 1 批 13 篇、UCIe 规范 1 篇、Harris 与人体 RCS 2 篇、802.3dj / 802.3db 2 篇、第 7 批 9 篇。另有 3 篇可选（Das Sharma、AEÜ、SAE）。2026-11-13 已下 4 篇（第 1 批 [1] [2] [6] [13]），2026-11-14 又下 1 篇（[15]），又下 2 篇（[9] [11]），又下 1 篇（Harris），2026-11-15 又下 1 篇（Liu 刊出版），还剩 18 篇（含因许可不能用的 UCIe 规范）。
 - 🌐 放行站点后本库自己取 7 篇：TU Delft、Hot Chips、JRC、NHTSA、专利、OIF、eCFR。（TU Delft 那篇实为只有元数据，2026-11-14 由用户从 Xplore 下载）
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 

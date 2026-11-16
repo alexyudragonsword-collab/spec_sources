@@ -141,6 +141,8 @@ consumers:
 #              → Liu 刊出版与 tg3c（7aae876，2026-11-15），文件加了 ieee802153c.yaml。这次是它在本库开的 spec_sources#26，
 #              回报在那里；issue 一栏写它重新 pin 的 PR mmw60_trx#37。
 #              → 802.11ad / ay 单信道 PHY（3123b65，2026-11-16），文件不变。请求在本库 spec_sources#29，issue 一栏写 mmw60_trx#49。
+#              → 0.5.0、第 7 批与 DMG / EDMG 的码、控制 PHY 与扇区扫描（76ee72a，2026-11-16），文件不变。请求在本库
+#              spec_sources#33，issue 一栏写 mmw60_trx#60。
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 #              → 第 4 批完（f87cc9b，fmcw_radar#19，2026-11-14），文件加了 windows.yaml
@@ -149,9 +151,9 @@ consumers:
 vendored:
 
   - repo: mmw60_trx
-    at: 29eb6fed3c8345fed2aa94d98322e5d749ae74b8
-    pin: 3123b65072d21d374da518a0b2a81d97232f56b7
-    issue: "mmw60_trx#49"
+    at: 53a9a16813312781c0a4566867452a5880fb487f
+    pin: 76ee72a008e3f5ad65fcaa6119643914d0328622
+    issue: "mmw60_trx#60"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/ieee802153c.yaml, data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 

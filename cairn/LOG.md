@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · 验收 #33：mmw60_trx 重新 pin 到 76ee72a（feat/accept-issue33）
+
+- PR #36 合并（main `76ee72a`），在 #33 给了 PIN，一次 pin 齐 0.5.0、第 7 批与 #33 的 12 条。mmw60_trx 在 mmw60_trx#60 合并 `53a9a16`（pin 的提交 `3ea11be`），接线在 #61（`50f30df`）。
+- 复核：9 个 vendor 文件去两行头后与 `76ee72a` 逐字节相同（`3ea11be`、`50f30df` 都是）；本地 `vendor_check --strict` 9 个 verbatim（241 个因缺 sibling 跳过）。指纹 `23d0130` 对 `3ea11be` 69 个值逐位相同（`MMW60_NO_JIT=1`）。合并表 180 → 193，未核实 20 → 9。
+- 动的数只在功耗列（指纹不覆盖）：ADC 功耗 ×1.0116，它报 pJ/bit 涨 0.1–1 %（同台表最好一行 592 → 596）。
+- #61 按键读新条目，本地表没抄数，不按条登记。它的注释记了控制 PHY 的码字切分规则与 EDMG PPDU 前导长度本库没有（扫描时长取下限），记进 ROADMAP。
+- **更正**：#33 回复里写它 vendor 的文件 survey "14 → 3"，漏了 `frontend60.yaml` 的 2 条，应为 16 → 5（少 11 条不变）。
+- `consumers.yaml`：mmw60_trx pin `3123b65` → `76ee72a`、at `53a9a16`，文件仍是 9 个；issue 一栏写 mmw60_trx#60。数据未动，共享表 146 条。
+
 ## 2026-11-16 · `dmg.phy_timing` 的 5 个时间常数被读成字符串（feat/phy-timing-floats，未发布）
 
 - PR #35 合并（main `af582c1`）。给 mmw60 写 PIN 前逐键打印新条目，发现 `rifs_s`、`sifs_s`、`sbifs_s`、`brpifs_s`、`slot_s` 读出来是 `'1e-06'` 这样的字符串：PyYAML 按 YAML 1.1 解析，指数式没有小数点就不算浮点数。`data_preamble_s: 1.745e-06` 有小数点，没事。

@@ -8,8 +8,22 @@
 `reader.py` 没动。
 
 - fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
-- mmw60_trx 已在 mmw60_trx#37 里 pin 到 `7aae876`、多 vendor 了 `data/ieee802153c.yaml`（#26，已验收，见下）。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的 `data/ieee80211.yaml` 新增 14 条 `dmg.*` / `edmg.*`，`ieee80211ay.channel_centres_ghz` 与 `dmg.sensitivity_assumptions` 从 survey 改成 spec（值不变）。它在 mmw60_trx#37 里 pin 到 `7aae876`（#26，已验收，见下）。
 - d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### #29（mmw60_trx 请求）：802.11ad（DMG）/ 802.11ay（EDMG）单信道 PHY 的数
+- **IEEE 802.11-2024 不能用**：用户经 IEEE GET 计划下载后，许可条款禁止把它输入 AI 系统（与 UCIe 规范同类）。本库不读标准，只读公开文件，再请用户对照标准核对（用户只回报哪几行对不上，没把标准内容发给本库）；2026-11-16 核对全部一致。
+- 读的公开文件（PDF 只放本地）：TGad 采纳的完整提案规范文本 IEEE 802.11-10/0433r2；R&S 白皮书 1MA220_3e（2017，Table 4-1 转引 IEEE 802.11-2016 第 20 章；为取它在环境里放行了 scdn.rohde-schwarz.com，用户批准）；TGay 的 11-17/0597r1、11-17/0628r1、11-17/0909r0、11-15/1358r9（SFD）、11-18/0713r3、11-18/1152r0。采纳它们的动议号读自 TGay 动议汇编 11-17/0186r37（2020-12，最终版）。
+- 新增 14 条（12 spec、2 derived）：
+  - DMG：`dmg.phy_params`（2.64 GHz / 1.76 GHz、336 + 16 + 3、GI 48.4 ns、导频 ±10…±150、SC 块 64 + 448）、`dmg.sc_mcs`（MCS 1–12）、`dmg.ofdm_mcs`（13–24）、`dmg.tx_evm_db`（MCS 0–24 与扩展 9.1、12.1–12.6）、`dmg.rx_sensitivity_dbm`（MCS 0–31，判据 PER 1% / 4096 字节）；
+  - EDMG（NCB = 1）：`edmg.ofdm_params`（GI 18.18 / 36.36 / 72.72 ns）、`edmg.ofdm_pilot_tones_ncb1`（导频位置随信道变，含信道 1–8 的中心频率与 DC 偏移）、`edmg.ofdm_pilot_values_ncb1`、`edmg.ofdm_mcs`（MCS 1–20 与 EVM）、`edmg.sc_params`（1.76 GHz、512 码片块、GI 32 / 64 / 128）、`edmg.sc_mcs`（MCS 1–21 与 EVM）、`edmg.sc_mcs_variants`（π/2-8PSK、π/2-64NUC）；
+  - derived：`edmg.ofdm_rate_mbps`、`edmg.sc_rate_mbps`（单流速率，短 / 普通 / 长 GI），在 `RECOMPUTE` 里由上面的条目复算；`test_rule2` 的比较改成表格逐列比。
+- 迁入的两条 survey 改成 spec（`VERIFIED`，值不变）：`ieee80211ay.channel_centres_ghz`（11-17/0597r1 Table 2）、`dmg.sensitivity_assumptions`（11-10/0433r2 21.3.3.8 原句"assumes 5 dB implementation loss and 10 dB noise factor"，迁入时是二手转引）。
+- **发现**：
+  - 2010 年的 TGad 提案文本与 2016 年标准（经 R&S）的 EVM 不同：SC MCS 1–12 几乎每档都改了，OFDM MCS 22、24 两档也改了；灵敏度只差 MCS 2（−67 → −66）。本库取 R&S 的值，note 记旧值。
+  - EDMG 的 MCS 表在 TGay 里改过两次：OFDM 从 19 档（SQPSK / QPSK）到 20 档（DCM BPSK / DCM QPSK，加 64-QAM 1/2），SC 从 20 档到 21 档（加 π/2-BPSK 7/8 与 64-QAM 1/2）。本库按最后被采纳的 2018 年文本。
+  - EDMG 的接收灵敏度在公开材料里没找到：TGay 有评论（CID 1620）要求补上灵敏度与 EVM，被采纳的解决方案 18/0713r3 只补了 EVM。没有建条目。
+- 共享表 133 条：spec 104、survey 17、derived 12。账本新增 14 个键，记 `added=unreleased`。
 
 ### 验收：#26（mmw60_trx 重新 pin 到 `7aae876`）
 - mmw60_trx 在 mmw60_trx#37 合并 `121b612`（重新 pin 的提交 `4d018e5`），vendor 9 个文件，比原来多了 `data/ieee802153c.yaml`。9 个文件去掉出处头后与 `7aae876` 逐字节相同，本库本地跑它的 `vendor_check --strict`：这 9 个都是 verbatim（另 241 个因本地缺它的其它 sibling 跳过）；它自己带上三个 sibling 跑：250 verbatim、0 skipped。

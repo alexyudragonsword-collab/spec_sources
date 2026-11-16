@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · #29：802.11ad / ay 单信道 PHY 的数，从公开提案建（feat/issue29-dmg-edmg，未发布）
+
+- mmw60_trx 开了 #29。用户下载 IEEE 802.11-2024 后发现许可禁止输入 AI → 不读标准；改读 mentor 上 TGad / TGay 的公开提案与 R&S 1MA220（放行 scdn.rohde-schwarz.com，用户批准），列成 A–E 五组请用户对照标准核对：全部一致。
+- 出处：TGad 11-10/0433r2（采纳的规范文本）；R&S 1MA220_3e Table 4-1（引 802.11-2016）；TGay 11-17/0597r1（动议 #208）、0628r1（#220）、0909r0（#262）、11-15/1358r9（SFD）、11-18/0713r3（#451）、1152r0（#489），动议号读自 11-17/0186r37。
+- 新增 14 条：`dmg.*` 5 条（参数、SC / OFDM MCS、EVM、灵敏度）、`edmg.*` 9 条（OFDM 参数、导频位置与值、OFDM MCS 20 档、SC 参数、SC MCS 21 档、两种变体，2 张速率表为 derived）。速率复算：OFDM MCS 1 = 792.00 / 729.47 / 630.00 Mbps，SC MCS 21 = 8662.50 / 8085.00 / 6930.00，与提案印的逐档相符。
+- 改成 spec（值不变）：`ieee80211ay.channel_centres_ghz`、`dmg.sensitivity_assumptions`（10 dB NF、5 dB 实现损耗，一手原句）。
+- 发现：2010 提案的 SC EVM 后来几乎全改（MCS 2 −9 → −7 …），OFDM 22 / 24 改为 −22 / −26；灵敏度只差 MCS 2（−67 → −66）。EDMG 的 MCS 表在 TGay 里改过两次。EDMG 灵敏度公开材料里没有（CID 1620 的解决只补了 EVM）。
+- 共享表 119 → 133 条：spec 104、survey 17、derived 12。测试 92 个（90 通过，2 跳过）。mmw60 需重新 pin。
+
 ## 2026-11-15 · 验收 #26：mmw60_trx 重新 pin 到 7aae876（feat/accept-issue26）
 
 - PR #27 合并（main `7aae876`），在 #26 给了新 PIN。mmw60_trx 在 mmw60_trx#37 合并 `121b612`（重新 pin 的提交 `4d018e5`），回帖在 #26。

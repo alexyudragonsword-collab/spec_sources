@@ -2,11 +2,12 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。现在没有等对方回报的 issue（#26 已验收、由 mmw60_trx 关闭；d2d_link #2、fmcw_radar #19 已验收）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目（未发布），合并后给它新 PIN；其余没有等对方回报的 issue。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### mmw60_trx —— pin 在 `7aae876`，本库 #26 已验收（由它关闭）
+### mmw60_trx —— pin 在 `7aae876`，本库 #26 已验收（由它关闭）；#29 已建条目，待它重新 pin
+- #29（802.11ad / ay 单信道 PHY 的数）已建 14 条（未发布）。合并后在 #29 给它新 PIN：它要重新 pin（`data/ieee80211.yaml` 变了）。告诉它：EDMG 灵敏度在公开材料里没有；802.11-2024 因许可不能读，数都来自公开提案、用户对照标准核对过。按 #29 的约定，由它验收后关闭。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `f87cc9b`，#19 已验收；它的表里没有 survey 了
@@ -28,7 +29,7 @@
 - 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（📥，期刊论文不受规范许可约束）。
 - 第 5 批 · **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 - 第 6 批 · **Halo_Serdes #11 的 4 条条文**。
-- 第 7 批 · 其余 survey：`liu2025.per_target`（刊出版没有那句，要的话读 arXiv v1 原文核）、`fcc15255.*`、`ieee80211ay.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`、`dmg.sensitivity_assumptions`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
+- 第 7 批 · 其余 survey：`liu2025.per_target`（刊出版没有那句，要的话读 arXiv v1 原文核）、`fcc15255.*`、`ieee80211ac.n_sd` / `ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`（IEEE 802.11 标准本身因许可不能读，要从 mentor 上的公开提案找，做法同 #29）、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi`、能耗三组（`horowitz2014.*`、`adc_survey.*`、`deepscale.*`）。
 
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 
@@ -40,6 +41,8 @@
 - 若有库要 Wu 2019 JSSC 那颗 PLL 的实测数（不是 pllsim 的模型输出），为论文本身单开一条 survey / spec 条目；mmw60 的 `survey.clock_profile_wu19` 不搬。
 - **Harris 1978 表 I 有两行对不上自己的定义**（`harris1978.blackman`、`harris1978.exact_blackman` 的 note 有复算数）：Blackman 的 3-dB / 6-dB 宽偏大约 2 %，Exact Blackman 一行旁瓣、相干增益、带宽都与式 (31a) 的系数不符。有没有勘误可查 Nuttall, IEEE Trans. ASSP 29(1), 1981（📥）。有消费方要用 Exact Blackman 的数时再做。
 - `liu2025.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。
+
+- **EDMG 的接收灵敏度**：公开材料里没找到（TGay CID 1620 要求补，被采纳的 18/0713r3 只补了 EVM）。若 mmw60_trx 要按 EDMG 灵敏度换算距离，先在 mentor 上找后来的评论解决文件；找不到就由它在本地写 assumed（例如沿用 DMG 的同调制档）。
 
 ## 开放问题
 

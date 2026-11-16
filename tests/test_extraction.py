@@ -47,7 +47,11 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        # issue #26 (mmw60_trx): Liu 2025's journal version and the two IEEE 802.15 documents its [15] points to
        "liu2025.table1_idft_period_s", "liu2025.table1_idft_size", "liu2025.cfo_algorithm_statement",
        "liu2025.mlo_bf_training_statement", "tg3c.pn_model", "tg3c.pn_psd0_examples_dbchz",
-       "tg3c.pa_modified_rapp_shape", "tg3c.pa_ghorbani_nec_gaas"}
+       "tg3c.pa_modified_rapp_shape", "tg3c.pa_ghorbani_nec_gaas",
+       # issue #29 (mmw60_trx): DMG / EDMG PHY from public TGad / TGay contributions and R&S 1MA220
+       "dmg.phy_params", "dmg.sc_mcs", "dmg.ofdm_mcs", "dmg.tx_evm_db", "dmg.rx_sensitivity_dbm",
+       "edmg.ofdm_params", "edmg.ofdm_pilot_tones_ncb1", "edmg.ofdm_pilot_values_ncb1", "edmg.ofdm_mcs",
+       "edmg.ofdm_rate_mbps", "edmg.sc_params", "edmg.sc_mcs", "edmg.sc_mcs_variants", "edmg.sc_rate_mbps"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -67,6 +71,10 @@ VERIFIED.update({k: "issue #26 (Liu 2025, IEEE Commun. Mag. 63(3))" for k in (
     "liu2025.packet_bytes", "liu2025.xo_ppm_tx", "liu2025.xo_ppm_rx", "liu2025.cfo_max_hz", "liu2025.stf_capture_hz",
     "liu2025.ltf_capture_hz", "liu2025.scs_threshold_hz", "liu2025.k_threshold", "liu2025.pn_f_pole_hz",
     "liu2025.pn_f_zero_hz", "liu2025.pn_psd0_dbchz", "liu2025.pa_obo_db", "liu2025.mmwave_spectrum_ghz")})
+# issue #29: read in public IEEE 802.11 contributions (the standard itself may not be input to AI);
+# the user checked them against IEEE 802.11-2024
+VERIFIED.update({k: "issue #29 (TGay 11-17/0597r1; TGad 11-10/0433r2)" for k in (
+    "ieee80211ay.channel_centres_ghz", "dmg.sensitivity_assumptions")})
 #: migrated entries read in the original, which disagrees with the source table: survey -> spec, and the
 #: value (or unit) changed to the original's -- {key: {field: (source value, value now)}}
 CORRECTED = {
@@ -202,7 +210,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 40 == 119
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 54 == 133
     assert set(CHANGED) <= set(ss.all_entries())
 
 

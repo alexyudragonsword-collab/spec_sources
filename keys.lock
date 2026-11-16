@@ -52,6 +52,20 @@ survey.eht_tone_mapper_dtm  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.ldpc_ppdu_encoding_thresholds  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.dmg_sensitivity_assumptions  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.rapp_p1db_below_psat_db  added=0.1.0  aliased=0.2.0  retired=0.3.0
+dmg.phy_params  added=unreleased
+dmg.sc_mcs  added=unreleased
+dmg.ofdm_mcs  added=unreleased
+dmg.tx_evm_db  added=unreleased
+dmg.rx_sensitivity_dbm  added=unreleased
+edmg.ofdm_params  added=unreleased
+edmg.ofdm_pilot_tones_ncb1  added=unreleased
+edmg.ofdm_pilot_values_ncb1  added=unreleased
+edmg.ofdm_mcs  added=unreleased
+edmg.ofdm_rate_mbps  added=unreleased
+edmg.sc_params  added=unreleased
+edmg.sc_mcs  added=unreleased
+edmg.sc_mcs_variants  added=unreleased
+edmg.sc_rate_mbps  added=unreleased
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0

@@ -19,7 +19,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 119
+    assert len(table) == 133
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -90,7 +90,35 @@ def _cfo(v):
 #: every derived entry recomputed from shared entries only (``v`` is the shared
 #: reader's value()): a derived entry that needs a library's own choice cannot
 #: be written here, so it cannot live in the shared tables.  (value, abs tolerance)
+_CODE_RATE = {"1/2": 1 / 2, "5/8": 5 / 8, "3/4": 3 / 4, "13/16": 13 / 16, "7/8": 7 / 8}
+
+
+def _edmg_ofdm_rates(v) -> dict:
+    """Per-stream EDMG OFDM rates, NCB = 1: N_SD x N_BPSC x R / T_SYM, T_SYM = (N_DFT + GI samples) / Fs."""
+    p, m = v("edmg.ofdm_params"), v("edmg.ofdm_mcs")
+    out = {"mcs": m["mcs"]}
+    for gi in ("short", "normal", "long"):
+        n_gi = round(p[f"gi_{gi}_s"] * p["fs_hz"])
+        out[f"{gi}_gi_mbps"] = [p["n_sd"] * b * _CODE_RATE[c] * p["fs_hz"] / (p["n_dft"] + n_gi) / 1e6
+                                for b, c in zip(m["n_bpsc"], m["code_rate"], strict=True)]
+    return out
+
+
+def _edmg_sc_rates(v) -> dict:
+    """Per-stream EDMG SC rates, NCB = 1: chip rate x (block - GI) / block x N_CBPS x R / repetition."""
+    p, m = v("edmg.sc_params"), v("edmg.sc_mcs")
+    out = {"mcs": m["mcs"]}
+    for gi in ("short", "normal", "long"):
+        keep = (p["block_chips"] - p[f"gi_{gi}_chips"]) / p["block_chips"]
+        out[f"{gi}_gi_mbps"] = [p["chip_rate_hz"] * keep * b * _CODE_RATE[c] / r / 1e6
+                                for b, c, r in zip(m["n_cbps"], m["code_rate"], m["repetition"], strict=True)]
+    return out
+
+
 RECOMPUTE = {
+    # EDMG single-channel data rates per spatial stream (#29), rounded to 0.01 Mbps in the table
+    "edmg.ofdm_rate_mbps": (_edmg_ofdm_rates, 0.006),
+    "edmg.sc_rate_mbps": (_edmg_sc_rates, 0.006),
     # ISO 19206-3 rear band, far range: its lower edge
     "target_rcs.iso19206_3_car_rear_far_lower_dbsm": (
         lambda v: v("target_rcs.iso19206_3_car_rear")["p_far_dbsm"]
@@ -121,6 +149,11 @@ def test_rule2_every_derived_entry_follows_its_formula_from_shared_entries():
             want = want["db_per_km"]
         elif key == "itu_p676.gamma_o_dry_sea_level_peak":
             want = [want["f_ghz"], want["db_per_km"]]
+        if isinstance(want, dict):                          # a table: compare column by column
+            assert set(got) == set(want), key
+            for col in want:
+                assert got[col] == pytest.approx(want[col], abs=tol), (key, col)
+            continue
         assert got == pytest.approx(want, abs=tol), key
 
 
@@ -139,7 +172,7 @@ FILE_PREFIXES = {
     "energy.yaml": {"horowitz2014", "adc_survey", "deepscale"},
     "frontend60.yaml": {"rx60", "isolation", "antenna60"},
     "ieee802153c.yaml": {"tg3c"},
-    "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg"},
+    "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg", "edmg"},
     "liu2025.yaml": {"liu2025"},
     "pa60.yaml": {"pa60"},
     "radar_targets.yaml": {"target_rcs"},
@@ -231,7 +264,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 90, "survey": 19, "assumed": 0, "derived": 10}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 104, "survey": 17, "assumed": 0, "derived": 12}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

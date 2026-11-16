@@ -3,13 +3,15 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
-## 未发布
+## 0.5.0 —— 里程碑 2 续：车辆与角反射器、窗函数、Liu 2025 刊出版、802.15.3c 模型与 802.11ad / ay 的 PHY 数（2026-11-16）
 
-`reader.py` 没动。
+版本号随 `__init__.py` 变；`reader.py` 没动。共享表 133 条（0.4.0 是 102 条）：spec 104、survey 17、derived 12。
 
-- fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
-- mmw60_trx 已在 mmw60_trx#49 里 pin 到 `3123b65`（#29，已验收，见下）。
-- d2d_link（`bbc0ccb`）vendor 的文件没动。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里只有 `__init__.py`（版本号）变了；它的数据文件在 #29 里已 pin 到 `3123b65`，之后没动。
+- fmcw_radar（`f87cc9b`，#19）、d2d_link（`bbc0ccb`，#2）vendor 的文件在各自 pin 之后都没动，也都不 vendor `__init__.py`，不用为 0.5.0 重新 pin。三个库的数据都已在各自的 issue 里验收。
+- 新数据文件：`data/windows.yaml`（`harris1978.*`）、`data/ieee802153c.yaml`（`tg3c.*`）。账本新增 31 个键（车辆与角反射器 4、窗函数 5、Liu 2025 刊出版 4、tg3c 4、dmg 5、edmg 9），记 `added=0.5.0`。
+- 测试机制：`tests/test_extraction.py` 新增 `CORRECTED`（迁入条目按原文改值）；`RECOMPUTE` 支持表格逐列比。
+- 许可：IEEE 802.11-2024（及 GET 计划里同类的 IEEE 标准）禁止输入 AI，与 UCIe 规范一样不读；802.11 的数改从 mentor.ieee.org 的公开提案取，用户对照标准核对。
 
 ### 验收：#29（mmw60_trx 重新 pin 到 `3123b65`）
 - mmw60_trx 在 mmw60_trx#49 合并 `29eb6fe`（重新 pin 的提交 `2400c5b`，只做 pin、没接线）。9 个 vendor 文件去掉出处头后与 `3123b65` 逐字节相同，本库本地跑它的 `vendor_check --strict` 这 9 个都是 verbatim；它带齐 sibling 是 250 verbatim、0 skipped。

@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · 发布 0.5.0（feat/release-0.5.0）
+
+- PR #31 已合并（main `bebefc5`）。用户定：按顺序做——先发版，再做第 7 批，最后是要下载原文的几项。
+- 0.5.0 收进 0.4.0 之后的：第 4 批完（车辆、角反射器、窗函数，fmcw #19 验收）、#26（Liu 刊出版与 tg3c，mmw60 验收）、#29（dmg / edmg，mmw60 验收）。共享表 102 → 133 条（spec 53 → 104，survey 40 → 17，derived 9 → 12）。
+- 改了 `__init__.py` 与 `pyproject.toml` 的版本号；CHANGELOG"未发布"一节改成 0.5.0；`keys.lock` 31 个键 `added=unreleased` → `added=0.5.0`（只换键行，文件头说明不动）。
+- 只有 mmw60_trx 要为 0.5.0 重新 pin（只有 `__init__.py`）；fmcw、d2d 的文件在各自 pin 之后没动。
+- 测试 92 个（90 通过，2 跳过）。
+
 ## 2026-11-16 · 验收 #29：mmw60_trx 重新 pin 到 3123b65（feat/accept-issue29）
 
 - PR #30 合并（main `3123b65`），在 #29 给了新 PIN。mmw60_trx 在 mmw60_trx#49 合并 `29eb6fe`（pin 的提交 `2400c5b`，只做 pin）。

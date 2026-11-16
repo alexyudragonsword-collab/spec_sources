@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · `dmg.phy_timing` 的 5 个时间常数被读成字符串（feat/phy-timing-floats，未发布）
+
+- PR #35 合并（main `af582c1`）。给 mmw60 写 PIN 前逐键打印新条目，发现 `rifs_s`、`sifs_s`、`sbifs_s`、`brpifs_s`、`slot_s` 读出来是 `'1e-06'` 这样的字符串：PyYAML 按 YAML 1.1 解析，指数式没有小数点就不算浮点数。`data_preamble_s: 1.745e-06` 有小数点，没事。
+- 改写成 `1.0e-06`、`3.0e-06`、`2.0e-05`，值不变。全表扫一遍，别处没有这种写法（`'8.6'` 这类是有意加引号的论文号，`edmg.sc_encoding` 的 `"624/672"` 照原文成文本）。
+- 新测试 `test_no_number_in_exponent_form_was_read_as_text`：旧数据上失败（5 处），改后通过。测试 94 个（92 通过，2 跳过）。条目数不变，仍 146。
+- 键还没发布（`added=unreleased`），没有消费方读过它们，不用登记；mmw60 的 PIN 等这个合并后再给。
+
 ## 2026-11-16 · #33：DMG / EDMG 的 LDPC、编码、扩展 MCS、控制 PHY 与扇区扫描（feat/issue33-ldpc-ctrl-ssw，未发布）
 
 - PR #34 合并（main `559639f`）。mmw60 开了 #33（4 项）。用户定按 3 → 4 → 1 → 2 做，mmw60 的重新 pin 并进 #33 的回复。

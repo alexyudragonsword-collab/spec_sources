@@ -57,7 +57,9 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        # issue #33 (mmw60_trx): DMG / EDMG LDPC codes, encoding, extended SC MCS, control PHY and sector sweep
        "dmg.ldpc_matrices", "dmg.data_encoding", "dmg.sc_mcs_extended", "dmg.ldpc_r7_8_punctured",
        "dmg.control_phy", "dmg.control_phy_rate_bps", "dmg.phy_timing", "dmg.ssw_frame",
-       "edmg.ldpc_672_r7_8", "edmg.ldpc_1344_lifting", "edmg.sc_encoding", "edmg.short_ssw"}
+       "edmg.ldpc_672_r7_8", "edmg.ldpc_1344_lifting", "edmg.sc_encoding", "edmg.short_ssw",
+       # the per-node energy table in DeepScaleTool's own file the 45 -> 7 nm ratio is recomputed from
+       "deepscale.energy_by_node"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -99,6 +101,8 @@ CORRECTED = {
     # batch 7: recomputed from the six rows of the Murmann survey; Halo_Serdes had rounded the median 70.8 to 70
     "adc_survey.walden_fom_fj": {"value": (70.0, 70.815)},
     "adc_survey.walden_fom_range_fj": {"value": ([38.4, 120.2], [38.36, 120.19])},
+    # recomputed from DeepScaleTool's per-node energy table, 0.11 / 0.63; Halo_Serdes had kept 3 digits
+    "deepscale.node_scale_45_to_7nm": {"value": (0.175, 0.1746)},
     "liu2025.receiver_cfo_statement": {"value": (
         "refrained from using estimation and compensation algorithms for CFO and PN",
         "refrained from using estimation and compensation algorithms for CFO and used phase tracking"
@@ -219,7 +223,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 67 == 146
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 68 == 147
     assert set(CHANGED) <= set(ss.all_entries())
 
 

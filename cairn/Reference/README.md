@@ -95,7 +95,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - ✅ X. Liu et al., "Wi-Fi 8: Embracing the Millimeter-Wave Era", IEEE Commun. Mag. 63(3), pp. 69–75, Mar. 2025（刊出版，doi 10.1109/MCOM.002.2400059；2026-11-15 用户从 Xplore 下载，本地 `liu_commag2025_wifi8.pdf`，7 页，文字层可用、两张表渲染核对过）：TABLE 1（p. 72）、Simulation Configuration 与 TABLE 2（p. 73）、Simulation Results（pp. 73–74）、Discussion（p. 74）→ `liu2025.*` 21 条改 spec（3 条改了值），新收 4 条。mmw60_trx 在本库 #26 里请求。
 - ✅ IEEE 802.15-06-0477-01-003c，Choi et al.（NICT、NEC、NTT、Panasonic），"RF impairment models for 60GHz-band SYS/PHY simulation"，2006-11（mentor.ieee.org 公开，本地 `ieee802_15_06_0477r1_rf_impairment.pdf`，17 页；Liu 的 [15]）：slide 5 修正 Rapp（无参数）、slide 9 相噪模型（−87 dBc/Hz、1 MHz、100 MHz）、slide 10 四档示例、slide 15 转引 802.11n 比较准则 IM1 / IM4 → `tg3c.*`。
 - ✅ IEEE 802.15-06-0396-01-003c，Choi et al.（NICT、NEC、NTT），"Behavioral model of 60GHz-band power amplifier for SYS/PHY evaluation"，2006-09（mentor.ieee.org 公开，本地 `ieee802_15_06_0396r1_pa_model.pdf`，15 页）：slide 10 NEC GaAs pHEMT PA 的 Ghorbani 参数（印的公式分子少了指数）、slide 8 输入 P1dB −11 dBm → `tg3c.pa_ghorbani_nec_gaas`。
-- 📥 K. Okada et al., "Full Four-Channel 6.3-Gb/s 60-GHz CMOS Transceiver With Low-Power Analog and Digital Baseband Circuitry", IEEE JSSC 48(1), 2013（`antenna60.okada2013_dbi`；东工大实验室站点上可能有，先在那里找）。
+- 📥 K. Okada et al., "Full Four-Channel 6.3-Gb/s 60-GHz CMOS Transceiver With Low-Power Analog and Digital Baseband Circuitry", IEEE JSSC 48(1), 2013（`antenna60.okada2013_dbi`；2026-11-16 查过实验室网站 www.ssc.p.isct.ac.jp/publication/，只有题录、没有 PDF；东工大实验室站点上可能有，先在那里找）。
 - 📥 "A 64 dB Gain 60 GHz Receiver with 7.1 dB Noise Figure for 802.11ad Applications in 90 nm CMOS", ISCAS 2015（`rx60.comm_iscas2015`）。
 - 📥 M. Horowitz, "1.1 Computing's energy problem (and what we can do about it)", ISSCC 2014（`horowitz2014.*`）。
 - 📥 S. Sarangi, B. Baas, "DeepScaleTool: A Tool for the Accurate Estimation of Technology Scaling in the Deep-Submicron Era", ISCAS 2021（`deepscale.*`）。
@@ -104,9 +104,11 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
   - IEEE 802.11-10/0433r2，TGad 采纳的完整提案规范文本（335 页，`ieee802_11_10_0433r2_tgad_cp_spec.pdf`）：21.3.3.8 灵敏度表与前提、21.3.4 Table 67、21.5 / 21.6 的 MCS、导频、SC 块、EVM。EVM 后来改过。
   - R&S 白皮书 1MA220_3e（2017-11，`rs_1ma220_3e_80211ad.pdf`）：Table 4-1 DMG 发射 EVM 与灵敏度（转引 802.11-2016 第 20 章）。
   - TGay：11-17/0597r1 OFDM 信号参数、11-17/0628r1 单信道导频序列、11-17/0909r0 OFDM MCS、11-15/1358r9 SFD（SC 的 GI 与 MCS）、11-18/0713r3 SC 性能要求（EVM）、11-18/1152r0 OFDM 性能要求（EVM）；采纳动议见 11-17/0186r37（各有本地 PDF，文件名以 `ieee802_11_` 开头）。都没有 AI 使用限制的字样。
-  → `dmg.*`、`edmg.*`，并把 `ieee80211ay.channel_centres_ghz`、`dmg.sensitivity_assumptions` 改成 spec。N_SD（11ac / be）、LDPC 编码流程、音调映射距离还没找公开出处。
-- 🌐 47 CFR §15.255（www.ecfr.gov）：`fcc15255.*`。
-- ✅ Murmann ADC survey（GitHub 仓库，git 克隆）：`adc_survey.*`。
+  → `dmg.*`、`edmg.*`，并把 `ieee80211ay.channel_centres_ghz`、`dmg.sensitivity_assumptions` 改成 spec。
+- ✅ 第 7 批读的 802.11 公开文件（2026-11-16，mentor.ieee.org）：TGn 联合提案 11-05/1102r4（Table 1 的 N_SD、4.3.3.4 LDPC PPDU 编码流程，步骤 (d) 是公式图）、TGac 框架 11-09/0992r21、TGax 11-15/0330r5（OFDMA 数字学）与框架 11-15/0132r17（Table 6 D_TM）、TGbe 框架 11-19/1262r23（Nsd_total 表、D_TM）→ `ieee80211ac.n_sd`、`ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`，用户对照标准核对一致。
+- ✅ 47 CFR §15.255（www.ecfr.gov，2026-11-16 放行后读 2026-11-12 版的现行条文，该节最近修订 2023-08-23）→ `fcc15255.*`。(c)(2) 有雷达类器件的限值（ROADMAP）。
+- ✅ Murmann ADC survey（github.com/bmurmann/ADC-survey，BSD-3，提交 00b4b85，`xls/ADCsurvey_rev20260801.xlsx`）：≥ 40 GS/s、4–7 nm 的 6 行时间交织 SAR → `adc_survey.ti_sar_ge40gs_4to7nm`，两条统计由它复算。
+- ✅ arXiv:2309.16813v1（Liu 2025 的预印本 v1）第 V 节：'the specified PER (10−2 )' → `liu2025.per_target`。
 
 ## 合计
 

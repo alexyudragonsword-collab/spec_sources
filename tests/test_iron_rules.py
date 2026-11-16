@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import math
 import re
+import statistics
 import subprocess
 
 import pytest
@@ -19,7 +20,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 133
+    assert len(table) == 134
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -116,6 +117,11 @@ def _edmg_sc_rates(v) -> dict:
 
 
 RECOMPUTE = {
+    # Murmann ADC survey, the six >= 40 GS/s 4-7 nm TI-SAR rows: median and range of FOMW_hf (batch 7)
+    "adc_survey.walden_fom_fj": (lambda v: statistics.median(v("adc_survey.ti_sar_ge40gs_4to7nm")["fomw_hf_fj"]), 1e-9),
+    "adc_survey.walden_fom_range_fj": (
+        lambda v: [min(v("adc_survey.ti_sar_ge40gs_4to7nm")["fomw_hf_fj"]),
+                   max(v("adc_survey.ti_sar_ge40gs_4to7nm")["fomw_hf_fj"])], 1e-9),
     # EDMG single-channel data rates per spatial stream (#29), rounded to 0.01 Mbps in the table
     "edmg.ofdm_rate_mbps": (_edmg_ofdm_rates, 0.006),
     "edmg.sc_rate_mbps": (_edmg_sc_rates, 0.006),
@@ -264,7 +270,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 104, "survey": 17, "assumed": 0, "derived": 12}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 114, "survey": 6, "assumed": 0, "derived": 14}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():

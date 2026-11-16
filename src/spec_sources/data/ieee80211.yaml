@@ -390,7 +390,7 @@ entries:
     note: "公式：1.76e9 ÷ 32 × 0.5 = 27.5e6 bit/s（每个 DBPSK 符号 1 位，用 32 码片的 Ga32 扩频，等效码率 1/2）。"
 
   dmg.phy_timing:
-    value: {rifs_s: 1e-06, sifs_s: 3e-06, sbifs_s: 1e-06, brpifs_s: 2e-05, slot_s: 3e-06, data_preamble_s: 1.745e-06, control_preamble_s: 3.564e-06, detection_threshold_dbm: -48.0}
+    value: {rifs_s: 1.0e-06, sifs_s: 3.0e-06, sbifs_s: 1.0e-06, brpifs_s: 2.0e-05, slot_s: 3.0e-06, data_preamble_s: 1.745e-06, control_preamble_s: 3.564e-06, detection_threshold_dbm: -48.0}
     unit: "s ×7, dBm"
     source: spec
     cite: "IEEE 802.11-10/0433r2 'PHY/MAC Complete Proposal Specification'（TGad 采纳的完整提案规范文本，2010-05-18，C. Cordeiro et al.）；mentor.ieee.org 公开文件，2026-11-16 读原文（表格从 docx 逐格取，公式是嵌入图片、渲染出来读）"

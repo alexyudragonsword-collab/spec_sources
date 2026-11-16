@@ -308,3 +308,24 @@ def test_the_ldpc_tables_agree_with_each_other():
     r34, r78 = base["r3_4"], ss.value("edmg.ldpc_672_r7_8")["rows"]
     for row, (i, j) in zip(r78, ((2, 0), (3, 1)), strict=True):
         assert row == [[x for x in (r34[i][c], r34[j][c]) if x != -1] for c in range(16)]
+
+
+# PyYAML resolves floats by YAML 1.1: 1e-06 with no decimal point stays a string ('1e-06'), 1.0e-06 is a float.
+_EXPONENT_TEXT = re.compile(r"^[+-]?(\d+\.?\d*|\.\d+)[eE][+-]?\d+$")
+
+
+def _strings(v):
+    if isinstance(v, str):
+        yield v
+    elif isinstance(v, dict):
+        for x in v.values():
+            yield from _strings(x)
+    elif isinstance(v, list):
+        for x in v:
+            yield from _strings(x)
+
+
+def test_no_number_in_exponent_form_was_read_as_text():
+    """dmg.phy_timing shipped rifs_s: 1e-06 and four more like it, which PyYAML read as strings."""
+    bad = [(k, s) for k, e in ss.all_entries().items() for s in _strings(e.value) if _EXPONENT_TEXT.match(s)]
+    assert bad == []

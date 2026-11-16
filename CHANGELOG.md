@@ -21,6 +21,7 @@
   - `edmg.ldpc_672_r7_8`（588 信息位的新 7/8 码）、`edmg.ldpc_1344_lifting`（1344 码长的提升矩阵，7/8 作用于 3/4 并两两合行）、`edmg.sc_encoding`（码率表、N_CBPB、N_BLKS）、`edmg.short_ssw`（48 位）。
 - 新测试 `test_the_ldpc_tables_agree_with_each_other`：EDMG 提升矩阵的 -1 与 DMG 基矩阵的零块逐格相同；672 位 7/8 矩阵等于 3/4 矩阵第 1+3、2+4 行之和。两份文件相隔六年，互相印证。
 - 没有做的：EDMG 的最低灵敏度在公开材料里没有（TGay CID 1620 的解决方案只补了 EVM）；EDMG OFDM 的填充规则没找到；BRP / TRN 单元长度（mmw60 写的"如顺手"）这次没做。
+- 修正（PR #35 合并之后）：`dmg.phy_timing` 的 `rifs_s`、`sifs_s`、`sbifs_s`、`brpifs_s`、`slot_s` 原写成 `1e-06` 这样没有小数点的指数式，PyYAML 按 YAML 1.1 读成字符串；改写成 `1.0e-06` 等，值不变。新测试 `test_no_number_in_exponent_form_was_read_as_text` 扫全表守着。
 - 共享表 146 条：spec 125、survey 6、derived 15。账本新增 12 个键，记 `added=unreleased`。
 
 ### 第 7 批：能用公开材料核的 survey

@@ -20,7 +20,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 134
+    assert len(table) == 146
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -117,6 +117,10 @@ def _edmg_sc_rates(v) -> dict:
 
 
 RECOMPUTE = {
+    # DMG control PHY data rate (#33): DBPSK spread by Ga32, effective code rate 1/2
+    "dmg.control_phy_rate_bps": (
+        lambda v: v("dmg.control_phy")["chip_rate_hz"] / v("dmg.control_phy")["spreading_factor"]
+        * v("dmg.control_phy")["effective_code_rate"], 1e-6),
     # Murmann ADC survey, the six >= 40 GS/s 4-7 nm TI-SAR rows: median and range of FOMW_hf (batch 7)
     "adc_survey.walden_fom_fj": (lambda v: statistics.median(v("adc_survey.ti_sar_ge40gs_4to7nm")["fomw_hf_fj"]), 1e-9),
     "adc_survey.walden_fom_range_fj": (
@@ -270,7 +274,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 114, "survey": 6, "assumed": 0, "derived": 14}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 125, "survey": 6, "assumed": 0, "derived": 15}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -291,3 +295,16 @@ def test_rule3_the_0_2_0_renames_were_retired_in_0_3_0():
         assert new in ss.all_entries() and old not in ss.all_entries()
         with pytest.raises(KeyError):
             ss.survey(old)
+
+
+def test_the_ldpc_tables_agree_with_each_other():
+    """#33: the EDMG lifting matrices have -1 exactly where the DMG base matrices have a zero block, and
+    the 672-bit rate-7/8 matrix is rows 1+3 and 2+4 of the DMG rate-3/4 matrix (two documents, six years apart)."""
+    base, lift = ss.value("dmg.ldpc_matrices"), ss.value("edmg.ldpc_1344_lifting")
+    pairs = [(r, r) for r in ("r1_2", "r5_8", "r3_4", "r13_16")] + [("r3_4", "r7_8_on_r3_4")]
+    for b, lft in pairs:
+        for row_b, row_l in zip(base[b], lift[lft], strict=True):
+            assert [x == -1 for x in row_b] == [y == -1 for y in row_l], (b, lft)
+    r34, r78 = base["r3_4"], ss.value("edmg.ldpc_672_r7_8")["rows"]
+    for row, (i, j) in zip(r78, ((2, 0), (3, 1)), strict=True):
+        assert row == [[x for x in (r34[i][c], r34[j][c]) if x != -1] for c in range(16)]

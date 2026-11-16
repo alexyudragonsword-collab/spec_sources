@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · #33：DMG / EDMG 的 LDPC、编码、扩展 MCS、控制 PHY 与扇区扫描（feat/issue33-ldpc-ctrl-ssw，未发布）
+
+- PR #34 合并（main `559639f`）。mmw60 开了 #33（4 项）。用户定按 3 → 4 → 1 → 2 做，mmw60 的重新 pin 并进 #33 的回复。
+- 来源：TGad 0433r2（LDPC 表从 docx 逐格取；SC / OFDM 填充公式是 wmf 图，渲染出来读）、REVmc 16/0233r0、TGay SFD 15/1358r9、16/1495r1、17/1061r1、17/0214r1。用户核对 K1–K11 一致。
+- 12 条：DMG 基矩阵 4 张（Z = 42）、编码（x⁷ + x⁴ + 1；N_CW、N_BLKS 等）、扩展 SC MCS 7 档（2695–8085 Mb/s）、7/8 打孔（624 / 546）、控制 PHY（5120 + 1152 码片，27.5 Mb/s derived）、时间常数（SBIFS 1 µs、BRPIFS 20 µs）、SSW 26 字节；EDMG 672 位 7/8、1344 提升矩阵 5 张、SC 编码、Short SSW 48 位。
+- 互证：提升矩阵的 -1 与 DMG 零块逐格相同；672 位 7/8 = 3/4 矩阵第 1+3、2+4 行之和（新测试守着）。
+- 没有：EDMG 灵敏度（再搜一轮仍无）、EDMG OFDM 填充、BRP / TRN 单元长度。
+- 共享表 134 → 146 条：spec 125、survey 6、derived 15。测试 93 个（91 通过，2 跳过）。
+
 ## 2026-11-16 · 第 7 批：能用公开材料核的 11 条（feat/batch7-public-sources，未发布）
 
 - PR #32 合并即 0.5.0（main `6ad42bf`）。用户同意：mmw60 的重新 pin issue 等这一批合并后一起开。

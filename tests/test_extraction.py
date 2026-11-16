@@ -53,7 +53,11 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "edmg.ofdm_params", "edmg.ofdm_pilot_tones_ncb1", "edmg.ofdm_pilot_values_ncb1", "edmg.ofdm_mcs",
        "edmg.ofdm_rate_mbps", "edmg.sc_params", "edmg.sc_mcs", "edmg.sc_mcs_variants", "edmg.sc_rate_mbps",
        # batch 7: the six Murmann-survey rows the two adc_survey statistics are recomputed from
-       "adc_survey.ti_sar_ge40gs_4to7nm"}
+       "adc_survey.ti_sar_ge40gs_4to7nm",
+       # issue #33 (mmw60_trx): DMG / EDMG LDPC codes, encoding, extended SC MCS, control PHY and sector sweep
+       "dmg.ldpc_matrices", "dmg.data_encoding", "dmg.sc_mcs_extended", "dmg.ldpc_r7_8_punctured",
+       "dmg.control_phy", "dmg.control_phy_rate_bps", "dmg.phy_timing", "dmg.ssw_frame",
+       "edmg.ldpc_672_r7_8", "edmg.ldpc_1344_lifting", "edmg.sc_encoding", "edmg.short_ssw"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -215,7 +219,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 55 == 134
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 67 == 146
     assert set(CHANGED) <= set(ss.all_entries())
 
 

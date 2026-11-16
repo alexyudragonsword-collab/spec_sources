@@ -2,7 +2,7 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），剩 6 条 survey 都要用户下载原文。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），剩 6 条 survey 的原文都在 IEEE Xplore 上，Xplore 的条款限制 AI，取法待用户定（见第 7 批）。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
@@ -23,12 +23,12 @@
 
 每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序，批号与 `cairn/Reference/README.md` 一致（第 4 批 fmcw_radar 的 14 条已在 #19 了结）：
 
-- 第 1 批 · **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）要用户下载，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 批。
+- 第 1 批 · **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）都在 IEEE Xplore 上，取法见第 7 批那句，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 批。
 - 第 2 批 · **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。fmcw 已在 #17 改引 `tdc_res_s`（12.2 ps）并验收。**抖动的出处现在有分量了**：fmcw 报回，12.2 ps 步长下 1 ps 抖动只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标；抖动 1 / 1.8 / 2.44 / 3 ps 对应 2.75 / 2.08 / 0.92 / 0.16 个。Wu 文 [35] Henzler et al.（ISSCC 2008）已读，建了 `tdc.henzler_isscc2008`（spec）与 `tdc.henzler_isscc2008_single_shot_s`（derived，3.29e-12 s，未发布）：单次精度 0.7 LSB × 4.7 ps，定义为反复测同一间隔时输出码字的标准差。它是 90 nm 局部无源插值 TDC，结构与 Wu 2014 不同，且含离散化与测试脉冲的抖动，只能当量级（上界）。**用户 2026-11-14 定：暂不给 fmcw 开 issue**，它的 `tdc_jitter_s` 仍是 1 ps 占位。日后要换时，issue 里写明：1 ps → 3.29 ps 按它报回的扫描会让鬼目标从每帧 2.75 降到 0.16 左右（3 ps 时），而 3.29 ps 是别的结构的 TDC、且是上界量级；用不用由它定。
-- 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（📥，期刊论文不受规范许可约束）。
+- 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（不受规范许可约束，但在 IEEE Xplore 上，受 Xplore 条款约束，见第 7 批）。
 - 第 5 批 · **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 - 第 6 批 · **Halo_Serdes #11 的 4 条条文**。
-- 第 7 批 · 其余 survey，都要用户下载原文：`horowitz2014.*`（ISSCC 2014）、`rx60.comm_iscas2015`（ISCAS 2015）、`antenna60.okada2013_dbi`（JSSC 2013，实验室网站只有题录）、`deepscale.node_scale_45_to_7nm`（DeepScaleTool，ISCAS 2021 或工具本身的 .xlsm）。下载前先看许可条款。
+- 第 7 批 · 其余 survey：`horowitz2014.*`（ISSCC 2014）、`rx60.comm_iscas2015`（ISCAS 2015）、`antenna60.okada2013_dbi`（JSSC 2013，实验室网站只有题录）、`deepscale.node_scale_45_to_7nm`（DeepScaleTool，ISCAS 2021）。**都在 IEEE Xplore 上，不再请用户下载发来**：Xplore 的条款限制把内容交给 AI 工具（`cairn/Reference/README.md` 末节），2026-11-16 用户决定删掉本地的 12 篇 Xplore 原文。怎么取待用户定：公开版本加用户核对（像 802.11 那样），或留 survey。DeepScaleTool 有 arXiv 预印本 2102.10195 与 GPLv3 的工具本身（SourceForge，要放行），不经 Xplore；其余没找到公开版本。
 
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 

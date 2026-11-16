@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · IEEE Xplore 的许可：删掉本地 12 篇 Xplore 原文（feat/xplore-licence）
+
+- PR #37 合并（main `b16245a`），#33 验收留言已发。
+- 要请用户下载剩下几篇前查许可：搜索结果一致说 IEEE Xplore 的条款限制 AI（不得上传给 AI 工具、不得存放在 AI 工具里；机构订阅许简短引用，有的机构协议许做摘要）。条款原文没读到（条款页 418，图书馆转述页不在白名单）。
+- 用户定：删。删了 12 篇（Asada 表 7 篇、Wu、Staszewski、Henzler、Harris、Liu 刊出版）在 `cairn/Reference/` 的 PDF、会话上传目录的原件、scratchpad 的 6 个渲染 / 抽字目录；按 sha256 复查容器里没有剩下。git 从没跟踪过它们。由它们建的条目不动。
+- 剩下标 📥 的 11 篇都在 Xplore 上，不再请用户下载；取法待用户定。DeepScaleTool 有 arXiv 2102.10195 与 GPLv3 工具，不经 Xplore。
+- 只改了文档：`cairn/Reference/README.md` 末节（只追加）、ROADMAP 三处。数据未动，共享表 146 条。
+
 ## 2026-11-16 · 验收 #33：mmw60_trx 重新 pin 到 76ee72a（feat/accept-issue33）
 
 - PR #36 合并（main `76ee72a`），在 #33 给了 PIN，一次 pin 齐 0.5.0、第 7 批与 #33 的 12 条。mmw60_trx 在 mmw60_trx#60 合并 `53a9a16`（pin 的提交 `3ea11be`），接线在 #61（`50f30df`）。

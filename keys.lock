@@ -52,20 +52,20 @@ survey.eht_tone_mapper_dtm  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.ldpc_ppdu_encoding_thresholds  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.dmg_sensitivity_assumptions  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.rapp_p1db_below_psat_db  added=0.1.0  aliased=0.2.0  retired=0.3.0
-dmg.phy_params  added=unreleased
-dmg.sc_mcs  added=unreleased
-dmg.ofdm_mcs  added=unreleased
-dmg.tx_evm_db  added=unreleased
-dmg.rx_sensitivity_dbm  added=unreleased
-edmg.ofdm_params  added=unreleased
-edmg.ofdm_pilot_tones_ncb1  added=unreleased
-edmg.ofdm_pilot_values_ncb1  added=unreleased
-edmg.ofdm_mcs  added=unreleased
-edmg.ofdm_rate_mbps  added=unreleased
-edmg.sc_params  added=unreleased
-edmg.sc_mcs  added=unreleased
-edmg.sc_mcs_variants  added=unreleased
-edmg.sc_rate_mbps  added=unreleased
+dmg.phy_params  added=0.5.0
+dmg.sc_mcs  added=0.5.0
+dmg.ofdm_mcs  added=0.5.0
+dmg.tx_evm_db  added=0.5.0
+dmg.rx_sensitivity_dbm  added=0.5.0
+edmg.ofdm_params  added=0.5.0
+edmg.ofdm_pilot_tones_ncb1  added=0.5.0
+edmg.ofdm_pilot_values_ncb1  added=0.5.0
+edmg.ofdm_mcs  added=0.5.0
+edmg.ofdm_rate_mbps  added=0.5.0
+edmg.sc_params  added=0.5.0
+edmg.sc_mcs  added=0.5.0
+edmg.sc_mcs_variants  added=0.5.0
+edmg.sc_rate_mbps  added=0.5.0
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0
@@ -95,10 +95,10 @@ liu2025.k_threshold_ltf_only  added=0.2.0
 derived.cfo_liu2025_hz  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.k_threshold_stf  added=0.1.0  aliased=0.2.0  retired=0.3.0
 derived.k_threshold_ltf_only  added=0.1.0  aliased=0.2.0  retired=0.3.0
-liu2025.table1_idft_period_s  added=unreleased
-liu2025.table1_idft_size  added=unreleased
-liu2025.cfo_algorithm_statement  added=unreleased
-liu2025.mlo_bf_training_statement  added=unreleased
+liu2025.table1_idft_period_s  added=0.5.0
+liu2025.table1_idft_size  added=0.5.0
+liu2025.cfo_algorithm_statement  added=0.5.0
+liu2025.mlo_bf_training_statement  added=0.5.0
 # pa60.yaml
 pa60.asada_eumc2011  added=0.1.0
 pa60.wu_asscc2012  added=0.1.0
@@ -151,18 +151,18 @@ tdc.henzler_isscc2008  added=0.4.0
 tdc.henzler_isscc2008_single_shot_s  added=0.4.0
 # radar_targets.yaml
 target_rcs.deep2019_pedestrian_77g  added=0.4.0
-target_rcs.iso19206_3_car_rear  added=unreleased
-target_rcs.iso19206_3_car_30m  added=unreleased
-target_rcs.iso19206_3_car_rear_far_lower_dbsm  added=unreleased
-target_rcs.trihedral_peak  added=unreleased
+target_rcs.iso19206_3_car_rear  added=0.5.0
+target_rcs.iso19206_3_car_30m  added=0.5.0
+target_rcs.iso19206_3_car_rear_far_lower_dbsm  added=0.5.0
+target_rcs.trihedral_peak  added=0.5.0
 # windows.yaml
-harris1978.rect  added=unreleased
-harris1978.hann  added=unreleased
-harris1978.hamming  added=unreleased
-harris1978.exact_blackman  added=unreleased
-harris1978.blackman  added=unreleased
+harris1978.rect  added=0.5.0
+harris1978.hann  added=0.5.0
+harris1978.hamming  added=0.5.0
+harris1978.exact_blackman  added=0.5.0
+harris1978.blackman  added=0.5.0
 # ieee802153c.yaml
-tg3c.pn_model  added=unreleased
-tg3c.pn_psd0_examples_dbchz  added=unreleased
-tg3c.pa_modified_rapp_shape  added=unreleased
-tg3c.pa_ghorbani_nec_gaas  added=unreleased
+tg3c.pn_model  added=0.5.0
+tg3c.pn_psd0_examples_dbchz  added=0.5.0
+tg3c.pa_modified_rapp_shape  added=0.5.0
+tg3c.pa_ghorbani_nec_gaas  added=0.5.0

@@ -7,8 +7,15 @@
 
 `reader.py` 没动。
 
-- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
+- **`mmw60_trx` 要为这一节重新 pin，已在 #33 pin 到 `76ee72a` 并验收（见下）**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它原来的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
 - fmcw_radar（`f87cc9b`）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### 验收：#33（mmw60_trx 重新 pin 到 `76ee72a`）
+- mmw60_trx 在 mmw60_trx#60 合并 `53a9a16`（重新 pin 的提交 `3ea11be`：只换 vendor 文件，另改两处写死旧数的测试）。9 个 vendor 文件去掉出处头后与 `76ee72a` 逐字节相同，`3ea11be` 与它现在的 main `50f30df` 都是；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过）；它带齐 sibling 是 250 verbatim。
+- 指纹：本库在本地对 `23d0130`（父提交）与 `3ea11be` 各录一次（`MMW60_NO_JIT=1`），69 个值逐位相同；它的指纹不覆盖功耗列。合并表 180 → 193 条（#33 的 12 条与 `adc_survey.ti_sar_ge40gs_4to7nm`），未核实 20 → 9。
+- 动的数只在功耗列：转换器功耗 × 70.815 / 70 = ×1.0116，它报示例 02 / 04 / 06 / 09 / 10 / 11 的 pJ/bit 涨 0.1–1 %（同台表最好一行 592 → 596，ay SC 188 → 189）；MCS 上限与 EVM 底板不动。
+- 接线在 mmw60_trx#61（`50f30df`）：扩展 SC 档并进它借门限的对应关系，两张 LDPC 表进 SC 编码 PER（它自己实测的门限表），控制 PHY、时间常数与 SSW 帧算扇区扫描时长。都按键读，本地表里没有抄数，不按条登记。
+- 更正：#33 的回复说它 vendor 的文件里 survey "从 14 条减到 3 条"，漏数了 `frontend60.yaml` 的 2 条，应为 16 → 5（少 11 条不变）。
 
 ### #33（mmw60_trx 请求）：DMG / EDMG 的 LDPC 与编码、扩展 SC MCS、控制 PHY 与扇区扫描
 - 标准本身不能读，全部取自公开文件，用户对照 IEEE 802.11-2024 逐行核对一致（K1–K11）：TGad 采纳的规范文本 11-10/0433r2；REVmc 的 11-16/0233r0（扩展 SC MCS）；TGay 的 SFD 11-15/1358r9、11-16/1495r1，已采纳的 17/1061r1（动议 #264）、17/0214r1（动议 #178）。表格从 docx 逐格取，公式是嵌入图片、渲染出来读。

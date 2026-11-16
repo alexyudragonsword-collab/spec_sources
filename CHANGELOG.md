@@ -3,6 +3,28 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
+## 未发布
+
+`reader.py` 没动。
+
+- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变。
+- fmcw_radar（`f87cc9b`）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### 第 7 批：能用公开材料核的 survey
+- 放行 www.ecfr.gov（环境 "rf design"，用户批准）。
+- **`fcc15255.*` 4 条** → spec（值不变）：读 eCFR 上 47 CFR §15.255 的现行条文（2026-11-12 版）。频段 57–71 GHz 在节标题与 (c) 首句；平均 40 dBm、峰值 43 dBm 在 (c)(1)(i)。迁入时 cite 写的 "(a)" 在现行条文里讲的是卫星，出处已改正。同一节 (c)(2) 有雷达类器件的限值，记进 ROADMAP。
+- **`liu2025.per_target`** → spec（值不变）：arXiv v1 第 V 节原句 "the SNR required to achieve the specified PER (10−2 )"。顺带更正 `liu2025.k_threshold` 的 note：#26 时写"arXiv 版只写 the 1250 KHz"是错的，v1 也写了 "4 × 312.5 KHz"。
+- **802.11 的 4 条** → spec（值不变），读 mentor 上的公开文件，用户对照标准核对一致（标准本身因许可不能读）：
+  - `ieee80211ac.n_sd`：TGac 框架 11-09/0992r21（20 / 40 MHz 与 11n 相同；80 MHz 3 DC、11 个边带空、8 导频；160 = 2 × 80）、TGn 联合提案 11-05/1102r4（52、108）、TGax 11-15/0330r5（"11ac 80 MHz … payload 234 data, 8 pilots"）；
+  - `ieee80211be.n_sd`：TGbe 框架 11-19/1262r23 的 Nsd_total 表（2×996 1960、4×996 3920、484+996 1448）与 11-15/0330r5 的 234；
+  - `ieee80211be.ldpc_tone_mapping_distance`：TGax 框架 11-15/0132r17 Table 6（242 / 484 / 996 = 9 / 12 / 20）与 996 段的 D_TM = 20，TGbe 框架 "Existing RUs: identical to 802.11ax"；
+  - `ieee80211.ldpc_ppdu_encoding_thresholds`：TGn 11-05/1102r4 Table 13（912 / 1464 / 2916）与步骤 (d) 的判据（0.1 / 1.2 / 0.3，公式图渲染出来读）。
+- **ADC survey**：新增 `adc_survey.ti_sar_ge40gs_4to7nm`（spec）：Murmann ADC survey 2026-08-01 版里 ≥ 40 GS/s、4–7 nm 的 6 行时间交织 SAR（FOMW_hf 67.00 / 74.63 / 38.36 / 74.85 / 120.19 / 42.98 fJ）。两条统计改成由它复算的 derived（`CORRECTED`，测试允许改成 derived）：
+  - `adc_survey.walden_fom_fj` = 70.815（迁入时 70：Halo_Serdes 把中位数 70.8 取了整）；
+  - `adc_survey.walden_fom_range_fj` = [38.36, 120.19]（迁入时取到 0.1）。
+- 还剩要用户下载的：Horowitz ISSCC 2014、ISCAS 2015 的 60 GHz 接收机、Okada JSSC 2013（实验室网站只有题录）、DeepScaleTool（ISCAS 2021）。
+- 共享表 134 条：spec 114、survey 6、derived 14。账本新增 1 个键，记 `added=unreleased`。
+
 ## 0.5.0 —— 里程碑 2 续：车辆与角反射器、窗函数、Liu 2025 刊出版、802.15.3c 模型与 802.11ad / ay 的 PHY 数（2026-11-16）
 
 版本号随 `__init__.py` 变；`reader.py` 没动。共享表 133 条（0.4.0 是 102 条）：spec 104、survey 17、derived 12。

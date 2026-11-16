@@ -51,7 +51,7 @@
 ## 本仓库特有的硬规矩
 
 - **`src/spec_sources/` 单独拷出去就要能用**：只依赖 PyYAML，只用相对导入，数据挨着代码找。消费方 vendor 它、pin 完整 SHA、过 `vendor_check --strict`（`test_vendored_copy.py` 从临时拷贝里 import 并运行）。
-- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。核实后改成 spec 的条目列在 `VERIFIED`（值与单位仍等于源表）；原文与源表不同、按原文改了值的列在 `CORRECTED`（旧值 → 新值）。原文清单与读书笔记在 `cairn/Reference/README.md`。
+- **迁入的条目逐字段等于源表**；迁入时改过的字段列在 `tests/test_extraction.py::CHANGED`（每处只是一次替换）。核实后改成 spec 的条目列在 `VERIFIED`（值与单位仍等于源表）；原文与源表不同、按原文改了值的列在 `CORRECTED`（旧值 → 新值；改成 spec，或改成由 spec 条目复算的 derived）。原文清单与读书笔记在 `cairn/Reference/README.md`。
 - **不改消费方的仓库**：需要它们做的写进 ROADMAP 的"报回上游"节，并在那个库开 issue（标题以"spec_sources 收件："开头；对方迁完在 issue 里回报，本库验收后关）。
 - 提交信息写为什么，带实测数字。在 `feat/*` 分支上开 PR 合 main。
 

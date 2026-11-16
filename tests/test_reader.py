@@ -43,7 +43,7 @@ def test_spec_number_refuses_what_rule_1_forbids():
         ss.SpecNumber("x.a", 1, "u", "derived", "")
     ok = ss.SpecNumber("x.a", 1, "u", "spec", "cite", quote="the text", section="3.1")
     assert ok.verified and ok.tag() == "1 u (source: spec)"
-    assert not ss.survey("liu2025.per_target").verified
+    assert not ss.survey("horowitz2014.mult32_pj").verified
 
 
 def test_loader_refuses_duplicate_keys_unknown_fields_and_missing_values(shared_tables):

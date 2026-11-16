@@ -156,16 +156,20 @@ entries:
   ieee80211ac.n_sd:
     value: {20.0e+6: 52, 40.0e+6: 108, 80.0e+6: 234, 160.0e+6: 468}
     unit: data subcarriers
-    source: survey
-    cite: "IEEE 802.11-2020 VHT N_SD per bandwidth (Table 21-5)"
-    note: "未核实：原文表未贴入；20 MHz 的 52 与 phy/mcs.py 一致。"
+    source: spec
+    cite: "R. Stacey (Intel) ed., 'Proposed Specification Framework for TGac', IEEE 802.11-09/0992r21, 2011-01；mentor.ieee.org 公开文件，2026-11-16 读原文；20 / 40 MHz 的数读 IEEE 802.11-05/1102r4 'Joint Proposal: High throughput extension to the 802.11 Standard: PHY'（TGn 联合提案，2006-01）；mentor.ieee.org 公开文件，2026-11-16 读原文；80 MHz 的 234 另见 S. Azizi, E. Perahia, R. Stacey (Intel), J. Choi (LGE) et al., 'OFDMA Numerology and Structure', IEEE 802.11-15/0330r5, 2015-05-13；mentor.ieee.org 公开文件，2026-11-16 读原文"
+    section: "TGac 框架：3.2.3 VHT preamble、3.2.4.6 Pilot subcarriers、3.2.4.7 OFDM modulation、R3.1.C；TGn 联合提案：Table 1 Timing related constants；TGax 11-15/0330r5：slide 18 'Number of Guard Tones'"
+    quote: "(TGac) The number of subcarriers and pilots, including subcarrier positions, of VHT-LTF and VHT-DATA symbols in 20 and 40 MHz channels are the same as those for 11n HT-LTF and HT-DATA in 20 and 40 MHz channels. [...] The draft specification shall have 8 pilot tones, with the positions {±103, ±75, ±39, ±11}, for 80 MHz [...] The draft specification shall have 3 DC tones at (0, ±1) in the 80 MHz VHT data field. The draft specification shall have 5 null tones at the upper tone edges (tone indices 123, 124, 125, 126, 127) and 6 null tones at the lower tone edges (tone indices -128, -127, -126, -125, -124, -123) of the 80 MHz VHT data. [...] R3.1.C: Tone allocation for 160 MHz operation shall consist of two 80 MHz tone allocations. [...] (TGn, Table 1) NSD: Number of data subcarriers — legacy 20MHz 48, 20MHz HT 52, 40MHz HT 108 [...] (11-15/0330r5) The payload design of 4x Symbol 20MHz is exactly 11ac 80 MHz down-clocked by 4, meaning (6,5) guard tones, 3 DC nulls, payload 234 data, 8 pilots"
+    note: "VHT 每个带宽的数据子载波数。20 / 40 MHz：TGac 框架写明与 11n 的 HT 相同，TGn 联合提案的表是 52 / 108。80 MHz：256 点里 3 个 DC、上 5 下 6 个边带空子载波、8 个导频，剩 234（TGax 的 11-15/0330r5 也写明 11ac 80 MHz 是 'payload 234 data, 8 pilots'）。160 MHz：两个 80 MHz 拼成，468。20 MHz 的 52 与 mmw60_trx 的 phy/mcs.py 一致。用户 2026-11-16 对照标准核对一致（IEEE 802.11 标准的许可禁止输入 AI，本库没有读标准，只读公开文件）。"
 
   ieee80211be.n_sd:
     value: {20.0e+6: 234, 40.0e+6: 468, 80.0e+6: 980, 160.0e+6: 1960, 320.0e+6: 3920}
     unit: data subcarriers
-    source: survey
-    cite: "IEEE 802.11be EHT N_SD per bandwidth (RU 242/484/996/2×996/4×996 minus pilots)"
-    note: "未核实：原文表未贴入。"
+    source: spec
+    cite: "'Specification framework for TGbe', IEEE 802.11-19/1262r23, 2021-01；mentor.ieee.org 公开文件，2026-11-16 读原文；20 MHz 的 234 读 S. Azizi, E. Perahia, R. Stacey (Intel), J. Choi (LGE) et al., 'OFDMA Numerology and Structure', IEEE 802.11-15/0330r5, 2015-05-13；mentor.ieee.org 公开文件，2026-11-16 读原文"
+    section: "TGbe 框架：1.7.3 Segment parser（Nsd_total 表）；TGax 11-15/0330r5：slide 18"
+    quote: "(TGbe) 802.11be uses 80 MHz segment parser with the following parameters for the proportional round robin scheme: RU aggregation | Nsd_total | Proportional ratio: 484+996 1448 1s:2s; 484+2×996 2428; 484+3×996 3408; 2×996 1960 1s:1s; 3×996 2940; 4×996 3920 1s:1s:1s:1s [...] (11-15/0330r5) The payload design of 4x Symbol 20MHz is exactly 11ac 80 MHz down-clocked by 4, meaning (6,5) guard tones, 3 DC nulls, payload 234 data, 8 pilots"
+    note: "EHT 整带宽单个 RU 的数据子载波数：20 MHz = RU242 的 234（11-15/0330r5），160 / 320 MHz = 2×996 / 4×996 的 1960 / 3920（TGbe 框架的表）；80 MHz 的 980 = 1960 ÷ 2（同表比例 1s:1s），40 MHz 的 468 = 同表 484+996 的 1448 − 980。用户 2026-11-16 对照标准核对一致（IEEE 802.11 标准的许可禁止输入 AI，本库没有读标准，只读公开文件）。"
 
   # ------------------------------------------------------------ DMG 接收机：灵敏度表的前提、最大输入电平
   dmg.sensitivity_assumptions:
@@ -190,16 +194,20 @@ entries:
   ieee80211be.ldpc_tone_mapping_distance:
     value: {20.0e+6: 9, 40.0e+6: 12, 80.0e+6: 20, 160.0e+6: 20, 320.0e+6: 20}
     unit: tones
-    source: survey
-    cite: "IEEE 802.11ax-2021 Table 27-31 'LDPC tone mapping distance' by RU size（242: 9、484: 12、996: 20，2×996 / 4×996 每个 996 段各 20）；EHT 沿用（802.11be D3.0 §36.3.12.8）"
-    note: "未核实：原文表未贴入。D_TM 只影响频率选择性信道上的 PER（平坦信道不变）；N_SD 必须整除 D_TM（234/9、468/12、980/20）。"
+    source: spec
+    cite: "'Specification Framework for TGax', IEEE 802.11-15/0132r17（页眉印 r15），2016-05-25；mentor.ieee.org 公开文件，2026-11-16 读原文；EHT 沿用读 'Specification framework for TGbe', IEEE 802.11-19/1262r23, 2021-01；mentor.ieee.org 公开文件，2026-11-16 读原文"
+    section: "TGax 框架：3.3.2.1 Resource unit, edge and DC tones；3.3.3 Interleaver and encoder, Table 6；TGbe 框架：1.9 Interleaving for RUs and aggregated RUs"
+    quote: "(TGax) The 2x996-tone RU employs a segment parser (as in 11ac) between the two 996-tone frequency segments and the LDPC tone mapper in each 996-tone segment uses DTM = 20. [...] Table 6 - BCC interleaver and LDPC tone mapper parameters — RU size (tones) | LDPC DTM: 26 1; 52 3; 106 6; 242 9; 484 12; 996 20 [...] (TGbe) 802.11be supports the following LDPC tone mapper parameters: For RU52+RU26: D_TM = 4. For RU106+RU26: D_TM = 6. Existing RUs: identical to 802.11ax."
+    note: "LDPC 音调映射距离 D_TM：RU242 / 484 / 996 = 9 / 12 / 20；2×996 在每个 996 段内用 20，EHT 的 4×996 也按 80 MHz 分段，每段 20。TGbe 框架写明已有 RU 与 802.11ax 相同，只给新的组合 RU（52+26、106+26、484+242）另定。D_TM 只影响频率选择性信道上的 PER（平坦信道不变）；N_SD 必须整除 D_TM（234/9、468/12、980/20）。用户 2026-11-16 对照标准核对一致（IEEE 802.11 标准的许可禁止输入 AI，本库没有读标准，只读公开文件）。"
 
   ieee80211.ldpc_ppdu_encoding_thresholds:
     value: {l1296_over_648: 912, l1944_over_1296: 1464, l1944_over_1296_two_cw: 2916, punc_frac_a: 0.1, shrt_ratio_b: 1.2, punc_frac_c: 0.3}
     unit: bits / ratios
-    source: survey
-    cite: "IEEE 802.11-2020 §19.3.11.7.5 'LDPC PPDU encoding process' steps (b)–(e) and Table 19-16（码长与码字数选取、缩短 / 删余 / 重复及加一个符号的两个条件）；VHT / HE / EHT 沿用同一流程"
-    note: "未核实：原文未贴入。本库按 HT/VHT 的流程（预 FEC 填充到 N_SYM·N_DBPS，等价于 HE 的 a = 4），不建 HE/EHT 的 a 因子与 PE 字段（assumed.eht_prefec_padding）。"
+    source: spec
+    cite: "IEEE 802.11-05/1102r4 'Joint Proposal: High throughput extension to the 802.11 Standard: PHY'（TGn 联合提案，2006-01）；mentor.ieee.org 公开文件，2026-11-16 读原文"
+    section: "4.3.3.4 LDPCC PPDU encoding process, Table 13 PPDU Encoding Parameters 与步骤 (d)"
+    quote: "Table 13 - PPDU Encoding Parameters — Range (bits) | NCW | LLDPC: Navbits ≤ 648: 1, 1296 if Navbits ≥ Npld + 912 × (1-R), 648 otherwise; 648 < Navbits ≤ 1296: 1, 1944 if Navbits ≥ Npld + 1464 × (1-R), 1296 otherwise; 1296 < Navbits ≤ 1944: 1, 1944; 1944 < Navbits ≤ 2592: 2, 1944 if Navbits ≥ Npld + 2916 × (1-R), 1296 otherwise [...] d) Compute the number of bits to be punctured from the codewords after encoding [...] If ((Npunc > 0.1×NCW×LLDPC×(1-R)) AND (Nshrt < 1.2×Npunc×R/(1-R))) is true OR if (Npunc > 0.3×NCW×LLDPC×(1-R)) is true, then increment Navbits and recompute Npunc"
+    note: "HT 的 LDPC PPDU 编码流程：码长按 N_avbits 与 N_pld 选（门限 912 / 1464 / 2916 乘 (1 − R)），删余太多时多加一个符号（N_punc > 0.1·N_CW·L_LDPC·(1 − R) 且 N_shrt < 1.2·N_punc·R/(1 − R)，或 N_punc > 0.3·N_CW·L_LDPC·(1 − R)）。步骤 (d) 的判据原文是公式图，渲染出来读。VHT / HE / EHT 沿用同一流程是 mmw60_trx 的读法；它按 HT/VHT 的流程（预 FEC 填充到 N_SYM·N_DBPS，等价于 HE 的 a = 4），不建 HE/EHT 的 a 因子与 PE 字段（它的 assumed.eht_prefec_padding）。用户 2026-11-16 对照标准核对一致（IEEE 802.11 标准的许可禁止输入 AI，本库没有读标准，只读公开文件）。"
 
   # ------------------------------------------------------------ DMG PHY（802.11ad，单信道 2.16 GHz）：#29，公开材料
 

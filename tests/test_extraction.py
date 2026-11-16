@@ -51,7 +51,9 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        # issue #29 (mmw60_trx): DMG / EDMG PHY from public TGad / TGay contributions and R&S 1MA220
        "dmg.phy_params", "dmg.sc_mcs", "dmg.ofdm_mcs", "dmg.tx_evm_db", "dmg.rx_sensitivity_dbm",
        "edmg.ofdm_params", "edmg.ofdm_pilot_tones_ncb1", "edmg.ofdm_pilot_values_ncb1", "edmg.ofdm_mcs",
-       "edmg.ofdm_rate_mbps", "edmg.sc_params", "edmg.sc_mcs", "edmg.sc_mcs_variants", "edmg.sc_rate_mbps"}
+       "edmg.ofdm_rate_mbps", "edmg.sc_params", "edmg.sc_mcs", "edmg.sc_mcs_variants", "edmg.sc_rate_mbps",
+       # batch 7: the six Murmann-survey rows the two adc_survey statistics are recomputed from
+       "adc_survey.ti_sar_ge40gs_4to7nm"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -75,6 +77,12 @@ VERIFIED.update({k: "issue #26 (Liu 2025, IEEE Commun. Mag. 63(3))" for k in (
 # the user checked them against IEEE 802.11-2024
 VERIFIED.update({k: "issue #29 (TGay 11-17/0597r1; TGad 11-10/0433r2)" for k in (
     "ieee80211ay.channel_centres_ghz", "dmg.sensitivity_assumptions")})
+# batch 7: eCFR (47 CFR 15.255), arXiv v1 of Liu 2025, and public IEEE 802.11 contributions (TGn / TGac / TGax / TGbe)
+_BATCH7 = "batch 7 (eCFR; arXiv:2309.16813v1; IEEE 802.11-05/1102r4, 09/0992r21, 15/0330r5, 15/0132r17, 19/1262r23)"
+VERIFIED.update({k: _BATCH7 for k in (
+    "fcc15255.band_low_hz", "fcc15255.band_high_hz", "fcc15255.eirp_avg_dbm", "fcc15255.eirp_peak_dbm",
+    "liu2025.per_target", "ieee80211ac.n_sd", "ieee80211be.n_sd", "ieee80211be.ldpc_tone_mapping_distance",
+    "ieee80211.ldpc_ppdu_encoding_thresholds")})
 #: migrated entries read in the original, which disagrees with the source table: survey -> spec, and the
 #: value (or unit) changed to the original's -- {key: {field: (source value, value now)}}
 CORRECTED = {
@@ -84,6 +92,9 @@ CORRECTED = {
         {4: [80e6, 160e6, 320e6, 640e6], 8: [160e6, 320e6, 640e6, 1280e6], 16: [320e6, 640e6, 1280e6, 2560e6, 5120e6]},
         {4: [80e6, 160e6, 320e6, 640e6], 8: [160e6, 320e6, 640e6, 1280e6], 16: [320e6, 640e6, 1280e6, 2560e6]})},
     # issue #26: the journal tracks the phase at the receiver; arXiv said no estimation / compensation for CFO and PN
+    # batch 7: recomputed from the six rows of the Murmann survey; Halo_Serdes had rounded the median 70.8 to 70
+    "adc_survey.walden_fom_fj": {"value": (70.0, 70.815)},
+    "adc_survey.walden_fom_range_fj": {"value": ([38.4, 120.2], [38.36, 120.19])},
     "liu2025.receiver_cfo_statement": {"value": (
         "refrained from using estimation and compensation algorithms for CFO and PN",
         "refrained from using estimation and compensation algorithms for CFO and used phase tracking"
@@ -92,16 +103,9 @@ CORRECTED = {
 #: fields changed on the way in: {key: {field: (old text, new text)}}; each is
 #: a replacement applied to the source's field and nothing else
 CHANGED = {
-    # issue #26: still survey -- the journal version has no "specified PER (10^-2)" sentence
-    "liu2025.per_target": {"note": (
-        "未核实。本库 external_check 的比较点。",
-        "未核实。本库 external_check 的比较点。刊出版（2026-11-15 读）正文没有"
-        "'specified PER (10^-2)'这句，Simulation Results 只说"
-        "'the SNR required to achieve the same PER'；Fig. 3 纵轴 10^0–10^-3。")},
     # iron rule 5: the note spelled the tag word with a colon (d2d_link's grep counted 0 spec lines as 1)
     "ucie.rx_eye_width_ui@24-32": {"note": ("改 source: spec 或删去", "改成 spec 标签或删去")},
     # 0.2.0: cross-references to renamed keys follow the rename
-    "adc_survey.walden_fom_fj": {"note": ("survey.walden_fom_range_fj", "adc_survey.walden_fom_range_fj")},
     "liu2025.k_threshold_stf": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
     "liu2025.k_threshold_ltf_only": {"cite": ("derived.cfo_liu2025_hz", "liu2025.cfo_from_ppm_hz")},
     # milestone 2 batch 1: four of the 13 quoted rows read in their originals; the note says which and what differs
@@ -153,7 +157,8 @@ def test_each_fixture_names_its_repo_and_full_sha(name):
 
 def _check_equal(new_key: str, src: dict, dst: dict):
     if new_key in CORRECTED:
-        assert src["source"] == "survey" and dst["source"] == "spec" and dst["quote"] and dst["section"], new_key
+        assert src["source"] == "survey", new_key
+        assert dst["source"] == "derived" or (dst["source"] == "spec" and dst["quote"] and dst["section"]), new_key
         for field in ("value", "unit"):
             if field in CORRECTED[new_key]:
                 old, new = CORRECTED[new_key][field]
@@ -210,7 +215,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 54 == 133
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 55 == 134
     assert set(CHANGED) <= set(ss.all_entries())
 
 

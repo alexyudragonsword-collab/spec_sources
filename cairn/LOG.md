@@ -3,6 +3,16 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · 第 7 批：能用公开材料核的 11 条（feat/batch7-public-sources，未发布）
+
+- PR #32 合并即 0.5.0（main `6ad42bf`）。用户同意：mmw60 的重新 pin issue 等这一批合并后一起开。
+- eCFR（放行 www.ecfr.gov）：§15.255 现行条文，`fcc15255.*` 4 条 → spec；迁入 cite 的 "(a)" 改为节标题 / (c)，(c)(1)(i) 40 / 43 dBm。(c)(2) 雷达限值记进 ROADMAP。
+- arXiv v1：`liu2025.per_target` → spec。更正：`liu2025.k_threshold` 的 note 原说 arXiv 只写 1250 KHz，v1 其实写了 4 × 312.5 KHz。
+- mentor 公开文件：TGn 11-05/1102r4、TGac 09/0992r21、TGax 15/0330r5 与 15/0132r17、TGbe 19/1262r23 → 802.11 的 4 条 → spec，用户核对一致（G1–G4）。
+- Murmann ADC survey（GitHub，00b4b85）：6 行 TI-SAR 新建 spec；`walden_fom_fj` 70 → 70.815、区间 [38.4, 120.2] → [38.36, 120.19]，改为 derived（CORRECTED 允许 derived）。
+- Okada JSSC 2013：实验室网站只有题录，归入要下载的。剩 6 条 survey 都要用户下载：Horowitz、ISCAS 2015、Okada、DeepScaleTool。
+- 共享表 133 → 134 条：spec 114、survey 6、derived 14。测试 92 个（90 通过，2 跳过）。mmw60 需重新 pin。
+
 ## 2026-11-16 · 发布 0.5.0（feat/release-0.5.0）
 
 - PR #31 已合并（main `bebefc5`）。用户定：按顺序做——先发版，再做第 7 批，最后是要下载原文的几项。

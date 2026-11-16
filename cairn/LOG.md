@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · 验收 #29：mmw60_trx 重新 pin 到 3123b65（feat/accept-issue29）
+
+- PR #30 合并（main `3123b65`），在 #29 给了新 PIN。mmw60_trx 在 mmw60_trx#49 合并 `29eb6fe`（pin 的提交 `2400c5b`，只做 pin）。
+- 复核：9 个 vendor 文件去两行头后与 `3123b65` 逐字节相同；本地 `vendor_check --strict` 9 个 verbatim（241 个因缺 sibling 跳过）。指纹 `e662238` 对 `2400c5b` 69 个值逐位相同（`MMW60_NO_JIT=1`）。合并表 157 → 171，未核实 22 → 20。
+- 它手算核了 Δf、子载波数、GI 样本数、两档速率、DC 偏移步长 0.46875 MHz；示例 08 只有一个标签变化。EDMG 灵敏度它第一轮不用。
+- `consumers.yaml`：mmw60_trx pin `7aae876` → `3123b65`、at `29eb6fe`，文件仍是 9 个；issue 一栏写 mmw60_trx#49（请求在本库 #29）。数据未动，共享表 133 条；测试 92 个（90 通过，2 跳过）。
+
 ## 2026-11-16 · #29：802.11ad / ay 单信道 PHY 的数，从公开提案建（feat/issue29-dmg-edmg，未发布）
 
 - mmw60_trx 开了 #29。用户下载 IEEE 802.11-2024 后发现许可禁止输入 AI → 不读标准；改读 mentor 上 TGad / TGay 的公开提案与 R&S 1MA220（放行 scdn.rohde-schwarz.com，用户批准），列成 A–E 五组请用户对照标准核对：全部一致。

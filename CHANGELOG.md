@@ -8,8 +8,13 @@
 `reader.py` 没动。
 
 - fmcw_radar 已在 [#19](https://github.com/alexyudragonsword-collab/fmcw_radar/issues/19) 里 pin 到 `f87cc9b`、多 vendor 了 `data/windows.yaml`（已验收，见下）。
-- **`mmw60_trx` 需重新 pin**：它 vendor 的 `data/ieee80211.yaml` 新增 14 条 `dmg.*` / `edmg.*`，`ieee80211ay.channel_centres_ghz` 与 `dmg.sensitivity_assumptions` 从 survey 改成 spec（值不变）。它在 mmw60_trx#37 里 pin 到 `7aae876`（#26，已验收，见下）。
+- mmw60_trx 已在 mmw60_trx#49 里 pin 到 `3123b65`（#29，已验收，见下）。
 - d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### 验收：#29（mmw60_trx 重新 pin 到 `3123b65`）
+- mmw60_trx 在 mmw60_trx#49 合并 `29eb6fe`（重新 pin 的提交 `2400c5b`，只做 pin、没接线）。9 个 vendor 文件去掉出处头后与 `3123b65` 逐字节相同，本库本地跑它的 `vendor_check --strict` 这 9 个都是 verbatim；它带齐 sibling 是 250 verbatim、0 skipped。
+- 指纹：本库在本地对 `e662238`（父提交）与 `2400c5b` 各录一次（`MMW60_NO_JIT=1`），69 个值逐位相同。它的合并表 157 → 171 条（多出 14 条 `dmg.*` / `edmg.*`），未核实 22 → 20。它报 pytest、ruff 绿。
+- 它手算核过 Δf、355 = 336 + 16 + 3、GI 样本数、OFDM MCS 1 与 SC MCS 21 的速率、信道间 DC 偏移每档 0.46875 MHz；可见变化只有示例 08 里 `dmg.sensitivity_assumptions` 的标签从 survey 变成 spec。EDMG 灵敏度它第一轮不用，要按距离换算时在本地写 assumed。`ay_ofdm` / `ay_sc` 接新键另开 PR。
 
 ### #29（mmw60_trx 请求）：802.11ad（DMG）/ 802.11ay（EDMG）单信道 PHY 的数
 - **IEEE 802.11-2024 不能用**：用户经 IEEE GET 计划下载后，许可条款禁止把它输入 AI 系统（与 UCIe 规范同类）。本库不读标准，只读公开文件，再请用户对照标准核对（用户只回报哪几行对不上，没把标准内容发给本库）；2026-11-16 核对全部一致。

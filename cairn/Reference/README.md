@@ -118,3 +118,11 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - ✅ 已能取 3 篇（ITU-R P.676、arXiv 1910.13706 已读；剩 Murmann ADC survey）。
 
 下载后把文件放进本目录，文件名用表里的编号或第一作者加年份（如 `asada_t1_01_chan_isscc2009.pdf`）。`*.pdf` / `*.doc` 不入库。
+
+## 2026-11-16 · IEEE Xplore 的许可：本地的 12 篇 Xplore 原文已删
+
+- 查许可时发现 IEEE Xplore 的使用条款限制 AI：个人 / 访客用户不得把 Xplore 内容直接或间接上传给 AI 工具；机构订阅不得把授权内容与 AI 工具结合使用（简短的学术引用除外），有的机构协议另许把少量文献交给不训练的 AI 工具做摘要；也不得把内容存放在 AI 工具里。**这是几次搜索结果的一致说法，条款原文没读到**：ieeexplore.ieee.org 的条款页对本环境返回 418，转述它的几个图书馆页面不在网络白名单里。
+- 用户决定删掉本地副本。删了这 12 篇（`cairn/Reference/` 里的 PDF、会话上传目录里的原件、scratchpad 里由它们渲染的页面与抽出的文字，按哈希复查容器里没有剩下的）：第 1 批 Asada 表 [1] Chan、[2] Lai、[6] Law、[9] Kuo、[11] Jin、[13] Tanomura、[15] Martineau；第 2 批 Wu JSSC 2014、Staszewski TCAS-II 2006、Henzler ISSCC 2008；Harris Proc. IEEE 1978；Liu ComMag 2025。上面各行写的"本地 `…pdf`"已不在。
+- 由它们建的条目不动：只有数值和简短引文。
+- 还标 📥 的都在 Xplore 上：第 1 批 Asada 表 [5] [7] [8] [10] [12] [14]，第 7 批 Horowitz ISSCC 2014、ISCAS 2015 接收机、Okada JSSC 2013、DeepScaleTool ISCAS 2021，可选的 Das Sharma CPMT 2022。**不再请用户下载发来**；怎么取待用户定（公开版本加用户核对，或留 survey）。DeepScaleTool 有作者的 arXiv 预印本（2102.10195）与 GPLv3 的工具本身（SourceForge），不经 Xplore。Horowitz 能搜到的全文副本（gwern.net、一个大学的 restricted 目录）不是作者或 IEEE 授权的发布，不用。
+- 不受影响的：mentor.ieee.org 的 802 工作组公开文件、Asada EuMC 2011（实验室网站）、arXiv、ITU-R、eCFR、NHTSA、Sandia、R&S、UCIe 联盟的公开材料、Murmann 的 GitHub。

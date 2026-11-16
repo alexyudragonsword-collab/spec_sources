@@ -7,8 +7,21 @@
 
 `reader.py` 没动。
 
-- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
 - fmcw_radar（`f87cc9b`）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### #33（mmw60_trx 请求）：DMG / EDMG 的 LDPC 与编码、扩展 SC MCS、控制 PHY 与扇区扫描
+- 标准本身不能读，全部取自公开文件，用户对照 IEEE 802.11-2024 逐行核对一致（K1–K11）：TGad 采纳的规范文本 11-10/0433r2；REVmc 的 11-16/0233r0（扩展 SC MCS）；TGay 的 SFD 11-15/1358r9、11-16/1495r1，已采纳的 17/1061r1（动议 #264）、17/0214r1（动议 #178）。表格从 docx 逐格取，公式是嵌入图片、渲染出来读。
+- 新增 12 条（11 spec、1 derived）：
+  - `dmg.ldpc_matrices`：码长 672、Z = 42，码率 1/2、5/8、3/4、13/16 的基矩阵（-1 为零块）；
+  - `dmg.data_encoding`：扰码 x⁷ + x⁴ + 1（周期 127，初值 7 位在头部），SC 与 OFDM 的码字数与填充公式；
+  - `dmg.sc_mcs_extended`：MCS 9.1、12.1–12.6 的调制、码率、速率（2695 … 8085 Mb/s）；`dmg.ldpc_r7_8_punctured`：这几档的 7/8 是 13/16 码打掉前 48 个校验位（624 / 546）；
+  - `dmg.control_phy`（STF 5120 码片、CEF 1152、头部 40 位、DBPSK、Ga32、等效 1/2）与 derived `dmg.control_phy_rate_bps` = 27.5 Mb/s；
+  - `dmg.phy_timing`：SIFS 3 µs、SBIFS 1 µs、BRPIFS 20 µs、slot 3 µs、控制 PHY 前导 3564 ns 等；`dmg.ssw_frame`：SSW 帧 26 字节、SSW 字段 1 / 9 / 6 / 2 / 6 位；
+  - `edmg.ldpc_672_r7_8`（588 信息位的新 7/8 码）、`edmg.ldpc_1344_lifting`（1344 码长的提升矩阵，7/8 作用于 3/4 并两两合行）、`edmg.sc_encoding`（码率表、N_CBPB、N_BLKS）、`edmg.short_ssw`（48 位）。
+- 新测试 `test_the_ldpc_tables_agree_with_each_other`：EDMG 提升矩阵的 -1 与 DMG 基矩阵的零块逐格相同；672 位 7/8 矩阵等于 3/4 矩阵第 1+3、2+4 行之和。两份文件相隔六年，互相印证。
+- 没有做的：EDMG 的最低灵敏度在公开材料里没有（TGay CID 1620 的解决方案只补了 EVM）；EDMG OFDM 的填充规则没找到；BRP / TRN 单元长度（mmw60 写的"如顺手"）这次没做。
+- 共享表 146 条：spec 125、survey 6、derived 15。账本新增 12 个键，记 `added=unreleased`。
 
 ### 第 7 批：能用公开材料核的 survey
 - 放行 www.ecfr.gov（环境 "rf design"，用户批准）。

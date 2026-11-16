@@ -105,6 +105,7 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
   - R&S 白皮书 1MA220_3e（2017-11，`rs_1ma220_3e_80211ad.pdf`）：Table 4-1 DMG 发射 EVM 与灵敏度（转引 802.11-2016 第 20 章）。
   - TGay：11-17/0597r1 OFDM 信号参数、11-17/0628r1 单信道导频序列、11-17/0909r0 OFDM MCS、11-15/1358r9 SFD（SC 的 GI 与 MCS）、11-18/0713r3 SC 性能要求（EVM）、11-18/1152r0 OFDM 性能要求（EVM）；采纳动议见 11-17/0186r37（各有本地 PDF，文件名以 `ieee802_11_` 开头）。都没有 AI 使用限制的字样。
   → `dmg.*`、`edmg.*`，并把 `ieee80211ay.channel_centres_ghz`、`dmg.sensitivity_assumptions` 改成 spec。
+- ✅ #33 读的公开文件（2026-11-16，mentor.ieee.org）：TGad 11-10/0433r2（21.3.8 LDPC 矩阵、21.3.9 扰码、21.4 控制 PHY、21.5 / 21.6 编码流程、21.10.4 PHY 特性、7.2.1.16–18 SS 帧；公式是嵌入图片，从 docx 的 wmf 渲染出来读）；REVmc 11-16/0233r0（扩展 SC MCS、7/8 打孔）；TGay 11-16/1495r1（7/8 打孔的是前 48 个校验位）、SFD 11-15/1358r9（6.3.6 LDPC、6.9.1 Short SSW）、17/1061r1（1344 码长 7/8，动议 #264）、17/0214r1（EDMG SC 编码，动议 #178）、17/0018（Short SSW 文本，已进 SFD）→ #33 的 12 条，用户核对一致。
 - ✅ 第 7 批读的 802.11 公开文件（2026-11-16，mentor.ieee.org）：TGn 联合提案 11-05/1102r4（Table 1 的 N_SD、4.3.3.4 LDPC PPDU 编码流程，步骤 (d) 是公式图）、TGac 框架 11-09/0992r21、TGax 11-15/0330r5（OFDMA 数字学）与框架 11-15/0132r17（Table 6 D_TM）、TGbe 框架 11-19/1262r23（Nsd_total 表、D_TM）→ `ieee80211ac.n_sd`、`ieee80211be.n_sd`、`ieee80211be.ldpc_tone_mapping_distance`、`ieee80211.ldpc_ppdu_encoding_thresholds`，用户对照标准核对一致。
 - ✅ 47 CFR §15.255（www.ecfr.gov，2026-11-16 放行后读 2026-11-12 版的现行条文，该节最近修订 2023-08-23）→ `fcc15255.*`。(c)(2) 有雷达类器件的限值（ROADMAP）。
 - ✅ Murmann ADC survey（github.com/bmurmann/ADC-survey，BSD-3，提交 00b4b85，`xls/ADCsurvey_rev20260801.xlsx`）：≥ 40 GS/s、4–7 nm 的 6 行时间交织 SAR → `adc_survey.ti_sar_ge40gs_4to7nm`，两条统计由它复算。

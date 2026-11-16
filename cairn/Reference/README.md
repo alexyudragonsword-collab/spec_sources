@@ -99,7 +99,12 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - 📥 "A 64 dB Gain 60 GHz Receiver with 7.1 dB Noise Figure for 802.11ad Applications in 90 nm CMOS", ISCAS 2015（`rx60.comm_iscas2015`）。
 - 📥 M. Horowitz, "1.1 Computing's energy problem (and what we can do about it)", ISSCC 2014（`horowitz2014.*`）。
 - 📥 S. Sarangi, B. Baas, "DeepScaleTool: A Tool for the Accurate Estimation of Technology Scaling in the Deep-Submicron Era", ISCAS 2021（`deepscale.*`）。
-- 📥 IEEE 802.11-2020、802.11ax-2021、802.11ay-2021、802.11be（GET 计划，免费注册）：N_SD、LDPC 编码流程与音调映射距离、DMG 灵敏度表的前提、信道化。
+- ~~📥 IEEE 802.11-2020、802.11ax-2021、802.11ay-2021、802.11be（GET 计划，免费注册）~~ **不能用（2026-11-16）**：用户下载 IEEE 802.11-2024（已并入 11ay 等 7 个修正案）后，许可条款禁止把它输入 AI 系统，与 UCIe 规范同类。不读标准，也别请用户发；GET 计划里的其它 IEEE 标准（802.3dj / db 等）下载前同样先看条款。做法改为读 mentor.ieee.org 上的公开提案与厂商公开资料，再请用户对照标准核对（用户只说哪几行对不上，不把标准内容发过来）。
+- ✅ #29 读的公开文件（2026-11-16，本地 PDF）：
+  - IEEE 802.11-10/0433r2，TGad 采纳的完整提案规范文本（335 页，`ieee802_11_10_0433r2_tgad_cp_spec.pdf`）：21.3.3.8 灵敏度表与前提、21.3.4 Table 67、21.5 / 21.6 的 MCS、导频、SC 块、EVM。EVM 后来改过。
+  - R&S 白皮书 1MA220_3e（2017-11，`rs_1ma220_3e_80211ad.pdf`）：Table 4-1 DMG 发射 EVM 与灵敏度（转引 802.11-2016 第 20 章）。
+  - TGay：11-17/0597r1 OFDM 信号参数、11-17/0628r1 单信道导频序列、11-17/0909r0 OFDM MCS、11-15/1358r9 SFD（SC 的 GI 与 MCS）、11-18/0713r3 SC 性能要求（EVM）、11-18/1152r0 OFDM 性能要求（EVM）；采纳动议见 11-17/0186r37（各有本地 PDF，文件名以 `ieee802_11_` 开头）。都没有 AI 使用限制的字样。
+  → `dmg.*`、`edmg.*`，并把 `ieee80211ay.channel_centres_ghz`、`dmg.sensitivity_assumptions` 改成 spec。N_SD（11ac / be）、LDPC 编码流程、音调映射距离还没找公开出处。
 - 🌐 47 CFR §15.255（www.ecfr.gov）：`fcc15255.*`。
 - ✅ Murmann ADC survey（GitHub 仓库，git 克隆）：`adc_survey.*`。
 

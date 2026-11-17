@@ -14,8 +14,8 @@ survey.horowitz_add32_pj  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.walden_fom_fj  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.walden_fom_range_fj  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.node_scale_45_to_7nm  added=0.1.0  aliased=0.2.0  retired=0.3.0
-adc_survey.ti_sar_ge40gs_4to7nm  added=unreleased
-deepscale.energy_by_node  added=unreleased
+adc_survey.ti_sar_ge40gs_4to7nm  added=0.6.0
+deepscale.energy_by_node  added=0.6.0
 # frontend60.yaml
 rx60.comm_asada2011  added=0.1.0
 rx60.comm_iscas2015  added=0.2.0
@@ -68,18 +68,18 @@ edmg.sc_params  added=0.5.0
 edmg.sc_mcs  added=0.5.0
 edmg.sc_mcs_variants  added=0.5.0
 edmg.sc_rate_mbps  added=0.5.0
-dmg.ldpc_matrices  added=unreleased
-dmg.data_encoding  added=unreleased
-dmg.sc_mcs_extended  added=unreleased
-dmg.ldpc_r7_8_punctured  added=unreleased
-dmg.control_phy  added=unreleased
-dmg.control_phy_rate_bps  added=unreleased
-dmg.phy_timing  added=unreleased
-dmg.ssw_frame  added=unreleased
-edmg.ldpc_672_r7_8  added=unreleased
-edmg.ldpc_1344_lifting  added=unreleased
-edmg.sc_encoding  added=unreleased
-edmg.short_ssw  added=unreleased
+dmg.ldpc_matrices  added=0.6.0
+dmg.data_encoding  added=0.6.0
+dmg.sc_mcs_extended  added=0.6.0
+dmg.ldpc_r7_8_punctured  added=0.6.0
+dmg.control_phy  added=0.6.0
+dmg.control_phy_rate_bps  added=0.6.0
+dmg.phy_timing  added=0.6.0
+dmg.ssw_frame  added=0.6.0
+edmg.ldpc_672_r7_8  added=0.6.0
+edmg.ldpc_1344_lifting  added=0.6.0
+edmg.sc_encoding  added=0.6.0
+edmg.short_ssw  added=0.6.0
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0
@@ -128,12 +128,12 @@ pa60.tanomura_isscc2008  added=0.4.0
 pa60.martineau_isscc2010  added=0.4.0
 pa60.kuo_mwcl2009  added=0.4.0
 pa60.jin_esscirc2007  added=0.4.0
-pa60.suzuki_isscc2008  added=unreleased
-pa60.kurita_rfic2009  added=unreleased
-pa60.bohsali_rfic2009  added=unreleased
-pa60.dawn_ims2009  added=unreleased
-pa60.pinel_isscc2008  added=unreleased
-pa60.chowdhury_isscc2008  added=unreleased
+pa60.suzuki_isscc2008  added=0.6.0
+pa60.kurita_rfic2009  added=0.6.0
+pa60.bohsali_rfic2009  added=0.6.0
+pa60.dawn_ims2009  added=0.6.0
+pa60.pinel_isscc2008  added=0.6.0
+pa60.chowdhury_isscc2008  added=0.6.0
 # regulatory.yaml
 fcc15255.eirp_avg_dbm  added=0.1.0
 fcc15255.eirp_peak_dbm  added=0.1.0

@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · 发布 0.6.0（feat/release-0.6.0）
+
+- PR #40 合并（main `cca7a21`）。用户定：先发 0.6.0，再给 mmw60_trx、fmcw_radar 各开一个重新 pin 的 issue。
+- 0.6.0 收进 0.5.0 之后的：第 7 批（#34）、#33 的 12 条与 `phy_timing` 修正（#35、#36，mmw60 已验收）、DeepScaleTool（#39）、Xplore 原文 10 篇（#40）。共享表 133 → 153 条（spec 104 → 136，survey 17 → 1，derived 12 → 16）。
+- 改了 `__init__.py` 与 `pyproject.toml` 的版本号；CHANGELOG"未发布"改成 0.6.0，头部几条重写成发版说明；`keys.lock` 20 个键 `added=unreleased` → `added=0.6.0`（只换键行）。
+- mmw60_trx（`__init__.py`、energy、frontend60、pa60）与 fmcw_radar（frontend60）要重新 pin；d2d_link 不用。
+
 ## 2026-11-17 · 10 篇 IEEE Xplore 原文：survey 5 → 1（feat/xplore-batch，未发布）
 
 - PR #39 合并（main `4863ff0`）。用户上传 10 篇 Xplore 原文；与上一轮"不发原文"相反，先停下来问，用户确认其许可允许。读完删本地副本。

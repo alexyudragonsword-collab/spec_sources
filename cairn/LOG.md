@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · 10 篇 IEEE Xplore 原文：survey 5 → 1（feat/xplore-batch，未发布）
+
+- PR #39 合并（main `4863ff0`）。用户上传 10 篇 Xplore 原文；与上一轮"不发原文"相反，先停下来问，用户确认其许可允许。读完删本地副本。
+- Horowitz ISSCC 2014 Fig. 1.1.9（渲染）：32 位整数乘 3.1、加 0.1 pJ（45 nm、0.9 V）→ 两条改 spec。
+- ISCAS 2015（Luo 等，清华）：NF 7.1、增益 64、调节 28、OP1dB −5.5、177 mW 全对 → spec；7.1 是三信道最小的双边带 NF。Okada JSSC 2013：收发天线各 6.0 dBi → spec。
+- Asada 表后 6 行新建 6 条：[7] [10] [12] [14] 四格全对；[8] 增益 4.4 是 S21（表 4.2）；[14] 5.5 是图注（正文 5.6）；[5] 无 PAE、电压 1.2 V（Asada 写 5.0 %、1.0 V）。13 行 P1dB、Psat 全对。
+- Das Sharma CPMT 2022：标准封装降宽、高级封装每 32 条 2 个备用，没有 x8 → `ucie.standard.lane_repair` 仍 survey，`ucie.yaml` 不动（免得 d2d 为一句 note 重新 pin）。
+- 共享表 147 → 153 条：spec 136、survey 1、derived 16。测试 94 个（92 通过，2 跳过）。mmw60（energy / frontend60 / pa60）、fmcw（frontend60）需重新 pin。
+
 ## 2026-11-16 · DeepScaleTool：读 arXiv 预印本与工具原文件（feat/deepscale-tool，未发布）
 
 - PR #38 合并（main `a1da0f8`）。用户定按默认做：不发 Xplore 原文；DeepScaleTool 读 arXiv，其余列 Xplore 地址给用户核对。

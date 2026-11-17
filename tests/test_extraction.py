@@ -59,7 +59,10 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "dmg.control_phy", "dmg.control_phy_rate_bps", "dmg.phy_timing", "dmg.ssw_frame",
        "edmg.ldpc_672_r7_8", "edmg.ldpc_1344_lifting", "edmg.sc_encoding", "edmg.short_ssw",
        # the per-node energy table in DeepScaleTool's own file the 45 -> 7 nm ratio is recomputed from
-       "deepscale.energy_by_node"}
+       "deepscale.energy_by_node",
+       # milestone 2 batch 1, the last six rows of Asada's Table I read in their originals (2026-11-17)
+       "pa60.suzuki_isscc2008", "pa60.kurita_rfic2009", "pa60.bohsali_rfic2009", "pa60.dawn_ims2009",
+       "pa60.pinel_isscc2008", "pa60.chowdhury_isscc2008"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -89,6 +92,9 @@ VERIFIED.update({k: _BATCH7 for k in (
     "fcc15255.band_low_hz", "fcc15255.band_high_hz", "fcc15255.eirp_avg_dbm", "fcc15255.eirp_peak_dbm",
     "liu2025.per_target", "ieee80211ac.n_sd", "ieee80211be.n_sd", "ieee80211be.ldpc_tone_mapping_distance",
     "ieee80211.ldpc_ppdu_encoding_thresholds")})
+# the IEEE Xplore originals the user downloaded and confirmed their licence lets spec_sources read (2026-11-17)
+VERIFIED.update({k: "Xplore originals, 2026-11-17 (Horowitz ISSCC 2014; Luo ISCAS 2015; Okada JSSC 2013)" for k in (
+    "horowitz2014.mult32_pj", "horowitz2014.add32_pj", "rx60.comm_iscas2015", "antenna60.okada2013_dbi")})
 #: migrated entries read in the original, which disagrees with the source table: survey -> spec, and the
 #: value (or unit) changed to the original's -- {key: {field: (source value, value now)}}
 CORRECTED = {
@@ -129,22 +135,28 @@ CHANGED = {
         "表里其他各行是它转引的、本库没有读各自的原文；用来看量级与分布，不用作基准档。"
         "14 行的 Psat 8–19.9 dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3），"
         "只有 [1] 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB。",
-        "表里其他各行是它转引的。spec_sources 读了其中 7 行的原文（里程碑 2 第 1 批）：[1"
-        "] pa60.chan_isscc2009、[2] pa60.lai_isscc2010、[6] pa6"
-        "0.law_isscc2010、[13] pa60.tanomura_isscc2008、[15] pa"
-        "60.martineau_isscc2010、[9] pa60.kuo_mwcl2009、[11] pa"
-        "60.jin_esscirc2007，P1dB、Psat、峰值 PAE 都与原文相同；增益有两格不同：["
-        "1] 原文表是 15.8（这里 16.0）；[13] 的 15.2 是原文 0.7 V 时 60 GHz"
-        " 的线性增益，同一行另外三格是 1.0 V 的（1.0 V 线性增益 14.3），这格看来转抄自 [9]"
-        " 的对比表。[11] 四格都在原文里，但不是 60 GHz 的：增益是 52 GHz 的峰值，功率是 4"
-        "8 GHz 的，60 GHz 时增益只有 11 dB。其余 6 行 mmw60_trx 与 spec_s"
-        "ources 都没有读原文。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9 dBm（"
-        "中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3）。只有 [1] 一行（9"
-        ".0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 PA 的 P"
-        "1dB 偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一行，最大是"
-        " [15] 的 5.6 dB，而它的 Psat 是功率扫描终点（Pin = 10 dBm）的输出、曲线仍"
-        "在上升，真实的差只会更大，同一颗 PA 在 1.8 V 时是 6.6 dB（pa60.martineau"
-        "_isscc2010）。")},
+        "表里其他各行是它转引的。spec_sources 读了全部 13 行的原文（里程碑 2 第 1 批；7 "
+        "行在 2026-11-13–14，[5] [7] [8] [10] [12] [14] 在 2026-1"
+        "1-17）：[1] pa60.chan_isscc2009、[2] pa60.lai_isscc2010"
+        "、[5] pa60.suzuki_isscc2008、[6] pa60.law_isscc2010、[7"
+        "] pa60.kurita_rfic2009、[8] pa60.bohsali_rfic2009、[9]"
+        " pa60.kuo_mwcl2009、[10] pa60.dawn_ims2009、[11] pa60."
+        "jin_esscirc2007、[12] pa60.pinel_isscc2008、[13] pa60."
+        "tanomura_isscc2008、[14] pa60.chowdhury_isscc2008、[15"
+        "] pa60.martineau_isscc2010。P1dB、Psat 13 行都与原文相同；峰值 P"
+        "AE 除 [5] 外都相同，[5] 的 5.0 % 原文里没有（Suzuki 没给效率，Asada 那行"
+        "的 1.0 V 原文是 1.2 V）。增益有几格要注意：[1] 原文表是 15.8（这里 16.0）；["
+        "13] 的 15.2 是原文 0.7 V 时 60 GHz 的线性增益，同一行另外三格是 1.0 V 的"
+        "（1.0 V 线性增益 14.3），这格看来转抄自 [9] 的对比表；[8] 的 4.4 是正文的 S2"
+        "1，原文汇总表的功率增益是 4.2；[14] 的 5.5 是图上的标注，正文的 S21 是 5.6。[1"
+        "1] 四格都在原文里，但不是 60 GHz 的：增益是 52 GHz 的峰值，功率是 48 GHz 的，"
+        "60 GHz 时增益只有 11 dB。用来看量级与分布，不用作基准档。14 行的 Psat 8–19.9"
+        " dBm（中位 12.45），Psat − P1dB 1.0–9.0 dB（中位 3.3）。只有 [1]"
+        " 一行（9.0 dB）接近 11ad 评估方法学那颗 Rapp 的 9.5 dB，而原作者自己把这颗 P"
+        "A 的 P1dB 偏低归于各级偏置不当造成的提前压缩（pa60.chan_isscc2009）；去掉这一"
+        "行，最大是 [15] 的 5.6 dB，而它的 Psat 是功率扫描终点（Pin = 10 dBm）的输"
+        "出、曲线仍在上升，真实的差只会更大，同一颗 PA 在 1.8 V 时是 6.6 dB（pa60.mart"
+        "ineau_isscc2010）。")},
 }
 
 
@@ -223,7 +235,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 68 == 147
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 74 == 153
     assert set(CHANGED) <= set(ss.all_entries())
 
 

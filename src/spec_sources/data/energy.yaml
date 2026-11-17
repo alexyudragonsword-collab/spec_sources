@@ -18,16 +18,20 @@ entries:
   horowitz2014.mult32_pj:
     value: 3.1
     unit: pJ
-    source: survey
-    cite: "Horowitz, ISSCC 2014 '1.1 Computing's energy problem' 32-bit int multiply at 45 nm, 0.9 V；经 Halo_Serdes analysis/power.py PowerCoefficients"
-    note: "未核实：照 Halo 示例 41 的口径。"
+    source: spec
+    cite: "M. Horowitz, '1.1 Computing's Energy Problem (and what we can do about it)', ISSCC 2014 Dig. Tech. Papers, pp. 10–14, doi 10.1109/ISSCC.2014.6757323（Stanford University）；用户从 IEEE Xplore 下载并确认其许可允许交给 spec_sources 读，2026-11-17 读原文，Figure 1.1.9 的表是编码字体，渲染出来读。迁入时经 Halo_Serdes analysis/power.py PowerCoefficients"
+    section: "Figure 1.1.9 'Rough energy costs for various operations in 45nm 0.9V' 的 Integer 一栏；正文引出 Figure 1.1.9 的一段"
+    quote: "The data for various operations in a 45nm technology are shown in Figure 1.1.9, which also gives the energy breakdown of a simple in-order processor. These numbers make two things very clear: First, the programmable nature of a processor has high energy overhead, 70pJ/instruction, vs. a few pJ for an operation. [...] Figure 1.1.9: Rough energy costs for various operations in 45nm 0.9V. Integer: Add 8 bit 0.03pJ, 32 bit 0.1pJ; Mult 8 bit 0.2pJ, 32 bit 3.1pJ. FP: FAdd 16 bit 0.4pJ, 32 bit 0.9pJ; FMult 16 bit 1.1pJ, 32 bit 3.7pJ. Memory (64bit): Cache 8KB 10pJ, 32KB 20pJ, 1MB 100pJ; DRAM 1.3-2.6nJ"
+    note: "45 nm、0.9 V 下一次 32 位整数乘法的能耗；图题自称是粗略值（Rough）。同一张图：8 位乘 0.2 pJ、32 位浮点乘 3.7 pJ；正文说一条指令的开销约 70 pJ，远大于一次运算。迁入时就是 3.1，读原文后值不变。用法照 Halo_Serdes 示例 41 的口径；换到 7 nm 乘 deepscale.node_scale_45_to_7nm。"
 
   horowitz2014.add32_pj:
     value: 0.1
     unit: pJ
-    source: survey
-    cite: "Horowitz, ISSCC 2014, 32-bit int add at 45 nm；经 Halo_Serdes PowerCoefficients"
-    note: "未核实。"
+    source: spec
+    cite: "M. Horowitz, ISSCC 2014, pp. 10–14, doi 10.1109/ISSCC.2014.6757323（同 horowitz2014.mult32_pj）；用户从 IEEE Xplore 下载并确认其许可允许交给 spec_sources 读，2026-11-17 读原文，Figure 1.1.9 渲染出来读。迁入时经 Halo_Serdes PowerCoefficients"
+    section: "Figure 1.1.9 'Rough energy costs for various operations in 45nm 0.9V' 的 Integer 一栏"
+    quote: "Figure 1.1.9: Rough energy costs for various operations in 45nm 0.9V. Integer: Add 8 bit 0.03pJ, 32 bit 0.1pJ; Mult 8 bit 0.2pJ, 32 bit 3.1pJ"
+    note: "45 nm、0.9 V 下一次 32 位整数加法的能耗（8 位 0.03 pJ），图题自称是粗略值。迁入时就是 0.1，读原文后值不变。"
 
   # ------------------------------------------------------------ ADC 的 Walden FoM（Murmann ADC survey）
   adc_survey.ti_sar_ge40gs_4to7nm:

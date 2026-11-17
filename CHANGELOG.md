@@ -9,6 +9,13 @@
 
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
+- **`mmw60_trx` 需重新 pin**（又一次）：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 更正：`dmg.data_encoding` 的 ρ = 2（mmw60_trx 在 #43 里追问）
+- SC MCS 1（ρ = 2）的码字：0433r2 21.6.3.2.2 的原文是数据 L_Z = 168 位后补 168 个零，按 1/2 码编码得 (数据, 零, 校验 336)，再把第 L_Z + 1 到 336 位（补的零）换成数据 ⊕ PN；PN 用数据扰码的 LFSR（x⁷ + x⁴ + 1），初值全 1，每个码字重新置位。码字为 (数据, 数据 ⊕ PN, 校验 336)。
+- #33 时 note 写成"把校验后半段换成数据 ⊕ PN"，是读错了原文。用户 2026-11-17 对照 IEEE 802.11-2024 核对 ρ = 2 一段，一致。
+- 新增两个字段 `sc_rho2_codeword`、`sc_rho2_pn`（文字），原有字段的值不变。
+- 新测试：用 `dmg.ldpc_matrices` 的 1/2 基矩阵展开 336 × 672 的 H，2 L_Z = 336 正是信息位数，后 336 列满秩，(数据, 零, 校验) 唯一；随机数据编一个码字核对 H·cᵀ = 0。测试 98 个（96 通过，2 跳过）。
 
 ### 验收：#43（mmw60_trx 重新 pin 到 `563cff4`）
 - mmw60_trx 在 mmw60_trx#67 合并 `636208a`（重新 pin 的提交 `6781b81`）。9 个 vendor 文件去掉出处头后与 `563cff4` 逐字节相同（`6781b81` 与它现在的 main `52449b6` 都是）；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过），它带齐 sibling 报 250 verbatim。

@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · 更正 `dmg.data_encoding` 的 ρ = 2（feat/data-encoding-rho2）
+
+- PR #45 合并（main `5ae7a38`）。mmw60 在 #43 追问 SC MCS 1 的码字。0433r2 21.6.3.2.2 的 ρ = 2 一段（公式图 image177–185 渲染出来读）：L_Z = L_CW/2ρ = 168，c = (b, 168 个零, p_1…p_336)，"Replace bits L_Z + 1 though 336 … XOR'ed by a PN sequence … LFSR used for data scrambling … initialized to the all ones vector and reinitialized … after every codeword"。
+- 本库 #33 的 note 写成换"校验后半段"，读错了：换的是补的零。用户核对标准一致（M1）。
+- 改 note，加 `sc_rho2_codeword`、`sc_rho2_pn`；新测试：1/2 码 H（336 × 672）后 336 列满秩，随机数据编出的 (数据, 零, 校验) 满足 H·cᵀ = 0。
+- 数据值不变，共享表 158 条；测试 98 个（96 通过，2 跳过）。mmw60 需再 pin。
+
 ## 2026-11-17 · 验收 #43：mmw60_trx 重新 pin 到 563cff4（feat/accept-issue43）
 
 - PR #44 合并（main `563cff4`），在 #43 给了 PIN。mmw60_trx 在 mmw60_trx#67 合并 `636208a`（pin 的提交 `6781b81`）。

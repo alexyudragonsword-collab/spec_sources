@@ -5,6 +5,7 @@ tests/test_reader.py, its use by consumers in tests/test_consumers.py."""
 from __future__ import annotations
 
 import math
+import random
 import re
 import statistics
 import subprocess
@@ -387,4 +388,45 @@ def test_the_short_ssw_field_widths_decode_the_published_example():
         got[name] = int(bits[i:i + width][::-1], 2)
         i += width
     assert got == want
+
+
+def _parity_rows(base: list[list[int]], z: int) -> list[int]:
+    """Rows of the binary parity-check matrix as ints (bit j = column j): -1 is a zero block, s >= 0 the
+    identity cyclically shifted by s."""
+    rows = []
+    for block_row in base:
+        for r in range(z):
+            rows.append(sum(1 << (c * z + (r + s) % z) for c, s in enumerate(block_row) if s != -1))
+    return rows
+
+
+def test_the_rho2_codeword_is_well_defined_by_the_rate_half_matrix():
+    """#43: for rho = 2, 0433r2 encodes (168 data bits, 168 zeros) with the rate-1/2 code and then replaces
+    bits 169..336 (the zeros) with data XOR PN, keeping all 336 parity bits. That needs 2*L_Z = 336 to be the
+    rate-1/2 code's information length and its parity columns to be invertible, so (data, zeros, parity) is
+    unique; checked on dmg.ldpc_matrices, then one codeword is built and checked against H."""
+    enc, mats = ss.value("dmg.data_encoding"), ss.value("dmg.ldpc_matrices")
+    z, n = mats["z"], enc["l_cw"]
+    assert n == mats["n"] == 16 * z
+    l_z = n // (2 * 2)                                   # L_Z = L_CW / (2 rho), rho = 2
+    assert l_z == 168 and "L_Z = L_CW/(2 rho) = 168" in enc["sc_rho2_codeword"]
+    rows = _parity_rows(mats["r1_2"], z)
+    k = n - len(rows)
+    assert k == 2 * l_z == 336
+    # solve H_p p = H_s s over GF(2) for s = (random data, zeros); bit n of a row holds the right-hand side
+    data = random.Random(43).getrandbits(l_z)
+    aug = [(row >> k) | ((bin(row & ((1 << k) - 1) & data).count("1") & 1) << (n - k)) for row in rows]
+    piv_rows, r = [], 0
+    for col in range(n - k):
+        piv = next((i for i in range(r, len(aug)) if aug[i] >> col & 1), None)
+        assert piv is not None, f"parity column {col} is dependent"
+        aug[r], aug[piv] = aug[piv], aug[r]
+        for i in range(len(aug)):
+            if i != r and aug[i] >> col & 1:
+                aug[i] ^= aug[r]
+        piv_rows.append(r)
+        r += 1
+    parity = sum((aug[i] >> (n - k) & 1) << col for col, i in enumerate(piv_rows))
+    c = data | (parity << k)                             # (b_1..b_168, 168 zeros, p_1..p_336)
+    assert all(bin(row & c).count("1") % 2 == 0 for row in rows)
 

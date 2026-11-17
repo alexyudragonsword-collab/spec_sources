@@ -2,17 +2,17 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇都读了原文（后 6 篇未发布）。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），DeepScaleTool 已按工具原文件核过（未发布）。2026-11-17 用户确认许可后发来 10 篇 IEEE Xplore 原文：`horowitz2014.*`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 4 条改 spec，Asada 表后 6 行建了条目（未发布）。共享表只剩 1 条 survey：`ucie.standard.lane_repair` 的降到 x8（见第 3 批）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇都读了原文（后 6 篇未发布）。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），DeepScaleTool 已按工具原文件核过（未发布）。2026-11-17 用户确认许可后发来 10 篇 IEEE Xplore 原文：`horowitz2014.*`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 4 条改 spec，Asada 表后 6 行建了条目（未发布）。共享表只剩 1 条 survey：`ucie.standard.lane_repair` 的降到 x8（见第 3 批）。以上在 0.6.0 发布。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 `76ee72a`，本库 #26、#29、#33 已验收（由它关闭）
-- **需重新 pin**（未开 issue，等用户定时机）：`data/energy.yaml`（DeepScaleTool 比值 0.175 → 0.1746；`horowitz2014.*` survey → spec）、`data/frontend60.yaml`（两条 survey → spec）、`data/pa60.yaml`（新增 6 条、Asada 表的 note）在 `76ee72a` 之后变了。值变了的只有 `deepscale.node_scale_45_to_7nm`。
+- **需为 0.6.0 重新 pin**：`__init__.py`、`data/energy.yaml`（DeepScaleTool 比值 0.175 → 0.1746；`horowitz2014.*` survey → spec）、`data/frontend60.yaml`（两条 survey → spec）、`data/pa60.yaml`（新增 6 条、Asada 表的 note）在 `76ee72a` 之后变了。值变了的只有 `deepscale.node_scale_45_to_7nm`。0.6.0 合并后在它的仓库开 issue（标题以"spec_sources 收件："开头），给一个 PIN。
 - Asada Table I 13 行都读完原文：P1dB、Psat 全对；[5] 的 PAE 5.0 % 与电压 1.0 V 原文里没有（Suzuki 没给效率，电压是 1.2 V）。它的示例 09 若算 PAE 的中位数，要知道这一格没有出处。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `f87cc9b`，#19 已验收；它的表里没有 survey 了
-- **需重新 pin**（未开 issue，等用户定时机）：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey → spec，值不变；它读的 `rx60.radar_iwr6843*`、`isolation.*` 没动。
+- **需为 0.6.0 重新 pin**（0.6.0 合并后在它的仓库开 issue，给一个 PIN）：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey → spec，值不变；它读的 `rx60.radar_iwr6843*`、`isolation.*` 没动。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。

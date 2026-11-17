@@ -3,16 +3,16 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
-## 未发布
+## 0.6.0 —— 里程碑 2 核实轮收尾：第 7 批、DMG / EDMG 的码与扇区扫描、DeepScaleTool、IEEE Xplore 原文 10 篇（2026-11-17）
 
-`reader.py` 没动。
+版本号随 `__init__.py` 变；`reader.py` 没动。共享表 153 条（0.5.0 是 133 条）：spec 136、survey 1、derived 16。
 
-- **`mmw60_trx` 要为这一节重新 pin，已在 #33 pin 到 `76ee72a` 并验收（见下）**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它原来的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
-- **`mmw60_trx` 需重新 pin**（又一次）：`data/energy.yaml`、`data/frontend60.yaml`、`data/pa60.yaml` 在 `76ee72a` 之后变了：
-  - DeepScaleTool 一节：`deepscale.node_scale_45_to_7nm` 0.175 → 0.1746（survey → derived），新增 `deepscale.energy_by_node`。它的同台表默认按 45 nm 算、不读这个比值，只有灵敏度节按 7 nm 重算时读，数字功耗在那里动 −0.23 %；
-  - IEEE Xplore 原文 10 篇一节：4 条 survey → spec，值不变；`pa60.*` 新增 6 条，`pa60.eumc2011_table1` 的值不变、note 改写。
-- **`fmcw_radar` 需重新 pin**：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey → spec，值不变。
-- d2d_link（`bbc0ccb`）vendor 的文件没动。
+- **`mmw60_trx` 需重新 pin**：它 vendor 的 `__init__.py`（版本号）、`data/energy.yaml`、`data/frontend60.yaml`、`data/pa60.yaml` 在 `76ee72a`（#33 时 pin、已验收）之后变了。值变了的只有 `deepscale.node_scale_45_to_7nm` 0.175 → 0.1746（它只在同台表按 7 nm 重算的灵敏度节读，数字功耗在那里动 −0.23 %）；其余是 survey 改 spec（值不变）、新增条目与 note。
+- **`fmcw_radar` 需重新 pin**：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey 改 spec，值不变；它读的 `rx60.radar_iwr6843*`、`isolation.*` 没动。
+- d2d_link（`bbc0ccb`）vendor 的文件没动，不用为 0.6.0 重新 pin。
+- 账本新增 20 个键（adc_survey 1、deepscale 1、dmg 8、edmg 4、pa60 6），记 `added=0.6.0`。
+- 共享表只剩 1 条 survey：`ucie.standard.lane_repair` 的"降到 x8"。规范本身不能读，联盟白皮书、Hot Chips 2023 教程与 Das Sharma 2022 都没写。
+- 许可：IEEE Xplore 的条款限制把内容交给 AI 工具。默认不发 Xplore 原文；用户确认其许可允许后才读，读完删本地副本（`cairn/Reference/README.md` 末两节）。
 
 ### IEEE Xplore 原文 10 篇（用户下载并确认其许可允许交给本库读）
 - 用户 2026-11-17 发来 10 篇 IEEE Xplore 原文，确认其许可允许；本库读完删掉了本地副本（上传原件与抽出的文字、渲染图）。

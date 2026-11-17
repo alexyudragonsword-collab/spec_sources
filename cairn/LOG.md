@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-16 · DeepScaleTool：读 arXiv 预印本与工具原文件（feat/deepscale-tool，未发布）
+
+- PR #38 合并（main `a1da0f8`）。用户定按默认做：不发 Xplore 原文；DeepScaleTool 读 arXiv，其余列 Xplore 地址给用户核对。
+- arXiv:2102.10195v1（CC BY 4.0）正文没有 45 → 7 nm 的能量比，只有例子（130 → 45 nm 面积 8.3、45 → 32 nm 功耗 1.238）。工具 `DeepScaleTool.xlsm`（SourceForge，GPLv3）的 `Sub Energy()` 是查表：各节点相对能量（65 nm = 1），45 nm 0.63、7 nm 0.11，倍数 = 两格之比（显示 3 位）。宏里另算的二次式没被写回单元格。
+- 互证：Fig. 2 截图 130 → 45 nm 能量 4 = 2.52 / 0.63；存档单元格 90 → 32 nm 3.432 = 1.51 / 0.44；Fig. 3 读图 7 / 45 nm 约 0.18。
+- 新建 `deepscale.energy_by_node`（spec）；`deepscale.node_scale_45_to_7nm` 改 derived：0.11 / 0.63 = 0.17460 → 0.1746（迁入 0.175，CORRECTED，−0.23 %）。
+- 共享表 146 → 147 条：spec 126、survey 5、derived 16。测试 94 个（92 通过，2 跳过）。mmw60 需重新 pin（`energy.yaml`）。
+
 ## 2026-11-16 · IEEE Xplore 的许可：删掉本地 12 篇 Xplore 原文（feat/xplore-licence）
 
 - PR #37 合并（main `b16245a`），#33 验收留言已发。

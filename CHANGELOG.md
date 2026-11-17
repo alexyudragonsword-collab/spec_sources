@@ -9,6 +9,13 @@
 
 - **`mmw60_trx` 要为这一节重新 pin，已在 #33 pin 到 `76ee72a` 并验收（见下）**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它原来的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
 - fmcw_radar（`f87cc9b`）、d2d_link（`bbc0ccb`）vendor 的文件没动。
+- **`mmw60_trx` 需重新 pin**（又一次）：`data/energy.yaml` 在 `76ee72a` 之后变了。`deepscale.node_scale_45_to_7nm` 0.175 → 0.1746（survey → derived），新增 `deepscale.energy_by_node`（见下面 DeepScaleTool 一节）。它的同台表默认按 45 nm 算、不读这个比值，只有灵敏度节按 7 nm 重算时读，数字功耗在那里动 −0.23 %。
+
+### DeepScaleTool：读工具原文件（不经 IEEE Xplore）
+- 论文读作者的 arXiv 预印本 2102.10195v1（CC BY 4.0），工具读 SourceForge 上的 `DeepScaleTool.xlsm`（GPLv3，2021-03-03）。论文正文没有直接给 45 → 7 nm 的能量比；工具的能量倍数在 VBA 宏 `Sub Energy()` 里，是各节点相对能量（65 nm = 1）两格之比。宏源码用 olevba 当文本读出，没有执行。
+- 新增 `deepscale.energy_by_node`（spec）：130 … 7 nm 共 11 个节点的相对能量，45 nm 0.63、7 nm 0.11。互证：论文 Fig. 2 截图 130 → 45 nm 的能量倍数 4 = 2.52 / 0.63；工具存档的单元格 90 → 32 nm 3.432 = 1.51 / 0.44。
+- `deepscale.node_scale_45_to_7nm` 改成由它复算的 derived：0.11 / 0.63 = 0.1746（迁入时 0.175，Halo_Serdes 取的 3 位；`CORRECTED`）。
+- 共享表 147 条：spec 126、survey 5、derived 16。账本新增 1 个键，记 `added=unreleased`。
 
 ### 验收：#33（mmw60_trx 重新 pin 到 `76ee72a`）
 - mmw60_trx 在 mmw60_trx#60 合并 `53a9a16`（重新 pin 的提交 `3ea11be`：只换 vendor 文件，另改两处写死旧数的测试）。9 个 vendor 文件去掉出处头后与 `76ee72a` 逐字节相同，`3ea11be` 与它现在的 main `50f30df` 都是；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过）；它带齐 sibling 是 250 verbatim。

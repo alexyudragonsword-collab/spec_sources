@@ -2,7 +2,7 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），剩 6 条 survey 的原文都在 IEEE Xplore 上，Xplore 的条款限制 AI，取法待用户定（见第 7 批）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），DeepScaleTool 已按工具原文件核过（未发布）。剩 5 条 survey 的原文都在 IEEE Xplore 上，按默认做法：不发原文，由用户在 Xplore 上核对（见第 7 批）。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
@@ -28,7 +28,7 @@
 - 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（不受规范许可约束，但在 IEEE Xplore 上，受 Xplore 条款约束，见第 7 批）。
 - 第 5 批 · **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 - 第 6 批 · **Halo_Serdes #11 的 4 条条文**。
-- 第 7 批 · 其余 survey：`horowitz2014.*`（ISSCC 2014）、`rx60.comm_iscas2015`（ISCAS 2015）、`antenna60.okada2013_dbi`（JSSC 2013，实验室网站只有题录）、`deepscale.node_scale_45_to_7nm`（DeepScaleTool，ISCAS 2021）。**都在 IEEE Xplore 上，不再请用户下载发来**：Xplore 的条款限制把内容交给 AI 工具（`cairn/Reference/README.md` 末节），2026-11-16 用户决定删掉本地的 12 篇 Xplore 原文。怎么取待用户定：公开版本加用户核对（像 802.11 那样），或留 survey。DeepScaleTool 有 arXiv 预印本 2102.10195 与 GPLv3 的工具本身（SourceForge，要放行），不经 Xplore；其余没找到公开版本。
+- 第 7 批 · 其余 survey：`horowitz2014.*`（ISSCC 2014）、`rx60.comm_iscas2015`（ISCAS 2015）、`antenna60.okada2013_dbi`（JSSC 2013，实验室网站只有题录）。**都在 IEEE Xplore 上，不再请用户下载发来**：Xplore 的条款限制把内容交给 AI 工具（`cairn/Reference/README.md` 末节），2026-11-16 用户决定删掉本地的 12 篇 Xplore 原文。用户定的默认做法：本库列出 Xplore 地址和要核的数，用户在 Xplore 上看、只回报哪个数不对；没核的留 survey。DeepScaleTool 已按 arXiv 预印本与 GPLv3 工具原文件核过（`deepscale.energy_by_node`，未发布）。
 
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 

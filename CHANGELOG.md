@@ -8,8 +8,21 @@
 `reader.py` 没动。
 
 - **`mmw60_trx` 要为这一节重新 pin，已在 #33 pin 到 `76ee72a` 并验收（见下）**：它 vendor 的文件里，`__init__.py`（0.5.0 的版本号）、`data/energy.yaml`、`data/ieee80211.yaml`、`data/liu2025.yaml`、`data/regulatory.yaml` 在它原来的 pin `3123b65` 之后变了。值变了的只有 `adc_survey.walden_fom_fj`（70.0 → 70.815）与 `adc_survey.walden_fom_range_fj`（[38.4, 120.2] → [38.36, 120.19]），其余是 survey 改 spec、值不变；`ieee80211.yaml` 另新增 #33 的 12 条（见下）。
-- fmcw_radar（`f87cc9b`）、d2d_link（`bbc0ccb`）vendor 的文件没动。
-- **`mmw60_trx` 需重新 pin**（又一次）：`data/energy.yaml` 在 `76ee72a` 之后变了。`deepscale.node_scale_45_to_7nm` 0.175 → 0.1746（survey → derived），新增 `deepscale.energy_by_node`（见下面 DeepScaleTool 一节）。它的同台表默认按 45 nm 算、不读这个比值，只有灵敏度节按 7 nm 重算时读，数字功耗在那里动 −0.23 %。
+- **`mmw60_trx` 需重新 pin**（又一次）：`data/energy.yaml`、`data/frontend60.yaml`、`data/pa60.yaml` 在 `76ee72a` 之后变了：
+  - DeepScaleTool 一节：`deepscale.node_scale_45_to_7nm` 0.175 → 0.1746（survey → derived），新增 `deepscale.energy_by_node`。它的同台表默认按 45 nm 算、不读这个比值，只有灵敏度节按 7 nm 重算时读，数字功耗在那里动 −0.23 %；
+  - IEEE Xplore 原文 10 篇一节：4 条 survey → spec，值不变；`pa60.*` 新增 6 条，`pa60.eumc2011_table1` 的值不变、note 改写。
+- **`fmcw_radar` 需重新 pin**：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey → spec，值不变。
+- d2d_link（`bbc0ccb`）vendor 的文件没动。
+
+### IEEE Xplore 原文 10 篇（用户下载并确认其许可允许交给本库读）
+- 用户 2026-11-17 发来 10 篇 IEEE Xplore 原文，确认其许可允许；本库读完删掉了本地副本（上传原件与抽出的文字、渲染图）。
+- 改成 spec，值不变（`VERIFIED`）：
+  - `horowitz2014.mult32_pj` 3.1 pJ、`horowitz2014.add32_pj` 0.1 pJ：Horowitz ISSCC 2014 Figure 1.1.9（45 nm、0.9 V，编码字体，渲染出来读）；
+  - `rx60.comm_iscas2015`：Luo 等（清华）ISCAS 2015 摘要与 Table I。NF 7.1 dB 是三个信道上的最小双边带 NF，note 注明单边带约再高 3 dB；
+  - `antenna60.okada2013_dbi` 6.0 dBi：Okada 等 JSSC 2013，系统要求与测量两段。
+- 新增 6 条 spec：Asada Table I 其余 6 行的原文，`pa60.suzuki_isscc2008`、`pa60.kurita_rfic2009`、`pa60.bohsali_rfic2009`、`pa60.dawn_ims2009`、`pa60.pinel_isscc2008`、`pa60.chowdhury_isscc2008`。13 行至此都读过原文：P1dB、Psat 全对；[5] 的 PAE 5.0 % 与电压 1.0 V 原文里没有（Suzuki 没给效率，电压 1.2 V）；[8] 的增益 4.4 是正文 S21（汇总表 4.2）；[14] 的 5.5 是图上标注（正文 S21 5.6）。`pa60.eumc2011_table1` 的值不变，note 改写（`CHANGED` 里的替换句同步）。
+- `ucie.standard.lane_repair` 仍是 survey：Das Sharma、Pasdast，IEEE Trans. CPMT 2022 只写标准封装靠降宽修复，没写降到 x8。`ucie.yaml` 没改。
+- 共享表 153 条：spec 136、survey 1、derived 16。账本新增 6 个键，记 `added=unreleased`。
 
 ### DeepScaleTool：读工具原文件（不经 IEEE Xplore）
 - 论文读作者的 arXiv 预印本 2102.10195v1（CC BY 4.0），工具读 SourceForge 上的 `DeepScaleTool.xlsm`（GPLv3，2021-03-03）。论文正文没有直接给 45 → 7 nm 的能量比；工具的能量倍数在 VBA 宏 `Sub Energy()` 里，是各节点相对能量（65 nm = 1）两格之比。宏源码用 olevba 当文本读出，没有执行。

@@ -127,3 +127,13 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - 还标 📥 的都在 Xplore 上：第 1 批 Asada 表 [5] [7] [8] [10] [12] [14]，第 7 批 Horowitz ISSCC 2014、ISCAS 2015 接收机、Okada JSSC 2013、DeepScaleTool ISCAS 2021，可选的 Das Sharma CPMT 2022。**不再请用户下载发来**；怎么取待用户定（公开版本加用户核对，或留 survey）。DeepScaleTool 有作者的 arXiv 预印本（2102.10195）与 GPLv3 的工具本身（SourceForge），不经 Xplore。Horowitz 能搜到的全文副本（gwern.net、一个大学的 restricted 目录）不是作者或 IEEE 授权的发布，不用。
 - 不受影响的：mentor.ieee.org 的 802 工作组公开文件、Asada EuMC 2011（实验室网站）、arXiv、ITU-R、eCFR、NHTSA、Sandia、R&S、UCIe 联盟的公开材料、Murmann 的 GitHub。
 - ✅ DeepScaleTool（2026-11-16，不经 Xplore）：作者预印本 arXiv:2102.10195v1（CC BY 4.0，6 页；正文只有 130 → 45 nm 等几个例子，Fig. 2 是工具截图、Fig. 3 是以 65 nm 为 1 的曲线）与工具本身 sourceforge.net/projects/deepscaletool 的 `DeepScaleTool/DeepScaleTool.xlsm`（GPLv3，2021-03-03，33 581 字节，sha256 561a3f8f…958df8）。能量倍数在 VBA 宏 `Sub Energy()` 里，用 olevba 当文本读出、没有执行 → `deepscale.energy_by_node`、`deepscale.node_scale_45_to_7nm`。两个文件放在 scratchpad，没放进本目录（`.xlsm` 不在 `.gitignore` 里）。
+
+## 2026-11-17 · 用户发来 10 篇 IEEE Xplore 原文
+
+- 上一节定的默认做法是不发 Xplore 原文；用户随后上传了 10 篇，经询问确认其许可允许交给本库读。读完删掉了本地副本：会话上传目录里的 10 个 PDF、scratchpad 里抽出的文字与渲染图。
+- ✅ M. Horowitz，ISSCC 2014 1.1，doi 10.1109/ISSCC.2014.6757323：Figure 1.1.9（编码字体，渲染）→ `horowitz2014.*`。
+- ✅ Asada Table I 的其余 6 行 → `pa60.suzuki_isscc2008`（[5]，doi …4523307）、`pa60.kurita_rfic2009`（[7]，doi 10.1109/RFIC.2009.5135485）、`pa60.bohsali_rfic2009`（[8]，…5135483）、`pa60.dawn_ims2009`（[10]，doi 10.1109/MWSYM.2009.5165752）、`pa60.pinel_isscc2008`（[12]，…4523091）、`pa60.chowdhury_isscc2008`（[14]，…4523306）。上面 [5] 那行"电压 1.0 V 对 1.2 V"的疑问：原文是 1.2 V。
+- ✅ J. Luo 等，ISCAS 2015，doi 10.1109/ISCAS.2015.7169168 → `rx60.comm_iscas2015`（作者这次读到了：清华微电子所）。
+- ✅ K. Okada 等，JSSC 48(1) 2013，doi 10.1109/JSSC.2012.2218066 → `antenna60.okada2013_dbi`。
+- ✅ D. Das Sharma、G. Pasdast，IEEE Trans. CPMT 12(9) 2022，pp. 1423–1431，doi 10.1109/TCPMT.2022.3207195：II.A 'the advanced package supports spare lanes to handle faulty lanes (including clock, valid, and sideband) whereas the standard package supports width degradation to handle failures'；高级模块 'allocates two redundant bumps for every 32 data signals to repair'。没有写标准封装降到 x8 → `ucie.standard.lane_repair` 仍是 survey。
+- DOI 取自各 PDF 的元数据（Subject 字段）。

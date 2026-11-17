@@ -2,14 +2,17 @@
 
 **这份文件只写还没做的事。** 做完即删，并在 `CHANGELOG.md` 记一笔、`cairn/LOG.md` 记数字。
 
-**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇读了 7 篇，剩 6 篇等用户下载。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），DeepScaleTool 已按工具原文件核过（未发布）。剩 5 条 survey 的原文都在 IEEE Xplore 上，按默认做法：不发原文，由用户在 Xplore 上核对（见第 7 批）。
+**当前焦点**：里程碑 2 的核实轮。第 1 批 `tgad_em.*` 已在 0.3.0 对上原文；Asada Table I 转引的 13 篇都读了原文（后 6 篇未发布）。第 2 批 TDC 读了 3 篇（分辨率有出处，抖动只有 Henzler 的上界量级）。第 3 批 UCIe 16 条里 15 条对上联盟公开材料（规范本身因许可证不能读）。第 4 批里本库能直接取的两篇已读。以上都在 0.4.0 发布。第 4 批剩下的车辆、角反射器、窗函数也建了条目，fmcw_radar 在 #19 里把最后 6 条改掉并已验收，它的表里没有 survey 了（未发布）。第 7 批里 `liu2025.*` 已按刊出版核过（mmw60_trx 在本库 #26 里请求，未发布）。#29（mmw60_trx 请求 802.11ad / ay 的 PHY 数）已从公开提案建了条目并验收。以上在 0.5.0 发布。第 7 批里能用公开材料核的 11 条已改（未发布），DeepScaleTool 已按工具原文件核过（未发布）。2026-11-17 用户确认许可后发来 10 篇 IEEE Xplore 原文：`horowitz2014.*`、`rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 4 条改 spec，Asada 表后 6 行建了条目（未发布）。共享表只剩 1 条 survey：`ucie.standard.lane_repair` 的降到 x8（见第 3 批）。
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 `76ee72a`，本库 #26、#29、#33 已验收（由它关闭）
+- **需重新 pin**（未开 issue，等用户定时机）：`data/energy.yaml`（DeepScaleTool 比值 0.175 → 0.1746；`horowitz2014.*` survey → spec）、`data/frontend60.yaml`（两条 survey → spec）、`data/pa60.yaml`（新增 6 条、Asada 表的 note）在 `76ee72a` 之后变了。值变了的只有 `deepscale.node_scale_45_to_7nm`。
+- Asada Table I 13 行都读完原文：P1dB、Psat 全对；[5] 的 PAE 5.0 % 与电压 1.0 V 原文里没有（Suzuki 没给效率，电压是 1.2 V）。它的示例 09 若算 PAE 的中位数，要知道这一格没有出处。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `f87cc9b`，#19 已验收；它的表里没有 survey 了
+- **需重新 pin**（未开 issue，等用户定时机）：`data/frontend60.yaml` 在 `f87cc9b` 之后变了，只是 `rx60.comm_iscas2015`、`antenna60.okada2013_dbi` 两条 survey → spec，值不变；它读的 `rx60.radar_iwr6843*`、`isolation.*` 没动。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
@@ -23,12 +26,10 @@
 
 每条 survey 要么查到原文、改成 spec（带 quote + section），要么在 note 里写明为什么读不到。按"决定哪个库的结论"排序，批号与 `cairn/Reference/README.md` 一致（第 4 批 fmcw_radar 的 14 条已在 #19 了结）：
 
-- 第 1 批 · **60 GHz CMOS PA 的 Psat / P1dB**（决定 mmw60_trx 同台表每格的 MCS）：`tgad_em.*` 已在 0.3.0 对上原文。`pa60.eumc2011_table1` 里 Asada 转引的 13 行已读 7 行（[1] [2] [6] [9] [11] [13] [15]，未发布），P1dB / Psat / PAE 都与原文相同，但 [11] 是 48 GHz 的数，不是 60 GHz。剩 6 行（[5] [7] [8] [10] [12] [14]）都在 IEEE Xplore 上，取法见第 7 批那句，题名见 `cairn/Reference/README.md`；它们在已读原文的对比表里都出现过且与 Asada 相符（[5] 的电压 1.0 V 对 1.2 V 除外），优先级低于第 2、3 批。
 - 第 2 批 · **TDC**（fmcw_radar 的两个占位：`60g_sensing.tdc_res_s` 5 ps、`60g_sensing.tdc_jitter_s` 1 ps）：Wu、Staszewski、Long（JSSC 2014）已读，建了 `adpll60.wu_jssc2014_tdc`（未发布）：分辨率 12.2 ps，带内相噪 −78 dBc/Hz（理论）/ −77（实测），由 TDC 量化主导。**原文没有给 TDC 自身的抖动**；它引的 TDC 原文 [23]（Staszewski et al., TCAS-II 2006）也读了，同样只有分辨率（90 nm 17–21 ps）。fmcw 已在 #17 改引 `tdc_res_s`（12.2 ps）并验收。**抖动的出处现在有分量了**：fmcw 报回，12.2 ps 步长下 1 ps 抖动只有 0.08 LSB，打不散量化，默认配置每帧 2.75 个鬼目标；抖动 1 / 1.8 / 2.44 / 3 ps 对应 2.75 / 2.08 / 0.92 / 0.16 个。Wu 文 [35] Henzler et al.（ISSCC 2008）已读，建了 `tdc.henzler_isscc2008`（spec）与 `tdc.henzler_isscc2008_single_shot_s`（derived，3.29e-12 s，未发布）：单次精度 0.7 LSB × 4.7 ps，定义为反复测同一间隔时输出码字的标准差。它是 90 nm 局部无源插值 TDC，结构与 Wu 2014 不同，且含离散化与测试脉冲的抖动，只能当量级（上界）。**用户 2026-11-14 定：暂不给 fmcw 开 issue**，它的 `tdc_jitter_s` 仍是 1 ps 占位。日后要换时，issue 里写明：1 ps → 3.29 ps 按它报回的扫描会让鬼目标从每帧 2.75 降到 0.16 左右（3 ps 时），而 3.29 ps 是别的结构的 TDC、且是上界量级；用不用由它定。
-- 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"在公开材料里没找到，要的话可读 Das Sharma et al., IEEE Trans. CPMT 2022（不受规范许可约束，但在 IEEE Xplore 上，受 Xplore 条款约束，见第 7 批）。
+- 第 3 批 · **UCIe**（d2d_link 的判定全悬在 0.65 UI 上）：16 条里 15 条已对上联盟公开的 Hot Chips 2023 教程与 2022 白皮书，改为 spec，另建 2 条（未发布）。**规范本身不能读**：许可协议禁止把规范输入 AI 系统，用户也不要把规范发给 Claude。剩下 `ucie.standard.lane_repair` 的"降到 x8"：联盟白皮书、Hot Chips 2023 教程与 Das Sharma、Pasdast 的 IEEE Trans. CPMT 2022（2026-11-17 读原文，用户确认许可）都只说标准封装靠降宽修复、高级封装用备用 lane，没说降到几条；只有规范本身可能有，而规范不能读。条目仍是 survey，`ucie.yaml` 不为这一句改。
 - 第 5 批 · **array_tx 的互耦值**（它的 ROADMAP A1；fmcw 的 `rx_coupling_c1_db` 占位也取它）。
 - 第 6 批 · **Halo_Serdes #11 的 4 条条文**。
-- 第 7 批 · 其余 survey：`horowitz2014.*`（ISSCC 2014）、`rx60.comm_iscas2015`（ISCAS 2015）、`antenna60.okada2013_dbi`（JSSC 2013，实验室网站只有题录）。**都在 IEEE Xplore 上，不再请用户下载发来**：Xplore 的条款限制把内容交给 AI 工具（`cairn/Reference/README.md` 末节），2026-11-16 用户决定删掉本地的 12 篇 Xplore 原文。用户定的默认做法：本库列出 Xplore 地址和要核的数，用户在 Xplore 上看、只回报哪个数不对；没核的留 survey。DeepScaleTool 已按 arXiv 预印本与 GPLv3 工具原文件核过（`deepscale.energy_by_node`，未发布）。
 
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 

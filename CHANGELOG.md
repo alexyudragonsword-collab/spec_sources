@@ -7,8 +7,16 @@
 
 `reader.py` 没动。
 
-- **`mmw60_trx` 需重新 pin**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
+- **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
+
+### 验收：#43（mmw60_trx 重新 pin 到 `563cff4`）
+- mmw60_trx 在 mmw60_trx#67 合并 `636208a`（重新 pin 的提交 `6781b81`）。9 个 vendor 文件去掉出处头后与 `563cff4` 逐字节相同（`6781b81` 与它现在的 main `52449b6` 都是）；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过），它带齐 sibling 报 250 verbatim。
+- 指纹：本库在本地对 `24f0d35`（父提交）与 `6781b81` 各录一次（`MMW60_NO_JIT=1`），69 个值逐位相同（numba 一项两边都抛错；它报 68 个，数法不同）。合并表 203 → 208 条，未核实仍是 4 条。
+- 它把 `arraylink.ssw_frame_s()` 改成按 `dmg.control_phy_encoding` 逐码字切分算：SSW 帧 12.582 → 14.909 µs，一轮发端 + 收端扫描 N = 4 / 16 / 64 从 108.7 / 434.6 / 1738.5 µs 变成 127.3 / 509.1 / 2036.4 µs。它只读控制 PHY 的前导，数据前导与 `edmg.short_ssw` 的位宽不读。
+- 用上了 `edmg.ofdm_modulation_mapping` 的静态配对（mmw60_trx#68）：OFDM MCS 1–10 有了编码载荷与实测门限。按读法读，不抄数，不按条登记。
+- 它追问 SC MCS 1（ρ = 2）的码字结构：本库 `dmg.data_encoding` 的 note 写成"把校验后半段换成数据 ⊕ PN"，是 #33 时读错了；0433r2 原文换的是补的零（第 L_Z + 1 到 336 位）。改正等用户对照标准核对后另开 PR。
+- `consumers.yaml`：mmw60_trx pin `a9af261` → `563cff4`、at `636208a`、issue mmw60_trx#67。
 
 ### #43（mmw60_trx 请求）：控制 PHY 的码字切分、EDMG PPDU 的前导、EDMG OFDM 的 DCM 与调制映射
 - 标准本身不能读，全部取自 mentor.ieee.org 的公开文件，用户对照 IEEE 802.11-2024 核对：TGad 的 11-10/0433r2；TGay 的 17/1806r3（TXTIME 计算）、17/0277r0（EDMG 控制模式数据域）、17/1040r0、17/1170r2（OFDM 调制映射，动议 #275）、17/0870r3、17/1568r0（动议 #328）、17/0018r0、17/1586r1（Short SSW 例子，动议 #339）、18/0331r2（DCM 改名）、18/0332r4、19/0043r3（对 D2.2 的意见处理）；动议号读自 17/0186r37。公式是嵌入图片，渲染出来读。

@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · 验收 ρ = 2 更正的重新 pin：mmw60_trx#70（feat/accept-rho2-repin）
+
+- PR #46 合并（main `25b2c5e`），在 #43 贴了原句、给了 PIN。mmw60_trx 在 #70 合并 `d27046b`（父提交 `4d1a06b`）。
+- 复核：9 个文件去头后与 `25b2c5e` 逐字节相同；本地 `vendor_check --strict` 9 verbatim（241 缺 sibling 跳过）；指纹 `4d1a06b` 对 `d27046b` 69 个值逐位相同；合并表 208、未核实 4；`sc_rho2_codeword` 读得到。
+- 它建了 SC MCS 1 的重复码：门限 −1.23 dB（原来借 DMG 灵敏度推的 −1.48 dB 偏乐观 0.25 dB）；4096 字节 196 个码字（本地复算一致）；PN 前 16 位 0000111011110010。
+- `consumers.yaml`：mmw60_trx pin → `25b2c5e`、at `d27046b`、issue mmw60_trx#70。数据未动，共享表 158 条。
+
 ## 2026-11-17 · 更正 `dmg.data_encoding` 的 ρ = 2（feat/data-encoding-rho2）
 
 - PR #45 合并（main `5ae7a38`）。mmw60 在 #43 追问 SC MCS 1 的码字。0433r2 21.6.3.2.2 的 ρ = 2 一段（公式图 image177–185 渲染出来读）：L_Z = L_CW/2ρ = 168，c = (b, 168 个零, p_1…p_336)，"Replace bits L_Z + 1 though 336 … XOR'ed by a PN sequence … LFSR used for data scrambling … initialized to the all ones vector and reinitialized … after every codeword"。

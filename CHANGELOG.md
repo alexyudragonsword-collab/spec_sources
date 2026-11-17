@@ -9,7 +9,12 @@
 
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
-- **`mmw60_trx` 需重新 pin**（又一次）：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+- **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 验收：ρ = 2 更正的重新 pin（mmw60_trx#70）
+- mmw60_trx 在 mmw60_trx#70 合并 `d27046b`（压缩合并，父提交 `4d1a06b`）。9 个 vendor 文件去掉出处头后与 `25b2c5e` 逐字节相同；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过）。指纹 `4d1a06b` 对 `d27046b`（`MMW60_NO_JIT=1`）69 个值逐位相同。合并表仍 208 条、未核实 4。
+- 它按 `sc_rho2_codeword` / `sc_rho2_pn` 建了 SC MCS 1 的重复码（`ay.coding.RepetitionCode`）：码字 (b, b ⊕ PN, 校验 336)，PN 取数据扰码器全 1 种子的前 168 位（前 16 位 `0000111011110010`），接收端合并两份 LLR。实测门限 −1.23 dB（95 % 区间 [−1.31, −1.12]），比原来借 DMG MCS 1 灵敏度推的 −1.48 dB 悲观 0.25 dB，比 SC MCS 2 低 1.35 dB（只有数据位重复）。4096 字节 196 个码字（⌈32768 / 168⌉，本地复算一致）。它说按旧 note 的读法测试会变红。
+- `consumers.yaml`：mmw60_trx pin `563cff4` → `25b2c5e`、at `d27046b`、issue mmw60_trx#70。
 
 ### 更正：`dmg.data_encoding` 的 ρ = 2（mmw60_trx 在 #43 里追问）
 - SC MCS 1（ρ = 2）的码字：0433r2 21.6.3.2.2 的原文是数据 L_Z = 168 位后补 168 个零，按 1/2 码编码得 (数据, 零, 校验 336)，再把第 L_Z + 1 到 336 位（补的零）换成数据 ⊕ PN；PN 用数据扰码的 LFSR（x⁷ + x⁴ + 1），初值全 1，每个码字重新置位。码字为 (数据, 数据 ⊕ PN, 校验 336)。

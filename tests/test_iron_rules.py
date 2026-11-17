@@ -20,7 +20,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 153
+    assert len(table) == 158
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -278,7 +278,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 136, "survey": 1, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 141, "survey": 1, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -333,3 +333,58 @@ def test_no_number_in_exponent_form_was_read_as_text():
     """dmg.phy_timing shipped rifs_s: 1e-06 and four more like it, which PyYAML read as strings."""
     bad = [(k, s) for k, e in ss.all_entries().items() for s in _strings(e.value) if _EXPONENT_TEXT.match(s)]
     assert bad == []
+
+
+def test_the_dmg_preambles_follow_their_chip_counts():
+    """#43: both preamble lengths in dmg.phy_timing are their STF + CEF chips at 1.76 GHz, kept to 1 ns, and the
+    chip counts agree wherever two entries carry the same field (17/1806r3 restates them for every mode)."""
+    timing, cphy, sc = ss.value("dmg.phy_timing"), ss.value("dmg.control_phy"), ss.value("dmg.sc_ppdu_chips")
+    rate = cphy["chip_rate_hz"]
+    assert sc["chip_rate_hz"] == rate
+    assert timing["control_preamble_s"] == pytest.approx((cphy["stf_chips"] + cphy["cef_chips"]) / rate, abs=0.5e-9)
+    assert timing["data_preamble_s"] == pytest.approx((sc["l_stf_chips"] + sc["l_cef_chips"]) / rate, abs=0.5e-9)
+    edmg_sc, edmg_c = ss.value("edmg.sc_siso_preamble"), ss.value("edmg.control_mode_encoding")
+    assert [edmg_sc[f] for f in ("l_stf_chips", "l_cef_chips", "l_header_chips")] == \
+        [sc[f] for f in ("l_stf_chips", "l_cef_chips", "l_header_chips")]
+    assert (edmg_c["l_stf_chips"], edmg_c["l_cef_chips"]) == (cphy["stf_chips"], cphy["cef_chips"])
+    assert ss.value("dmg.control_phy_encoding")["trn_chips_per_trn_len"] == sc["trn_chips_per_trn_len"]
+
+
+def _control_codewords(length: int, extra_octets: int) -> list[int]:
+    """Data bits per LDPC codeword of a control mode PPDU: 88 in the first, the rest shared out (0433r2, 17/0277r0)."""
+    rest = (length + extra_octets) * 8
+    n_cw = 1 + math.ceil(rest / 168)
+    l_dpcw = math.ceil(rest / (n_cw - 1))
+    return [88] + [l_dpcw] * (n_cw - 2) + [rest - (n_cw - 2) * l_dpcw]
+
+
+def test_the_control_phy_codeword_split_reproduces_its_example_and_its_closed_form():
+    """#43: 0433r2's example (Length 120 -> 7 codewords of 88, 152, ..., 152 bits) and 17/1806r3's closed form
+    (Length + 5)*8 + 168*N_CW, for every allowed Length; likewise (Length + 14)*8 for the EDMG control mode."""
+    enc = ss.value("dmg.control_phy_encoding")
+    cws = _control_codewords(enc["example_length"], -6)
+    assert len(cws) == enc["example_n_cw"] and cws[1] == enc["example_l_dpcw"] and cws[-1] == enc["example_l_dplcw"]
+    lo, hi = enc["length_octets"]
+    for length in range(lo, hi + 1):
+        for extra, header in ((-6, 5), (3, 14)):
+            cws = _control_codewords(length, extra)
+            assert all(0 < c <= enc["max_data_bits_per_cw"] for c in cws), (length, extra)
+            assert sum(c + enc["parity_bits_per_cw"] for c in cws) == (length + header) * 8 + 168 * len(cws)
+
+
+def test_the_short_ssw_field_widths_decode_the_published_example():
+    """#43: 17/1586r1's 48-bit example (LSB first) splits back into the values it lists only with the widths in
+    edmg.short_ssw (Packet Type 1 bit, RF Chain ID 3 bits); every format is 48 bits."""
+    ssw = ss.value("edmg.short_ssw")
+    for fmt in ("itxss_su", "itxss_mu", "rtxss"):
+        assert sum(ssw[f"{fmt}_field_bits"]) == ssw["packet_bits"]
+        assert len(ssw[f"{fmt}_field_bits"]) == len(ssw[f"{fmt}_field_names"])
+    bits = "000101010001000000011111100000110101101000000111"
+    want = {"Packet Type": 0, "Direction": 0, "Addressing Mode": 0, "Source AID": 0x15, "Destination AID": 1,
+            "CDOWN": 0x3F, "RF Chain ID": 3, "Short Scrambled BSSID": 0x02D, "Unassociated": 0, "FCS": 0xE}
+    got, i = {}, 0
+    for width, name in zip(ssw["itxss_su_field_bits"], ssw["itxss_su_field_names"], strict=True):
+        got[name] = int(bits[i:i + width][::-1], 2)
+        i += width
+    assert got == want
+

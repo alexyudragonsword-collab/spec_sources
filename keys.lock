@@ -80,6 +80,11 @@ edmg.ldpc_672_r7_8  added=0.6.0
 edmg.ldpc_1344_lifting  added=0.6.0
 edmg.sc_encoding  added=0.6.0
 edmg.short_ssw  added=0.6.0
+dmg.control_phy_encoding  added=unreleased
+dmg.sc_ppdu_chips  added=unreleased
+edmg.sc_siso_preamble  added=unreleased
+edmg.control_mode_encoding  added=unreleased
+edmg.ofdm_modulation_mapping  added=unreleased
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0

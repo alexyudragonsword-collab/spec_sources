@@ -7,6 +7,7 @@
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 `a9af261`（0.6.0），mmw60_trx#63 已验收；本库 #26、#29、#33 已验收（由它关闭）
+- **#43 合并后在 #43 给它 PIN**：`ieee80211.yaml` 改了三条的值（控制 PHY 的 STF 5120 → 6400 码片；两个前导 1.745 / 3.564 → 1.891 / 4.291 µs；Short SSW 的字段位宽）。它用控制 PHY 前导与 SSW 帧算扇区扫描时长，SSW 帧按码字精确算是 14.909 µs（它现在的下限是 12.58 µs）。
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
@@ -41,7 +42,7 @@
 - `liu2025.k_threshold_stf` 的 312.5 kHz（802.11 VHT 子载波间距）不是条目，只写在 cite 里；核实轮补一条 `ieee80211.*` 的 spec 条目，RECOMPUTE 改读它。
 
 - **EDMG 的接收灵敏度**：公开材料里没找到（TGay CID 1620 要求补，被采纳的 18/0713r3 只补了 EVM；#33 时按标题再搜了 sensitivity / minimum input / receiver / requirement，翻了两份性能要求文件与动议汇编，仍没有）。mmw60_trx 在本地写 assumed（沿用 DMG 的同调制档，`dmg.sc_mcs_extended` 进来后 SC 的高阶档也配上了）；mmw60_trx#61 起 SC 改用它按 #33 的码实测的门限，OFDM 仍借 DMG 同档。
-- **EDMG OFDM 的数据域填充规则与 BRP / TRN 单元长度**（#33 里没做）：前者公开材料里没找到；后者 mmw60 写的是"如顺手"，要的话从 TGad 0433r2 的 21.8 与 TGay 的 TRN 文件（11-17/0213、0430 等）取。mmw60_trx#61 的扇区扫描注释另记了两处本库没有的：控制 PHY 把头部与数据切成 LDPC 码字的规则（它按码字填满算，扫描时长是下限）、EDMG PPDU 的前导长度（short SSW 的时长因此没算）。它没提请求；要的话从 TGad 0433r2 的控制 PHY 一节与 TGay SFD 取。
+- **#43 里公开材料没有的三处**：Short SSW 用哪种 PPDU、哪个 MCS 发（控制模式长度下限 14 字节装不下 6 字节，SFD 只写"在 EDMG PPDU 的数据域里"）；EDMG OFDM 16 / 64-QAM 的交织置换（17/1568r0 只说在一个 OFDM 符号内交织，1170r2 写 TBD）；EDMG OFDM 的填充规则（#33、#43 两次都没找到）。EDMG 的 TRN 单元长度也没有收（DMG 的 4992 码片已在 `dmg.control_phy_encoding`、`dmg.sc_ppdu_chips`）。
 
 - **47 CFR §15.255(c)(2) 的雷达限值**（2026-11-16 读 eCFR 时看到，未建条目）：雷达类器件默认峰值 EIRP 10 dBm、峰值传导 −10 dBm；57.0–59.4 GHz 室内 20 / 室外 30 dBm；57.0–61.56 GHz 3 dBm（满足关断时间可到 20）；57.0–64.0 GHz 14 dBm（33 ms 里关断 ≥ 25.5 ms），室外固定或车载作业 20 dBm（关断 ≥ 16.5 ms）；61.0–61.5 GHz 窄带可到平均 40 / 峰值 43 dBm。fmcw_radar 若要按合规上限算 EIRP，从这一节建条目。
 

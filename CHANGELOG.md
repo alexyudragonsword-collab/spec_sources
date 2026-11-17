@@ -3,6 +3,15 @@
 按版本记录。每条写**做了什么**和**为什么**；数字原值在 `cairn/LOG.md`。
 下游重新 pin 时读这里：`consumers.yaml` 里登记的条目，数值或键名每变一次，这里就有一行 `` `<引用>` = <值> ``（铁律 4，`tests/test_consumers.py` 守着）。
 
+## 未发布
+
+数据未动；`reader.py` 没动。三个库 vendor 的文件都与各自的 pin 相同，不用重新 pin。
+
+### 验收：0.6.0 的重新 pin（mmw60_trx#63、fmcw_radar#21）
+- **mmw60_trx**：在 mmw60_trx#64 合并 `bd0b125`（重新 pin 的提交 `1a70205`）。9 个 vendor 文件去掉出处头后与 `a9af261` 逐字节相同（`1a70205` 与 `bd0b125` 都是）；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过），它带齐 sibling 报 250 verbatim、0 skipped。指纹 `64bea53` 对 `1a70205`（`MMW60_NO_JIT=1`）69 个值逐位相同。它的合并表 193 → 202 条：vendor 进来 +7（`deepscale.energy_by_node` 与 6 条 `pa60.*`），另 +2 是它为 #63 里两件事在本地加的 assumed（3 dB 的双边带 → 单边带换算、剔掉 Asada [5] 的 PAE），与 pin 在同一个提交里；都不从本库抄数，不按条登记。未核实 9 → 4，只剩它自己的 4 条 `survey.*`。示例 04 的 7 nm 系数改成 0.1746（倍率两位小数下不变），示例 08 两个标签改成 spec，示例 09 的峰值 PAE 中位数 8.5 → 8.8 %（14 行的原值并列打印）。
+- **fmcw_radar**：在 fmcw_radar#22 合并 `49c1e76`。6 个 vendor 文件去掉出处头后与 `a9af261` 逐字节相同；本库本地跑它的 `vendor_check --strict`：这 6 个都在 verbatim 名单里（那 1 个 adapted 是 array_tx 的 `arraytx/coupling.py`，与本库无关）。指纹 `4495310` 对 `49c1e76` 2035 个值逐位相同。它不读那两条改了标签的条目；Okada 的 6 dBi 是通信收发机的封装天线，它没拿来替换 MIMO 阵元的 10 dBi 占位。
+- `consumers.yaml`：mmw60_trx pin `76ee72a` → `a9af261`、at `bd0b125`、issue mmw60_trx#63；fmcw_radar pin `f87cc9b` → `a9af261`、at `49c1e76`、issue fmcw_radar#21。d2d_link 不变（`bbc0ccb`）。
+
 ## 0.6.0 —— 里程碑 2 核实轮收尾：第 7 批、DMG / EDMG 的码与扇区扫描、DeepScaleTool、IEEE Xplore 原文 10 篇（2026-11-17）
 
 版本号随 `__init__.py` 变；`reader.py` 没动。共享表 153 条（0.5.0 是 133 条）：spec 136、survey 1、derived 16。

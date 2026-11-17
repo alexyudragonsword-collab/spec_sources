@@ -137,3 +137,14 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - ✅ K. Okada 等，JSSC 48(1) 2013，doi 10.1109/JSSC.2012.2218066 → `antenna60.okada2013_dbi`。
 - ✅ D. Das Sharma、G. Pasdast，IEEE Trans. CPMT 12(9) 2022，pp. 1423–1431，doi 10.1109/TCPMT.2022.3207195：II.A 'the advanced package supports spare lanes to handle faulty lanes (including clock, valid, and sideband) whereas the standard package supports width degradation to handle failures'；高级模块 'allocates two redundant bumps for every 32 data signals to repair'。没有写标准封装降到 x8 → `ucie.standard.lane_repair` 仍是 survey。
 - DOI 取自各 PDF 的元数据（Subject 字段）。
+
+## 2026-11-17 · #43：控制 PHY 的码字、EDMG 前导、OFDM 调制映射（mentor.ieee.org 公开文件）
+
+- ✅ TGad 11-10/0433r2 21.4.3.3.2 Encoder（#33 时已下载；公式图 image103–117 渲染出来读）→ `dmg.control_phy_encoding`。
+- ✅ TGay 11-17/1806r3 "30.12.3 TXTIME Calculation"：30.12.3.2（EDMG 控制模式）、30.12.3.3（EDMG SC）、30.12.3.5（非 EDMG 控制模式）、30.12.3.6（非 EDMG SC），公式图渲染出来读 → `dmg.sc_ppdu_chips`、`edmg.sc_siso_preamble`，并更正 `dmg.control_phy`、`dmg.phy_timing` 的前导（控制 STF 6400、SC STF 2176 码片）。
+- ✅ 11-17/0277r0（EDMG 控制模式数据域）、11-17/1040r0（控制模式 PPDU 发送，动议 #245）→ `edmg.control_mode_encoding`。
+- ✅ 11-17/1170r2（30.6.7.4 调制映射，动议 #275）、11-17/0870r3（30.6.7.2）、11-17/1568r0（30.6.8，动议 #328）、11-18/0331r2（DCM 改名）、11-18/0332r4（CID 1536、1537）→ `edmg.ofdm_modulation_mapping`。
+- ✅ 11-17/0018r0、11-17/1586r1（Short SSW 例子，动议 #339）、11-19/0043r3（对 D2.2 的意见处理）、动议 #168 → 更正 `edmg.short_ssw` 的位宽。
+- 没有：Short SSW 的 PPDU 类型与 MCS；EDMG OFDM 16 / 64-QAM 的交织置换；EDMG OFDM 的填充规则。TGay 2017–2019 年的文件目录（mentor 上约 1860 份）按标题筛过一遍。
+- 用户 2026-11-17 对照 IEEE 802.11-2024 核对：后来的公开文件与标准一致（#33 时取自 0433r2 / 2015 年 SFD 的三处因此更正）。
+

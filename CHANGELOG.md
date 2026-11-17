@@ -5,7 +5,27 @@
 
 ## 未发布
 
-数据未动；`reader.py` 没动。三个库 vendor 的文件都与各自的 pin 相同，不用重新 pin。
+`reader.py` 没动。
+
+- **`mmw60_trx` 需重新 pin**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
+- fmcw_radar、d2d_link vendor 的文件没动。
+
+### #43（mmw60_trx 请求）：控制 PHY 的码字切分、EDMG PPDU 的前导、EDMG OFDM 的 DCM 与调制映射
+- 标准本身不能读，全部取自 mentor.ieee.org 的公开文件，用户对照 IEEE 802.11-2024 核对：TGad 的 11-10/0433r2；TGay 的 17/1806r3（TXTIME 计算）、17/0277r0（EDMG 控制模式数据域）、17/1040r0、17/1170r2（OFDM 调制映射，动议 #275）、17/0870r3、17/1568r0（动议 #328）、17/0018r0、17/1586r1（Short SSW 例子，动议 #339）、18/0331r2（DCM 改名）、18/0332r4、19/0043r3（对 D2.2 的意见处理）；动议号读自 17/0186r37。公式是嵌入图片，渲染出来读。
+- **更正三条（#33 时取自较早的提案，用户这次核对确认新值）**：
+  - `dmg.control_phy` 的 `stf_chips` = 6400（原 5120，0433r2 的"38 个 Gb128 + −Gb128 + −Ga128"）；
+  - `dmg.phy_timing` 的 `data_preamble_s` = 1.891e-06、`control_preamble_s` = 4.291e-06（原 1745 / 3564 ns，0433r2 Table 90），即 (2176 + 1152)、(6400 + 1152) 码片 ÷ 1.76 GHz；其余各值不变；
+  - `edmg.short_ssw`：Packet Type 1 位、RF Chain ID 3 位（原 2、2）；I-TXSS 单播的 11 位是 Short Scrambled BSSID 10 + Unassociated 1（原记作保留 11），新增 I-TXSS 群播一种格式（SISO Feedback Duration 10 + 保留 1）。按新位宽、低位在前能把 17/1586r1 的 48 位例子逐字段拆回（新测试）。
+  - #33 时这几条的 note 写了"用户核对一致"，那次核对没有覆盖到这几处；note 已改写并注明更正。
+- 新增 5 条 spec：
+  - `dmg.control_phy_encoding`：控制 PHY 的码字切分（第一个码字 88 位 = 头部 5 + 数据 6 字节，其后每个码字最多 168 位、平均分配）、编码后位数 (Length + 5) × 8 + 168 × N_CW、TXTIME 公式、TRN 每个 TRN_LEN 单位 4992 码片；
+  - `dmg.sc_ppdu_chips`：DMG SC PPDU 的 STF 2176、CEF 1152、头部 1024 码片，数据 N_BLKS × 512 + 64；
+  - `edmg.sc_siso_preamble`：单信道单流 EDMG SC 的 L-STF、L-CEF、L-Header、EDMG-Header-A（1024 码片），**没有 EDMG-STF / EDMG-CEF**；
+  - `edmg.control_mode_encoding`：EDMG 控制模式（第一个码字 L-Header 5 + EDMG-Header-A1 6 字节，A2 的 3 字节在第二个码字）；
+  - `edmg.ofdm_modulation_mapping`：DCM BPSK / DCM QPSK 的映射矩阵、静态与动态子载波配对、16-QAM / 64-QAM 星座、数据子载波的排法。
+- 新测试：两个前导长度等于各自码片数 ÷ 1.76 GHz、各条目的码片数一致；控制模式码字切分复现 0433r2 的例子、对 14–1023 每个 Length 都等于闭式；Short SSW 的位宽拆回 17/1586r1 的例子。
+- **没有找到的**：Short SSW 用哪种 PPDU、哪个 MCS 发（公开文件只写"在 EDMG PPDU 的数据域里"，控制模式长度下限 14 字节装不下 6 字节）；EDMG OFDM 16 / 64-QAM 的交织置换（17/1568r0 只说在一个 OFDM 符号内交织）；EDMG OFDM 的填充规则。
+- 共享表 158 条：spec 141、survey 1、derived 16。账本新增 5 个键，记 `added=unreleased`。
 
 ### 验收：0.6.0 的重新 pin（mmw60_trx#63、fmcw_radar#21）
 - **mmw60_trx**：在 mmw60_trx#64 合并 `bd0b125`（重新 pin 的提交 `1a70205`）。9 个 vendor 文件去掉出处头后与 `a9af261` 逐字节相同（`1a70205` 与 `bd0b125` 都是）；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过），它带齐 sibling 报 250 verbatim、0 skipped。指纹 `64bea53` 对 `1a70205`（`MMW60_NO_JIT=1`）69 个值逐位相同。它的合并表 193 → 202 条：vendor 进来 +7（`deepscale.energy_by_node` 与 6 条 `pa60.*`），另 +2 是它为 #63 里两件事在本地加的 assumed（3 dB 的双边带 → 单边带换算、剔掉 Asada [5] 的 PAE），与 pin 在同一个提交里；都不从本库抄数，不按条登记。未核实 9 → 4，只剩它自己的 4 条 `survey.*`。示例 04 的 7 nm 系数改成 0.1746（倍率两位小数下不变），示例 08 两个标签改成 spec，示例 09 的峰值 PAE 中位数 8.5 → 8.8 %（14 行的原值并列打印）。

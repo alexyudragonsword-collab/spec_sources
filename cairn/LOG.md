@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · #43：控制 PHY 的码字、EDMG 前导、OFDM 调制映射；更正 #33 的三条（feat/issue43-cphy-edmg-ofdm，未发布）
+
+- PR #42 合并（main `30a4db1`）。mmw60 开了 #43（4 项）。读 mentor 的公开文件，列 L1–L11 请用户对照标准核对：后来的文件与标准一致。
+- 更正：`dmg.control_phy` STF 5120 → 6400 码片；`dmg.phy_timing` 前导 1745 / 3564 → 1891 / 4291 ns；`edmg.short_ssw` Packet Type 2 → 1、RF Chain ID 2 → 3 位，单播 11 位改为 SS-BSSID 10 + Unassociated 1，新增群播格式。#33 时取自 0433r2（2010）与 1358r9（2015），当时标的"核对一致"没覆盖这几处。
+- 新增 5 条：`dmg.control_phy_encoding`（88 位 + 168 位 / 码字，Length 120 → 7 个码字；SSW 帧 14.909 µs）、`dmg.sc_ppdu_chips`（2176 / 1152 / 1024）、`edmg.sc_siso_preamble`（SISO 无 EDMG-STF / CEF）、`edmg.control_mode_encoding`、`edmg.ofdm_modulation_mapping`（DCM 矩阵、STP / DTP 42 组、16 / 64-QAM）。
+- 互证：17/1586r1 的 48 位例子用新位宽低位在前逐字段拆回（旧位宽拆不回）；码字切分对 14–1023 每个 Length 都等于闭式。3 个新测试。
+- 没有：Short SSW 的 PPDU 类型；OFDM 16 / 64-QAM 交织置换；OFDM 填充。
+- 共享表 153 → 158 条：spec 141、survey 1、derived 16。测试 97 个（95 通过，2 跳过）。mmw60 需重新 pin。
+
 ## 2026-11-17 · 验收 0.6.0 的重新 pin：mmw60_trx#63、fmcw_radar#21（feat/accept-0.6.0-repins）
 
 - PR #41 合并即 0.6.0（main `a9af261`），在 mmw60_trx#63、fmcw_radar#21 各给了 PIN。

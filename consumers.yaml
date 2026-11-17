@@ -143,24 +143,26 @@ consumers:
 #              → 802.11ad / ay 单信道 PHY（3123b65，2026-11-16），文件不变。请求在本库 spec_sources#29，issue 一栏写 mmw60_trx#49。
 #              → 0.5.0、第 7 批与 DMG / EDMG 的码、控制 PHY 与扇区扫描（76ee72a，2026-11-16），文件不变。请求在本库
 #              spec_sources#33，issue 一栏写 mmw60_trx#60。
+#              → 0.6.0（a9af261，mmw60_trx#63，2026-11-17），文件不变。
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 #              → 第 4 批完（f87cc9b，fmcw_radar#19，2026-11-14），文件加了 windows.yaml
+#              → 0.6.0（a9af261，fmcw_radar#21，2026-11-17），文件不变。
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
 #              （只查找，不抄数，所以不按条登记）。
 vendored:
 
   - repo: mmw60_trx
-    at: 53a9a16813312781c0a4566867452a5880fb487f
-    pin: 76ee72a008e3f5ad65fcaa6119643914d0328622
-    issue: "mmw60_trx#60"
+    at: bd0b125d9ee43f159166615773f8fefcf84ddb32
+    pin: a9af2614c47f66eb602738e7ae19e84d164199de
+    issue: "mmw60_trx#63"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/ieee802153c.yaml, data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 
   - repo: fmcw_radar
-    at: 44953106404592e6644df0334b428491219c6a9b
-    pin: f87cc9b54af9d6510e406d8356c04267fa1dd388
-    issue: "fmcw_radar#19"
+    at: 49c1e76aec9af93543ba21c2fb4505b27108a721
+    pin: a9af2614c47f66eb602738e7ae19e84d164199de
+    issue: "fmcw_radar#21"
     files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml,
             data/windows.yaml]
 

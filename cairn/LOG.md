@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-17 · 验收 0.6.0 的重新 pin：mmw60_trx#63、fmcw_radar#21（feat/accept-0.6.0-repins）
+
+- PR #41 合并即 0.6.0（main `a9af261`），在 mmw60_trx#63、fmcw_radar#21 各给了 PIN。
+- mmw60：合并 `bd0b125`（pin 的提交 `1a70205`）。9 个文件去头后与 `a9af261` 逐字节相同；本地 `vendor_check --strict` 9 verbatim（241 缺 sibling 跳过）；指纹 `64bea53` 对 `1a70205` 69 个值逐位相同。合并表 193 → 202（vendor +7，它本地 assumed +2，与 pin 同一提交），未核实 9 → 4。
+- mmw60 定了两件：ISCAS 2015 作双边带、另列单边带一行（本地 assumed 3 dB）；Asada [5] 的 PAE 剔掉（示例 09 中位数 8.5 → 8.8 %）。两条 assumed 只记 3 dB 与行号，不抄本库的数，不按条登记。
+- fmcw：合并 `49c1e76`。6 个文件去头后逐字节相同，`vendor_check` 里都是 verbatim（唯一的 adapted 是 array_tx 的 coupling.py）；指纹 `4495310` 对 `49c1e76` 2035 个值逐位相同。
+- `consumers.yaml` 两库 pin → `a9af261`。数据未动，共享表 153 条；测试 94 个（92 通过，2 跳过）。
+
 ## 2026-11-17 · 发布 0.6.0（feat/release-0.6.0）
 
 - PR #40 合并（main `cca7a21`）。用户定：先发 0.6.0，再给 mmw60_trx、fmcw_radar 各开一个重新 pin 的 issue。

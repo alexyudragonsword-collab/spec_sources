@@ -68,7 +68,12 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "edmg.ofdm_modulation_mapping",
        # issue #48 (mmw60_trx): EDMG OFDM PPDU, EDMG-CEF / -STF, DMG CEF layout, OFDM preamble filter, Golay
        "edmg.ofdm_ppdu_ncb1", "edmg.ofdm_cef_ncb1", "edmg.ofdm_stf_ncb1", "dmg.cef_golay_layout",
-       "dmg.ofdm_preamble_hfilt", "dmg.golay_sequences"}
+       "dmg.ofdm_preamble_hfilt", "dmg.golay_sequences",
+       # issue #50 (fmcw_radar): the radar tiers of 47 CFR 15.255(c)(2), with (b)(3) and the mode-switch rule
+       "fcc15255.radar_default", "fcc15255.radar_57_59p4_indoor", "fcc15255.radar_57_59p4_outdoor",
+       "fcc15255.radar_57_61p56",
+       "fcc15255.radar_57_61p56_off_time", "fcc15255.radar_57_64", "fcc15255.radar_57_64_outdoor",
+       "fcc15255.radar_61_61p5", "fcc15255.radar_uav_60_64", "fcc15255.radar_mode_switch"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -241,7 +246,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 85 == 164
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 95 == 174
     assert set(CHANGED) <= set(ss.all_entries())
 
 

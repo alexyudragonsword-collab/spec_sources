@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 164
+    assert len(table) == 174
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -279,7 +279,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 147, "survey": 1, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 157, "survey": 1, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -538,3 +538,44 @@ def test_the_ofdm_preamble_filter_is_symmetric_and_centred_on_its_delay():
     assert h == h[::-1] and f["delay_half_samples"] == (len(h) - 1) // 2 == 36 and max(h) == h[36] == 256
     assert dmg["fs_ofdm_hz"] / dmg["chip_rate_hz"] == f["upsample"] / f["downsample"] == 1.5
     assert f["normalized_norm"] == "sqrt(3)" and math.sqrt(sum(x * x for x in h)) == pytest.approx(428.679, abs=5e-4)
+
+
+# ------------------------------------------------------------------- #50: the radar tiers of 47 CFR 15.255(c)(2)
+def _quoted(x: float, unit: str, quote: str) -> bool:
+    """x as the eCFR prints it (57, 57.0, 61.56; a minus sign or a hyphen) followed by unit."""
+    forms = {f"{x:g}", f"{x:.1f}", f"{x:.2f}"}
+    return any(f"{s}{unit}" in quote or f"{s.replace('-', '−')}{unit}" in quote for s in forms)
+
+
+def test_the_fcc_radar_tiers_sit_in_the_band_and_quote_their_own_numbers():
+    """#50: every (c)(2) tier (and (b)(3), which (c)(2) offers as one) is a sub-band of 57-71 GHz whose band
+    edges and dBm limits are in its own quote; off-time limits count runs of at least 2 ms over any 33 ms
+    window; only the default tier has a conducted limit, the others operate 'without being subject to a
+    transmitter conducted output power limit'."""
+    table = ss.all_entries()
+    lo, hi = ss.value("fcc15255.band_low_hz"), ss.value("fcc15255.band_high_hz")
+    tiers = {k: e for k, e in table.items() if k.startswith("fcc15255.radar_") and "band_low_hz" in e.value}
+    assert len(tiers) == 9
+    default = tiers["fcc15255.radar_default"].value
+    assert (default["band_low_hz"], default["band_high_hz"]) == (lo, hi)
+    for k, e in tiers.items():
+        v = e.value
+        assert lo <= v["band_low_hz"] < v["band_high_hz"] <= hi, k
+        assert any(_quoted(v["band_low_hz"] / 1e9, f"-{b}", e.quote)
+                   for b in (f"{v['band_high_hz'] / 1e9:g}", f"{v['band_high_hz'] / 1e9:.1f}")), k
+        for field in (f for f in v if f.endswith("_dbm")):
+            assert _quoted(v[field], " dBm", e.quote), (k, field)
+        assert ("peak_conducted_dbm" in v) == (k == "fcc15255.radar_default"), k
+        if "off_time_sum_min_s" in v:
+            assert (v["off_time_window_s"], v["off_time_min_run_s"]) == (0.033, 0.002), k
+            assert v["off_time_sum_min_s"] < v["off_time_window_s"], k
+            assert "off-times of at least two milliseconds" in e.quote, k
+            window = " milliseconds within any contiguous interval of 33 milliseconds"
+            assert _quoted(v["off_time_sum_min_s"] * 1e3, window, e.quote), k
+    assert _quoted(tiers["fcc15255.radar_61_61p5"].value["max_bandwidth_hz"] / 1e6, " MHz bandwidth or less",
+                   tiers["fcc15255.radar_61_61p5"].quote)
+    assert _quoted(tiers["fcc15255.radar_uav_60_64"].value["max_height_agl_m"], " meters",
+                   tiers["fcc15255.radar_uav_60_64"].quote)
+    mode = table["fcc15255.radar_mode_switch"]
+    assert mode.value == {"modes_at_once": 1, "min_dwell_s": 0.033}
+    assert "only one mode at any time and does so for at least 33 milliseconds" in mode.quote

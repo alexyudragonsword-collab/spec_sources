@@ -85,6 +85,12 @@ dmg.sc_ppdu_chips  added=unreleased
 edmg.sc_siso_preamble  added=unreleased
 edmg.control_mode_encoding  added=unreleased
 edmg.ofdm_modulation_mapping  added=unreleased
+edmg.ofdm_ppdu_ncb1  added=unreleased
+edmg.ofdm_cef_ncb1  added=unreleased
+edmg.ofdm_stf_ncb1  added=unreleased
+dmg.cef_golay_layout  added=unreleased
+dmg.ofdm_preamble_hfilt  added=unreleased
+dmg.golay_sequences  added=unreleased
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0

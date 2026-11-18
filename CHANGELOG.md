@@ -7,10 +7,27 @@
 
 `reader.py` 没动。
 
+- **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
 - **`mmw60_trx` 需重新 pin（#48），已在 mmw60_trx#76 pin 到 `65ff5e4` 并验收（见下）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### #50（fmcw_radar 请求）：47 CFR §15.255(c)(2) 的雷达限值
+- 2026-11-18 读 eCFR 的现行条文（2026-11-16 版；该节最近修订仍是 2023-08-23，与 2026-11-16 读的 2026-11-12 版逐字节相同），另读 §15.3 的定义。每段 quote 都逐字出现在原文里（本库用脚本对过）。
+- 新增 10 条 spec（`data/regulatory.yaml`，键名里的 p 是小数点）：
+  - `fcc15255.radar_default`：57–71 GHz，峰值 EIRP 10 dBm、峰值传导 −10 dBm；
+  - `fcc15255.radar_57_59p4_indoor` / `_outdoor`：57.0–59.4 GHz，峰值 EIRP 20 / 30 dBm；
+  - `fcc15255.radar_57_61p56`：57.0–61.56 GHz，3 dBm；`fcc15255.radar_57_61p56_off_time`：满足关断时间时 20 dBm；
+  - `fcc15255.radar_57_64`：57.0–64.0 GHz，14 dBm，**必须**满足关断合计 ≥ 25.5 ms；`fcc15255.radar_57_64_outdoor`：室外固定或车载（车厢内除外）20 dBm、关断 ≥ 16.5 ms；
+  - `fcc15255.radar_61_61p5`：占用 ≤ 500 MHz 且整个在 61.0–61.5 GHz 内，平均 40 / 峰值 43 dBm，档外（57–71 GHz 内）平均 10 / 峰值 13 dBm；
+  - `fcc15255.radar_uav_60_64`：(b)(3) 无人机，60–64 GHz，20 dBm，关断 ≥ 16.5 ms，离地 ≤ 121.92 m（(c)(2) 首句把它列为一档）；
+  - `fcc15255.radar_mode_switch`：(c)(2)(iv)，同一时刻只在一档，换档前至少停 33 ms。
+  - 关断时间的字段：`off_time_sum_min_s`（0.0165 / 0.0255）、`off_time_window_s`（0.033，任意连续窗口）、`off_time_min_run_s`（0.002，每段至少连续 2 ms 才计入）。
+- 与 ROADMAP 原来的转述相比，原文多了：每段关断须连续 ≥ 2 ms；57.0–64.0 GHz 的 14 dBm 档没有"不满足关断时可降功率"的分支；室外那一档同时要求"室外"且"固定或车载作业"，车厢内除外；61.0–61.5 GHz 档的占用带宽 ≤ 500 MHz 条件与档外 10 / 13 dBm；(b)(3) 无人机档；(c)(2)(iv) 换档规则。数值与转述一致。
+- `fcc15255.eirp_avg_dbm` 的 note 原来写"见 ROADMAP"，改为指向 `fcc15255.radar_*`，值不变。
+- 新测试 1 个：9 档的频段都在 57–71 GHz 内，频段边界与每个 dBm 限值都出现在自己的 quote 里（把 14 改成 15 测试即报错），关断时间的三个字段与原文的句子相符，只有默认档带传导功率字段。
+- 共享表 164 → 174 条（spec 147 → 157）；测试 103 个（101 通过，2 跳过）。
 
 ### 验收：#48（mmw60_trx 重新 pin 到 `65ff5e4`）
 - mmw60_trx 在 mmw60_trx#76 合并 `147ef1d`（压缩合并，父提交 `f547d8d`）。这次重新 pin 与它 OFDM 接收机的改动在同一个提交里，所以本库把重新 pin 单独拆出来核：在 `f547d8d` 上只换进 `147ef1d` 的 vendor 文件、`vendor/__init__.py` 与 `vendor_manifest.json`，两边都用 `f547d8d` 的 `fingerprint.py` 录（`MMW60_NO_JIT=1`），69 个值逐位相同（numba 一项两边都抛错）。

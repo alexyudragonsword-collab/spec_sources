@@ -6,11 +6,13 @@
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### mmw60_trx —— pin 在 `65ff5e4`，mmw60_trx#76 已验收；本库 #26、#29、#33 已验收（由它关闭），#43、#48 待它关
+### mmw60_trx —— pin 在 `65ff5e4`，mmw60_trx#76 已验收；本库 #26、#29、#33、#43、#48 都已验收并由它关闭
+- `data/regulatory.yaml` 在 `65ff5e4` 之后多了 10 条雷达档（#50），它用不上，下次因别的事重新 pin 时一起；不为此单开 issue。
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `a9af261`（0.6.0），fmcw_radar#21 已验收；它的表里没有 survey 了
+- **#50 已答复，待它接入**：§15.255(c)(2) 的 10 条 `fcc15255.radar_*`。它要多 vendor `data/regulatory.yaml`，并用 `upstream:` 逐个读数；它回报用了哪些引用后，本库照例复核并在 `consumers.yaml` 按条登记、更新它的 vendored 一条。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
@@ -43,8 +45,6 @@
 - **EDMG 的接收灵敏度**：公开材料里没找到（TGay CID 1620 要求补，被采纳的 18/0713r3 只补了 EVM；#33 时按标题再搜了 sensitivity / minimum input / receiver / requirement，翻了两份性能要求文件与动议汇编，仍没有）。mmw60_trx 在本地写 assumed（沿用 DMG 的同调制档，`dmg.sc_mcs_extended` 进来后 SC 的高阶档也配上了）；mmw60_trx#61 起 SC 改用它按 #33 的码实测的门限，OFDM 仍借 DMG 同档。
 - **#43 里公开材料没有的三处**：Short SSW 用哪种 PPDU、哪个 MCS 发（控制模式长度下限 14 字节装不下 6 字节，SFD 只写"在 EDMG PPDU 的数据域里"）；EDMG OFDM 16 / 64-QAM 的交织置换（17/1568r0 只说在一个 OFDM 符号内交织，1170r2 写 TBD）；EDMG OFDM 的填充规则（#33、#43 两次都没找到）。EDMG 的 TRN 单元长度也没有收（DMG 的 4992 码片已在 `dmg.control_phy_encoding`、`dmg.sc_ppdu_chips`）。
 - **#48 里公开材料没有的**：DMG 前导 STF 2176 码片（= 17 × 128）的组成，0433r2 写的 14 × Ga128 + −Ga128（1920 码片）是旧的，控制 PHY 的 6400 码片同样只有长度；EDMG OFDM 的 N_SYMS（30.6.6.2，本库没收）。"数据信道用 EDMG-CEF 估"与"EDMG OFDM 包的 L-CEF 用 OFDM 排法"两句标准里有、公开文件里没有，现在只在条目 note 里写明是用户对照标准确认的；以后若找到公开原句，补进 quote。
-
-- **47 CFR §15.255(c)(2) 的雷达限值**（2026-11-16 读 eCFR 时看到，未建条目）：雷达类器件默认峰值 EIRP 10 dBm、峰值传导 −10 dBm；57.0–59.4 GHz 室内 20 / 室外 30 dBm；57.0–61.56 GHz 3 dBm（满足关断时间可到 20）；57.0–64.0 GHz 14 dBm（33 ms 里关断 ≥ 25.5 ms），室外固定或车载作业 20 dBm（关断 ≥ 16.5 ms）；61.0–61.5 GHz 窄带可到平均 40 / 峰值 43 dBm。fmcw_radar 若要按合规上限算 EIRP，从这一节建条目。
 
 ## 开放问题
 

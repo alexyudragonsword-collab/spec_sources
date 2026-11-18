@@ -148,3 +148,14 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - 没有：Short SSW 的 PPDU 类型与 MCS；EDMG OFDM 16 / 64-QAM 的交织置换；EDMG OFDM 的填充规则。TGay 2017–2019 年的文件目录（mentor 上约 1860 份）按标题筛过一遍。
 - 用户 2026-11-17 对照 IEEE 802.11-2024 核对：后来的公开文件与标准一致（#33 时取自 0433r2 / 2015 年 SFD 的三处因此更正）。
 
+
+## 2026-11-18 · #48：EDMG OFDM 包的训练场、DMG CEF、hFilt、Golay（mentor.ieee.org 公开文件）
+
+- ✅ TGay 11-17/1806r3 30.12.3.4（EDMG OFDM 的 TXTIME，公式图 image47–55 渲染出来读）→ `edmg.ofdm_ppdu_ncb1`。
+- ✅ 11-17/0596r0 "30.6.3 OFDM EDMG-CEF Definition"（动议 #219）：30.6.3.2 与 30.11 的 16 张序列表（前 8 张是 i_STS 1–8 的左半，后 8 张右半），公式图渲染出来读 → `edmg.ofdm_cef_ncb1`（只收 i_STS = 1）。
+- ✅ 11-17/0546r0 "EDMG-STF for OFDM in single channel"（动议 #209），同样的排法 → `edmg.ofdm_stf_ncb1`（只收 i_STS = 1）。
+- ✅ 11-17/1404r2（OFDM 前导与导频的意见处理，动议 #313）：对 EDMG-STF / EDMG-CEF 没有改动。
+- ✅ TGad 11-10/0433r2（#33 时已下载）21.3.6.2 与图 134 / 135、21.3.6.3 与 21.3.6.3.1、21.9 与 Table 83–88 → `dmg.cef_golay_layout`、`dmg.ofdm_preamble_hfilt`、`dmg.golay_sequences`。
+- 动议编号查自 11-17/0186r37（TGay 动议汇编，本地）。
+- 没有：DMG SC / 控制 PHY 前导 STF 的最终组成（只有长度 2176 / 6400）；"数据信道用 EDMG-CEF 估"与"EDMG OFDM 包的 L-CEF 用 OFDM 排法"的原句（用户对照标准确认标准里有）。
+- 用户 2026-11-18 对照 IEEE 802.11-2024 核对 N1–N6，一致。

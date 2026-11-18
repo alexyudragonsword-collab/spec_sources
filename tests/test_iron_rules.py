@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 158
+    assert len(table) == 164
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -279,7 +279,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 141, "survey": 1, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 147, "survey": 1, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -430,3 +430,111 @@ def test_the_rho2_codeword_is_well_defined_by_the_rate_half_matrix():
     c = data | (parity << k)                             # (b_1..b_168, 168 zeros, p_1..p_336)
     assert all(bin(row & c).count("1") % 2 == 0 for row in rows)
 
+
+
+# ------------------------------------------------------------------- #48: the OFDM training fields
+_TONE = {"0": 0, "+1": 1, "-1": -1, "+j": 1j, "-j": -1j}
+
+
+def _tones(field: dict) -> dict[int, complex]:
+    """k -> value of an EDMG OFDM training field laid out as [left 176, 0, 0, 0, right 176]."""
+    left, right = ([_TONE[t] for t in field[f].split()] for f in ("seq1_left", "seq1_right"))
+    values = left + [0, 0, 0] + right
+    ks = range(field["k_first"], field["k_last"] + 1)
+    assert len(values) == len(ks)
+    return dict(zip(ks, values, strict=True))
+
+
+def test_the_edmg_ofdm_training_fields_fill_the_ofdm_tones():
+    """#48: EDMG-CEF covers k = -177..177 with only the three DC tones empty, so it has N_ST - N_DC = 352 unit
+    tones; EDMG-STF uses every 4th tone (88), so its period is N_DFT/4 = 128 samples and 30 periods are the 3840
+    samples 17/1806r3 gives the field; one EDMG-CEF symbol is N_DFT plus the long GI, two of them for one stream;
+    the parts sent at 1.76 GHz are the DMG / EDMG SC ones."""
+    ofdm, ppdu = ss.value("edmg.ofdm_params"), ss.value("edmg.ofdm_ppdu_ncb1")
+    cef, stf = ss.value("edmg.ofdm_cef_ncb1"), ss.value("edmg.ofdm_stf_ncb1")
+    for field in (cef, stf):
+        assert (field["k_first"], field["k_last"]) == (-ofdm["n_sr"], ofdm["n_sr"])
+    c = _tones(cef)
+    assert len(c) == ofdm["n_st"] and [k for k, x in c.items() if not x] == [-1, 0, 1] and ofdm["n_dc"] == 3
+    assert cef["n_tone"] == "N_ST - N_DC" and sum(1 for x in c.values() if x) == ofdm["n_st"] - ofdm["n_dc"] == 352
+    assert all(abs(x) == 1 for x in c.values() if x)
+    s = _tones(stf)
+    used = [k for k, x in s.items() if x]
+    assert len(used) == stf["n_tone"] == 88 and all(k % 4 == 0 and abs(s[k]) == 1 for k in used)
+    period = ofdm["n_dft"] // 4
+    assert period / ofdm["fs_hz"] == pytest.approx(stf["period_s"], abs=0.005e-9)
+    assert stf["n_periods"] * period == ppdu["edmg_stf_samples"] == 3840
+    assert ppdu["edmg_stf_samples"] / ppdu["fs_hz"] == pytest.approx(stf["duration_s"], abs=0.5e-9)
+    assert ppdu["fs_hz"] == ofdm["fs_hz"]
+    gi = dict(zip(ppdu["gi_order"], ppdu["n_gi"], strict=True))
+    assert gi == {name: round(ofdm[f"gi_{name}_s"] * ofdm["fs_hz"]) for name in ppdu["gi_order"]}
+    assert ppdu["edmg_cef_samples_per_symbol"] == ofdm["n_dft"] + gi[cef["gi"]] == 704
+    assert ss.ref("edmg.ofdm_ppdu_ncb1#n_edmg_cef_symbols@n_sts=1") == cef["n_symbols_nsts1"] \
+        == len(cef["p_matrix_nsts1"]) == 2
+    sc, edmg_sc = ss.value("dmg.sc_ppdu_chips"), ss.value("edmg.sc_siso_preamble")
+    assert [ppdu[f] for f in ("l_stf_chips", "l_cef_chips", "l_header_chips", "chip_rate_hz")] == \
+        [sc[f] for f in ("l_stf_chips", "l_cef_chips", "l_header_chips", "chip_rate_hz")]
+    assert ppdu["edmg_header_a_chips"] == edmg_sc["otherwise_edmg_header_a_chips"]
+
+
+def _golay(d: list[int], w: list[int]) -> tuple[list[int], list[int]]:
+    """0433r2 21.9: A_0 = B_0 = delta, A_k(n) = W_k A_{k-1}(n) + B_{k-1}(n - D_k), B_k(n) = W_k A_{k-1}(n) -
+    B_{k-1}(n - D_k), kept on 0 <= n < 2^K (D_1 can exceed 2^1, only the last pair fits in 2^k)."""
+    size = 2 ** len(d)
+    a = [1] + [0] * (size - 1)
+    b = a[:]
+    for dk, wk in zip(d, w, strict=True):
+        late = [0] * dk + b[:size - dk]
+        a, b = [wk * x + y for x, y in zip(a, late, strict=True)], [wk * x - y for x, y in zip(a, late, strict=True)]
+    return a, b
+
+
+def _acf(x: list[int], lag: int, periodic: bool = False) -> int:
+    n = len(x)
+    if periodic:
+        return sum(x[i] * x[(i + lag) % n] for i in range(n))
+    return sum(x[i] * x[i + lag] for i in range(n - lag))
+
+
+def test_the_golay_tables_are_their_recursion_reversed_and_complementary():
+    """#48: each of the six tables is the 21.9 recursion with its own D_k, W_k, read backwards (Ga128(n) =
+    A_7(128 - n) with the tables indexed from 1), and each pair is complementary: the two aperiodic
+    autocorrelations cancel at every nonzero lag."""
+    g = ss.value("dmg.golay_sequences")
+    for n in (128, 64, 32):
+        a, b = _golay(g[f"d_{n}"], g[f"w_{n}"])
+        ga, gb = g[f"ga{n}"], g[f"gb{n}"]
+        assert len(ga) == len(gb) == n and ga == a[::-1] and gb == b[::-1]
+        assert all(_acf(ga, lag) + _acf(gb, lag) == 0 for lag in range(1, n))
+        assert f"Ga{n}(n) = A_{len(g[f'd_{n}'])}({n} - n)" in g["reversal"]
+
+
+def test_the_dmg_cef_is_built_from_the_golay_tables():
+    """#48: Gu512 and Gv512 are spelled out of Ga128 / Gb128; both end with -Ga128, the end of the STF, so every
+    512-chip block is preceded by its own cyclic prefix and the closing 128 chips are a cyclic suffix, and the two
+    are periodically complementary. Both orders fill the 1152 CEF chips, the OFDM order swaps the SC one."""
+    g, lay = ss.value("dmg.golay_sequences"), ss.value("dmg.cef_golay_layout")
+    part = {"+Ga128": g["ga128"], "-Ga128": [-x for x in g["ga128"]],
+            "+Gb128": g["gb128"], "-Gb128": [-x for x in g["gb128"]]}
+    gu = [x for name in lay["gu512"] for x in part[name]]
+    gv = [x for name in lay["gv512"] for x in part[name]]
+    blocks = {"Gu512": gu, "Gv512": gv, "Gu128": gu[:128], "Gv128": gv[:128]}
+    assert gu[:128] == gv[:128] == part["-Gb128"]
+    assert lay["gu128"].endswith("-Gb128") and lay["gv128"].endswith("-Gb128")
+    assert gu[-128:] == gv[-128:] == part["-Ga128"]
+    for order in (lay["sc_order"], lay["ofdm_order"]):
+        assert sum(len(blocks[b]) for b in order) == lay["cef_chips"] == ss.value("dmg.sc_ppdu_chips")["l_cef_chips"]
+    assert lay["ofdm_order"][:2] == lay["sc_order"][1::-1] and lay["ofdm_order"][2] == "Gu128"
+    assert all(_acf(gu, lag, periodic=True) + _acf(gv, lag, periodic=True) == 0 for lag in range(1, 512))
+    assert any(_acf(gu, lag) + _acf(gv, lag) for lag in range(1, 512))      # not aperiodically complementary
+
+
+def test_the_ofdm_preamble_filter_is_symmetric_and_centred_on_its_delay():
+    """#48: hFilt has 73 integer taps, is symmetric with its peak 256 at h36, which is why 0433r2 takes sample
+    2n - 36; 3/2 is the OFDM to SC rate ratio of dmg.phy_params."""
+    f, dmg = ss.value("dmg.ofdm_preamble_hfilt"), ss.value("dmg.phy_params")
+    h = f["coefficients"]
+    assert len(h) == f["n_taps"] == 73 and all(isinstance(x, int) for x in h)
+    assert h == h[::-1] and f["delay_half_samples"] == (len(h) - 1) // 2 == 36 and max(h) == h[36] == 256
+    assert dmg["fs_ofdm_hz"] / dmg["chip_rate_hz"] == f["upsample"] / f["downsample"] == 1.5
+    assert f["normalized_norm"] == "sqrt(3)" and math.sqrt(sum(x * x for x in h)) == pytest.approx(428.679, abs=5e-4)

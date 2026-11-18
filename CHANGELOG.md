@@ -7,9 +7,24 @@
 
 `reader.py` 没动。
 
+- **`mmw60_trx` 需重新 pin（#48）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### #48（mmw60_trx 请求）：EDMG OFDM 包的训练场、DMG CEF 的拼法、OFDM 前导的重采样滤波器、Golay 序列
+- 标准本身不能读，全部取自 mentor.ieee.org 的公开文件：TGay 的 17/1806r3（TXTIME，30.12.3.4）、17/0596r0（EDMG-CEF，动议 #219）、17/0546r0（EDMG-STF，动议 #209）；TGad 的 11-10/0433r2（21.3.6、21.9）。17/1404r2（动议 #313）对这两个场没有改动。用户 2026-11-18 对照 IEEE 802.11-2024 逐行核对（N1–N6），一致。
+- mmw60 先要确认的事：**EDMG OFDM 包的数据信道用 EDMG-CEF 估**。17/1806r3 的 TXTIME 公式显示单流的 EDMG OFDM 包也有 EDMG-STF 与 EDMG-CEF（SC 单流包没有）；"用 EDMG-CEF 估"与"EDMG OFDM 包的 L-CEF 用 OFDM 排法"两件公开文件里没有原句，是用户对照标准确认的，写在条目 note 里。
+- 新增 6 条 spec：
+  - `edmg.ofdm_ppdu_ncb1`：L-STF 2176、L-CEF 1152、L-Header 1024、EDMG-Header-A 1088 码片（1.76 GHz），EDMG-STF 3840 个样点、EDMG-CEF 每符号 704 个样点（2.64 GHz）；`n_edmg_cef_symbols` 按 `n_sts` 1–8 为 2, 2, 3, 4, 6, 6, 8, 8；单用户无 EDMG-Header-B；数据每符号 512 + N_GI，N_GI = 48 / 96 / 192。例：`ref("edmg.ofdm_ppdu_ncb1#n_edmg_cef_symbols@n_sts=1")` → 2。
+  - `edmg.ofdm_cef_ncb1`：第 1 个空时流的 Seq1_left / Seq1_right（各 176 个 ±1 / ±j，文本），k = −177 … 177 排成 [左, 0, 0, 0, 右]；单流 P = [+1, −1]、2 个符号、长 GI；归一化 1/√(N_STS · 352)。
+  - `edmg.ofdm_stf_ncb1`：EDMGS1_left / EDMGS1_right（各 176 个，只有 4 的倍数号音非零，共 88 个）；周期 48.48 ns × 30 = 1.455 µs，不加 GI。
+  - `dmg.cef_golay_layout`：Gu512 = [−Gb128, −Ga128, +Gb128, −Ga128]、Gv512 = [−Gb128, +Ga128, −Gb128, −Ga128]；SC 包 [Gu512, Gv512, Gv128]、OFDM 包 [Gv512, Gu512, Gu128]；乘 exp(jπn/2)。
+  - `dmg.ofdm_preamble_hfilt`：73 个整数抽头（h36 = 256，对称），缩放到范数 √3；插零 ×3、滤波、取第 2n − 36 个样点。
+  - `dmg.golay_sequences`：Ga128 / Gb128 / Ga64 / Gb64 / Ga32 / Gb32 六张表与递推的 D_k、W_k。
+- 新测试 4 个：两个训练场的音数（352 与 88，STF 只占 4 的倍数号音）、STF 周期 × 30 = 3840、CEF 符号 = 512 + 长 GI、前导码片数与 `dmg.sc_ppdu_chips` 一致；Golay 递推结果倒过来逐位等于六张表、三对非周期互补；用表拼出的 Gu512 / Gv512 填满 1152 码片的 CEF、两者周期互补（非周期并不互补）；hFilt 对称、中心在延迟 36、3/2 = 2.64 / 1.76。
+- 公开材料里没有、这次没收的：DMG SC 前导 STF 2176 码片的组成（0433r2 写的 14 × Ga128 + −Ga128 = 1920 码片是旧的）；第 2–8 个空时流的序列与多流 P 矩阵（文件里有，单流用不上）；N_SYMS（30.6.6.2）。
+- 共享表 158 → 164 条（spec 141 → 147）；测试 102 个（100 通过，2 跳过）。
 
 ### 验收：ρ = 2 更正的重新 pin（mmw60_trx#70）
 - mmw60_trx 在 mmw60_trx#70 合并 `d27046b`（压缩合并，父提交 `4d1a06b`）。9 个 vendor 文件去掉出处头后与 `25b2c5e` 逐字节相同；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 241 个因本地缺它的其它 sibling 跳过）。指纹 `4d1a06b` 对 `d27046b`（`MMW60_NO_JIT=1`）69 个值逐位相同。合并表仍 208 条、未核实 4。

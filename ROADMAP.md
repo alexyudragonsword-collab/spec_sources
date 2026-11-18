@@ -6,8 +6,7 @@
 
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
-### mmw60_trx —— pin 在 `25b2c5e`，mmw60_trx#70 已验收；本库 #26、#29、#33 已验收（由它关闭），#43 待它关
-- **#48 已答复，待它重新 pin**：6 条新键（EDMG OFDM 包结构、EDMG-CEF / EDMG-STF 单流序列、DMG CEF 拼法、OFDM 前导的 hFilt、Golay 序列），原有条目没动，指纹应不变。它回报重新 pin 的提交后，本库照例复核（去头逐字节、`vendor_check --strict`、指纹、条数）并更新 `consumers.yaml`。
+### mmw60_trx —— pin 在 `65ff5e4`，mmw60_trx#76 已验收；本库 #26、#29、#33 已验收（由它关闭），#43、#48 待它关
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 

@@ -7,10 +7,17 @@
 
 `reader.py` 没动。
 
-- **`mmw60_trx` 需重新 pin（#48）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
+- **`mmw60_trx` 需重新 pin（#48），已在 mmw60_trx#76 pin 到 `65ff5e4` 并验收（见下）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 验收：#48（mmw60_trx 重新 pin 到 `65ff5e4`）
+- mmw60_trx 在 mmw60_trx#76 合并 `147ef1d`（压缩合并，父提交 `f547d8d`）。这次重新 pin 与它 OFDM 接收机的改动在同一个提交里，所以本库把重新 pin 单独拆出来核：在 `f547d8d` 上只换进 `147ef1d` 的 vendor 文件、`vendor/__init__.py` 与 `vendor_manifest.json`，两边都用 `f547d8d` 的 `fingerprint.py` 录（`MMW60_NO_JIT=1`），69 个值逐位相同（numba 一项两边都抛错）。
+- 9 个 vendor 文件去掉出处头后与 `65ff5e4` 逐字节相同；本库本地跑它的 `vendor_check --strict`：9 个 verbatim（另 108 个因本地缺 wifitrx、array_tx 跳过；它报 117 个全 verbatim）。合并表 208 → 214 条，未核实仍是 4 条。
+- 它用了 `edmg.ofdm_ppdu_ncb1`、`edmg.ofdm_cef_ncb1`、`edmg.ofdm_stf_ncb1`：OFDM 的训练场换成规范的 EDMG-STF / EDMG-CEF（它的 `ay/training.py`），数据信道在 EDMG-CEF 上估。按读法读（`spec.value` / `spec.ref`），不抄数，不按条登记。`dmg.ofdm_preamble_hfilt`、`dmg.cef_golay_layout`、`dmg.golay_sequences` 这一轮没用（它要求 SC 的数逐位不变，SC 的训练序列仍是它自己的构造，记在它的 ROADMAP）。
+- 它报的效果：OFDM 实测门限比 SC 同调制同码率高出的量 0.42–1.69 dB（平均 0.84）→ 0.07–0.34 dB（平均 0.19）；单看换训练场，理想链 13 dB 上 EVM 比 SNR 多丢的 0.79 → 0.65 dB，其余来自跨符号公共相位与按估计加权的解映射。
+- `consumers.yaml`：mmw60_trx pin `25b2c5e` → `65ff5e4`、at `147ef1d`、issue mmw60_trx#76。
 
 ### #48（mmw60_trx 请求）：EDMG OFDM 包的训练场、DMG CEF 的拼法、OFDM 前导的重采样滤波器、Golay 序列
 - 标准本身不能读，全部取自 mentor.ieee.org 的公开文件：TGay 的 17/1806r3（TXTIME，30.12.3.4）、17/0596r0（EDMG-CEF，动议 #219）、17/0546r0（EDMG-STF，动议 #209）；TGad 的 11-10/0433r2（21.3.6、21.9）。17/1404r2（动议 #313）对这两个场没有改动。用户 2026-11-18 对照 IEEE 802.11-2024 逐行核对（N1–N6），一致。

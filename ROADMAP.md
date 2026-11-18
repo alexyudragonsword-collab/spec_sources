@@ -11,8 +11,8 @@
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
-### fmcw_radar —— pin 在 `a9af261`（0.6.0），fmcw_radar#21 已验收；它的表里没有 survey 了
-- **#50 已答复，待它接入**：§15.255(c)(2) 的 10 条 `fcc15255.radar_*`。它要多 vendor `data/regulatory.yaml`，并用 `upstream:` 逐个读数；它回报用了哪些引用后，本库照例复核并在 `consumers.yaml` 按条登记、更新它的 vendored 一条。
+### fmcw_radar —— pin 在 `18241cd`，fmcw_radar#26（重新 pin）与 #27（合规检查）已验收；它的表里没有 survey 了
+- **#50 待它关**：44 个 `fcc15255.*` 引用已按条登记。它请本库留意一件事：§15.255(c)(2) 的关断时间，一段 ≥ 2 ms 的关断被 33 ms 窗口截断时，截下来的片段算不算（它按整段计；另一种读法多扣最多 4 ms，6.4 ms 的帧在 14 dBm 档任何帧率都不合规）。条文没写，本库以后若读到 FCC 的测量规程或 KDB 对这一点的说法，在 #50 或新 issue 里告诉它。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。

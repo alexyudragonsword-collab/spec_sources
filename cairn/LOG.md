@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-18 · 验收 #50：fmcw_radar 重新 pin 到 18241cd 并接入合规检查（feat/accept-issue50-fmcw）
+
+- PR #52 合并（main `18241cd`），在 #50 给了 PIN 与六个答复。fmcw_radar 先在 #26 单独重新 pin（`036bb9b`，父 `8bd37e4`），再在 #27 接入（`5ffbafd`）。
+- 复核：7 个登记文件去头后与 `18241cd` 逐字节相同；本地 `vendor_check --strict` spec_sources 7 verbatim（26 缺 sibling 跳过）；指纹 `8bd37e4` 对 `036bb9b`（同一工具）2153 个值逐位相同，`036bb9b` 对 `5ffbafd` 原有 2153 个不变、新增 247 个全是 `compliance.*`；它的表 23 → 37 条。
+- 它的 `upstream:` 读 44 个 `fcc15255.*` 数，与本库值和类型都相同；按条登记，fmcw_radar 登记 14 → 58。固定件换成 `5ffbafd` 的表。
+- 它的结果：默认 22 dBm 超 `radar_57_64` 的 14 dBm 8.0 dB；帧周期至少 31.90 ms。它问关断被窗口截断时的计法，记进 ROADMAP（条文没写）。
+
 ## 2026-11-18 · #50：47 CFR §15.255(c)(2) 的雷达各档（feat/issue50-fcc15255-radar，未发布）
 
 - PR #51 合并（main `e86bd88`）后 mmw60 关了 #48；#43 在 11-17 就关了。fmcw_radar 开了 #50：它默认扫 58–62 GHz、EIRP 22 dBm，没有上限检查。

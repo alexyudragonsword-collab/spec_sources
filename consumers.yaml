@@ -136,6 +136,358 @@ consumers:
     value: 1.68
     was: ""
 
+  # fmcw_radar#27（spec_sources#50）：§15.255(c)(2) 的雷达各档，它的合规检查逐个读 44 个数；它的本地键是 fcc15255.<档>.<字段>。
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.band_high_hz
+    key: fcc15255.band_high_hz
+    value: 71000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.band_low_hz
+    key: fcc15255.band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_indoor.band_high_hz
+    key: fcc15255.radar_57_59p4_indoor
+    field: band_high_hz
+    value: 59400000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_indoor.band_low_hz
+    key: fcc15255.radar_57_59p4_indoor
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_indoor.peak_eirp_dbm
+    key: fcc15255.radar_57_59p4_indoor
+    field: peak_eirp_dbm
+    value: 20.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_outdoor.band_high_hz
+    key: fcc15255.radar_57_59p4_outdoor
+    field: band_high_hz
+    value: 59400000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_outdoor.band_low_hz
+    key: fcc15255.radar_57_59p4_outdoor
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_59p4_outdoor.peak_eirp_dbm
+    key: fcc15255.radar_57_59p4_outdoor
+    field: peak_eirp_dbm
+    value: 30.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56.band_high_hz
+    key: fcc15255.radar_57_61p56
+    field: band_high_hz
+    value: 61560000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56.band_low_hz
+    key: fcc15255.radar_57_61p56
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56.peak_eirp_dbm
+    key: fcc15255.radar_57_61p56
+    field: peak_eirp_dbm
+    value: 3.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.band_high_hz
+    key: fcc15255.radar_57_61p56_off_time
+    field: band_high_hz
+    value: 61560000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.band_low_hz
+    key: fcc15255.radar_57_61p56_off_time
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.off_time_min_run_s
+    key: fcc15255.radar_57_61p56_off_time
+    field: off_time_min_run_s
+    value: 0.002
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.off_time_sum_min_s
+    key: fcc15255.radar_57_61p56_off_time
+    field: off_time_sum_min_s
+    value: 0.0165
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.off_time_window_s
+    key: fcc15255.radar_57_61p56_off_time
+    field: off_time_window_s
+    value: 0.033
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_61p56_off_time.peak_eirp_dbm
+    key: fcc15255.radar_57_61p56_off_time
+    field: peak_eirp_dbm
+    value: 20.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.band_high_hz
+    key: fcc15255.radar_57_64
+    field: band_high_hz
+    value: 64000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.band_low_hz
+    key: fcc15255.radar_57_64
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.off_time_min_run_s
+    key: fcc15255.radar_57_64
+    field: off_time_min_run_s
+    value: 0.002
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.off_time_sum_min_s
+    key: fcc15255.radar_57_64
+    field: off_time_sum_min_s
+    value: 0.0255
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.off_time_window_s
+    key: fcc15255.radar_57_64
+    field: off_time_window_s
+    value: 0.033
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64.peak_eirp_dbm
+    key: fcc15255.radar_57_64
+    field: peak_eirp_dbm
+    value: 14.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.band_high_hz
+    key: fcc15255.radar_57_64_outdoor
+    field: band_high_hz
+    value: 64000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.band_low_hz
+    key: fcc15255.radar_57_64_outdoor
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.off_time_min_run_s
+    key: fcc15255.radar_57_64_outdoor
+    field: off_time_min_run_s
+    value: 0.002
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.off_time_sum_min_s
+    key: fcc15255.radar_57_64_outdoor
+    field: off_time_sum_min_s
+    value: 0.0165
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.off_time_window_s
+    key: fcc15255.radar_57_64_outdoor
+    field: off_time_window_s
+    value: 0.033
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_57_64_outdoor.peak_eirp_dbm
+    key: fcc15255.radar_57_64_outdoor
+    field: peak_eirp_dbm
+    value: 20.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_61_61p5.avg_eirp_dbm
+    key: fcc15255.radar_61_61p5
+    field: avg_eirp_dbm
+    value: 40.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_61_61p5.band_high_hz
+    key: fcc15255.radar_61_61p5
+    field: band_high_hz
+    value: 61500000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_61_61p5.band_low_hz
+    key: fcc15255.radar_61_61p5
+    field: band_low_hz
+    value: 61000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_61_61p5.max_bandwidth_hz
+    key: fcc15255.radar_61_61p5
+    field: max_bandwidth_hz
+    value: 500000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_61_61p5.peak_eirp_dbm
+    key: fcc15255.radar_61_61p5
+    field: peak_eirp_dbm
+    value: 43.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_default.band_high_hz
+    key: fcc15255.radar_default
+    field: band_high_hz
+    value: 71000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_default.band_low_hz
+    key: fcc15255.radar_default
+    field: band_low_hz
+    value: 57000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_default.peak_conducted_dbm
+    key: fcc15255.radar_default
+    field: peak_conducted_dbm
+    value: -10.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_default.peak_eirp_dbm
+    key: fcc15255.radar_default
+    field: peak_eirp_dbm
+    value: 10.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.band_high_hz
+    key: fcc15255.radar_uav_60_64
+    field: band_high_hz
+    value: 64000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.band_low_hz
+    key: fcc15255.radar_uav_60_64
+    field: band_low_hz
+    value: 60000000000.0
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.off_time_min_run_s
+    key: fcc15255.radar_uav_60_64
+    field: off_time_min_run_s
+    value: 0.002
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.off_time_sum_min_s
+    key: fcc15255.radar_uav_60_64
+    field: off_time_sum_min_s
+    value: 0.0165
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.off_time_window_s
+    key: fcc15255.radar_uav_60_64
+    field: off_time_window_s
+    value: 0.033
+    was: ""
+
+  - repo: fmcw_radar
+    at: 5ffbafdeaab515670633915f99f2c93af760bd5c
+    local: fcc15255.radar_uav_60_64.peak_eirp_dbm
+    key: fcc15255.radar_uav_60_64
+    field: peak_eirp_dbm
+    value: 20.0
+    was: ""
+
 # 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。之后同日验收的重新 pin：
 #   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）→ 0.4.0（8e5f2e2，mmw60_trx#27，2026-11-14）
 #              → Liu 刊出版与 tg3c（7aae876，2026-11-15），文件加了 ieee802153c.yaml。这次是它在本库开的 spec_sources#26，
@@ -153,6 +505,8 @@ consumers:
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 #              → 第 4 批完（f87cc9b，fmcw_radar#19，2026-11-14），文件加了 windows.yaml
 #              → 0.6.0（a9af261，fmcw_radar#21，2026-11-17），文件不变。
+#              → §15.255(c)(2) 的雷达各档（18241cd，fmcw_radar#26，2026-11-18），文件加了 regulatory.yaml。请求在本库
+#              spec_sources#50；它在 fmcw_radar#27 接入合规检查，44 个引用按条登记在上面。
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
 #              （只查找，不抄数，所以不按条登记）。
 vendored:
@@ -165,11 +519,11 @@ vendored:
             data/ieee802153c.yaml, data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 
   - repo: fmcw_radar
-    at: 49c1e76aec9af93543ba21c2fb4505b27108a721
-    pin: a9af2614c47f66eb602738e7ae19e84d164199de
-    issue: "fmcw_radar#21"
+    at: 036bb9b92a5fcef84ca491c74289b1f1bdc73135
+    pin: 18241cd698facbc745ff73c7e7b267d915436acc
+    issue: "fmcw_radar#26"
     files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml,
-            data/windows.yaml]
+            data/windows.yaml, data/regulatory.yaml]
 
   - repo: d2d_link
     at: d5d34a62aa581a1f5a8d9db486703038ae6b7d39

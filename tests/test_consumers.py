@@ -14,10 +14,11 @@ from conftest import PACKAGE, REPO, fixture_entries, fixture_header
 import spec_sources as ss
 
 FMCW = "fmcw_radar.sources.yaml"
-FMCW_LAST = "fmcw_radar.sources.4495310.yaml"   # its table at its last acceptance (fmcw_radar#19)
+FMCW_LAST = "fmcw_radar.sources.5ffbafd.yaml"   # its table at its last acceptance (fmcw_radar#27, spec_sources#50)
 ACCEPTED = {"2e5cbb61cef62819804fad89a197b0412b2eb84d", "ffc703ed2208ac5c5b59ac1666537520619125c5",  # milestone 1, #15
             "0d32179a94d3f098091ad386242c4a0ba53329ec",                                            # #17
-            "44953106404592e6644df0334b428491219c6a9b"}                                            # #19
+            "44953106404592e6644df0334b428491219c6a9b",                                            # #19
+            "5ffbafdeaab515670633915f99f2c93af760bd5c"}                                            # #50
 M1 = "2e5cbb61cef62819804fad89a197b0412b2eb84d"   # fmcw_radar when milestone 1 registered its five references
 REQUIRED = {"repo", "at", "local", "key", "value", "was"}
 OPTIONAL = {"field", "select"}
@@ -41,7 +42,7 @@ def _ref(r: dict) -> str:
 
 def test_registrations_are_well_formed():
     regs = _registrations()
-    assert len(regs) == 14
+    assert len(regs) == 14 + 44
     for r in regs:
         assert REQUIRED <= set(r) <= REQUIRED | OPTIONAL, r
         assert re.fullmatch(r"[0-9a-f]{40}", r["at"]), r
@@ -83,15 +84,17 @@ def test_fmcw_references_are_all_registered_and_agree_with_its_table():
 
 
 def test_fmcw_references_at_its_last_acceptance_are_all_registered():
-    """fmcw_radar#19 (accepted at 4495310): every ``upstream:`` in its table --
-    the five front-end figures, the three of #15 (oxygen at 60 and 77.5 GHz,
-    the pedestrian RCS), the 60 GHz TDC resolution of #17, and the car RCS
-    and four window widths of #19 -- is a registration here, spelled as the
-    reference, with the same value."""
+    """fmcw_radar#27 (accepted at 5ffbafd for spec_sources#50): every
+    ``upstream:`` in its table -- the five front-end figures, the three of #15
+    (oxygen at 60 and 77.5 GHz, the pedestrian RCS), the 60 GHz TDC resolution
+    of #17, the car RCS and four window widths of #19, and the 44 numbers of
+    47 CFR 15.255 its compliance check reads (#50) -- is a registration here,
+    spelled as the reference, with the same value."""
     src = fixture_entries(FMCW_LAST)
     upstream = {k: e for k, e in src.items() if e.get("upstream")}
     regs = {r["local"]: r for r in _registrations() if r["repo"] == "fmcw_radar"}
-    assert set(regs) == set(upstream) and len(regs) == 14
+    assert set(regs) == set(upstream) and len(regs) == 14 + 44
+    assert sum(r["key"].startswith("fcc15255.") for r in regs.values()) == 44
     assert fixture_header(FMCW_LAST)["sha"] in ACCEPTED
     for local, r in regs.items():
         assert upstream[local]["upstream"] == f"spec_sources:{_ref(r)}", local

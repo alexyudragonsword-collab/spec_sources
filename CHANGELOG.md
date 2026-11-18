@@ -7,11 +7,31 @@
 
 `reader.py` 没动。
 
+- **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
 - **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
 - **`mmw60_trx` 需重新 pin（#48），已在 mmw60_trx#76 pin 到 `65ff5e4` 并验收（见下）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 验收：#50（fmcw_radar 重新 pin 到 `18241cd`、接入合规检查）
+- 重新 pin 单独一个提交：fmcw_radar#26 的 `036bb9b`（父提交 `8bd37e4`）。7 个登记的 vendor 文件去掉出处头后与 `18241cd` 逐字节相同（它的 `vendor/spec_sources/__init__.py` 是它自己的，不在登记里）；本库本地跑它的 `vendor_check --strict`：spec_sources 的 7 个都是 verbatim（另 26 个因本地缺别的 sibling 跳过；它报 `--fail-on-skip` 下 37 verbatim、1 adapted、无漂移）。指纹（两边都用 `8bd37e4` 的 `fingerprint.py`）：2153 个值逐位相同。它 vendor 的表 23 → 37 条，未核实 0 条。
+- 接入合规检查：fmcw_radar#27 的 `5ffbafd`。本库对 `036bb9b` 与 `5ffbafd` 各录一次：原有 2153 个值逐位相同，新增 247 个，全是 `compliance.*`。
+- 它的 `upstream:` 读 44 个数，每个都与本库的值（连同类型）相同，都是 spec。没读的：`fcc15255.radar_mode_switch`、`radar_61_61p5` 的 `outside_*`、`radar_uav_60_64` 的 `max_height_agl_m`、`fcc15255.eirp_avg_dbm` / `eirp_peak_dbm`。
+- 它报的结果：默认配置（58–62 GHz、22 dBm）能用、又不依赖使用场景的档只有默认档与 `radar_57_64`，按后者上限 14 dBm，超 8.0 dB；6.4 ms 连续发射的帧要满足 25.5 ms 关断，帧周期至少 31.90 ms。这次它没有改任何现有数字。
+- 本库答复里"原文没有"的几处，它在自己的报表里写明了它的读法（使用场景由配置声明、占用带宽取指令扫频范围、窗口截断的关断按整段 ≥ 2 ms 计、TDM 按单通道、配置功率当峰值）。其中关断被 33 ms 窗口截断时怎么计，它请本库以后若读到 FCC 的测量规程或 KDB 的说法就告诉它（ROADMAP）。
+- `consumers.yaml`：fmcw_radar 的 vendored 一条 pin `a9af261` → `18241cd`、at `036bb9b`、issue fmcw_radar#26，文件加 `data/regulatory.yaml`；按条登记 44 个引用（at `5ffbafd`），fmcw_radar 的登记 14 → 58 条。`tests/fixtures/` 里它的表换成 `5ffbafd` 的（`4495310` 的在 git 历史里）。按条登记的引用：
+  - `fcc15255.band_low_hz` = 57000000000.0
+  - `fcc15255.band_high_hz` = 71000000000.0
+  - `fcc15255.radar_default#band_high_hz` = 71000000000.0、`fcc15255.radar_default#band_low_hz` = 57000000000.0、`fcc15255.radar_default#peak_conducted_dbm` = -10.0、`fcc15255.radar_default#peak_eirp_dbm` = 10.0
+  - `fcc15255.radar_57_59p4_indoor#band_high_hz` = 59400000000.0、`fcc15255.radar_57_59p4_indoor#band_low_hz` = 57000000000.0、`fcc15255.radar_57_59p4_indoor#peak_eirp_dbm` = 20.0
+  - `fcc15255.radar_57_59p4_outdoor#band_high_hz` = 59400000000.0、`fcc15255.radar_57_59p4_outdoor#band_low_hz` = 57000000000.0、`fcc15255.radar_57_59p4_outdoor#peak_eirp_dbm` = 30.0
+  - `fcc15255.radar_57_61p56#band_high_hz` = 61560000000.0、`fcc15255.radar_57_61p56#band_low_hz` = 57000000000.0、`fcc15255.radar_57_61p56#peak_eirp_dbm` = 3.0
+  - `fcc15255.radar_57_61p56_off_time#band_high_hz` = 61560000000.0、`fcc15255.radar_57_61p56_off_time#band_low_hz` = 57000000000.0、`fcc15255.radar_57_61p56_off_time#off_time_min_run_s` = 0.002、`fcc15255.radar_57_61p56_off_time#off_time_sum_min_s` = 0.0165、`fcc15255.radar_57_61p56_off_time#off_time_window_s` = 0.033、`fcc15255.radar_57_61p56_off_time#peak_eirp_dbm` = 20.0
+  - `fcc15255.radar_57_64#band_high_hz` = 64000000000.0、`fcc15255.radar_57_64#band_low_hz` = 57000000000.0、`fcc15255.radar_57_64#off_time_min_run_s` = 0.002、`fcc15255.radar_57_64#off_time_sum_min_s` = 0.0255、`fcc15255.radar_57_64#off_time_window_s` = 0.033、`fcc15255.radar_57_64#peak_eirp_dbm` = 14.0
+  - `fcc15255.radar_57_64_outdoor#band_high_hz` = 64000000000.0、`fcc15255.radar_57_64_outdoor#band_low_hz` = 57000000000.0、`fcc15255.radar_57_64_outdoor#off_time_min_run_s` = 0.002、`fcc15255.radar_57_64_outdoor#off_time_sum_min_s` = 0.0165、`fcc15255.radar_57_64_outdoor#off_time_window_s` = 0.033、`fcc15255.radar_57_64_outdoor#peak_eirp_dbm` = 20.0
+  - `fcc15255.radar_61_61p5#avg_eirp_dbm` = 40.0、`fcc15255.radar_61_61p5#band_high_hz` = 61500000000.0、`fcc15255.radar_61_61p5#band_low_hz` = 61000000000.0、`fcc15255.radar_61_61p5#max_bandwidth_hz` = 500000000.0、`fcc15255.radar_61_61p5#peak_eirp_dbm` = 43.0
+  - `fcc15255.radar_uav_60_64#band_high_hz` = 64000000000.0、`fcc15255.radar_uav_60_64#band_low_hz` = 60000000000.0、`fcc15255.radar_uav_60_64#off_time_min_run_s` = 0.002、`fcc15255.radar_uav_60_64#off_time_sum_min_s` = 0.0165、`fcc15255.radar_uav_60_64#off_time_window_s` = 0.033、`fcc15255.radar_uav_60_64#peak_eirp_dbm` = 20.0
 
 ### #50（fmcw_radar 请求）：47 CFR §15.255(c)(2) 的雷达限值
 - 2026-11-18 读 eCFR 的现行条文（2026-11-16 版；该节最近修订仍是 2023-08-23，与 2026-11-16 读的 2026-11-12 版逐字节相同），另读 §15.3 的定义。每段 quote 都逐字出现在原文里（本库用脚本对过）。

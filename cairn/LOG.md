@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-18 · 验收 #48：mmw60_trx 重新 pin 到 65ff5e4（feat/accept-issue48-repin）
+
+- PR #49 合并（main `65ff5e4`），在 #48 给了 PIN。mmw60_trx 在 #76 合并 `147ef1d`（父提交 `f547d8d`），重新 pin 与它的 OFDM 接收机改动在同一个提交里。
+- 复核：9 个文件去头后与 `65ff5e4` 逐字节相同；本地 `vendor_check --strict` 9 verbatim（108 缺 sibling 跳过）；指纹：`f547d8d` 对"`f547d8d` + `147ef1d` 的 vendor 文件"，同一个 `fingerprint.py`，69 个值逐位相同；合并表 208 → 214、未核实 4。
+- 它用上了 EDMG-STF / EDMG-CEF（`ay/training.py`，按键读）；OFDM 比 SC 门限多出的量平均 0.84 → 0.19 dB（换训练场单项：13 dB 理想链 EVM 多丢 0.79 → 0.65 dB）。hFilt、DMG CEF、Golay 这轮没用。
+- `consumers.yaml`：mmw60_trx pin → `65ff5e4`、at `147ef1d`、issue mmw60_trx#76。数据未动，共享表 164 条。
+
 ## 2026-11-18 · #48：EDMG OFDM 包的训练场、DMG CEF 拼法、hFilt、Golay 序列（feat/issue48-ofdm-training，未发布）
 
 - mmw60 开了 #48（4 项），先问 EDMG OFDM 包的数据用哪个场估信道。读 mentor 公开文件：17/1806r3 30.12.3.4（TXTIME）、17/0596r0（EDMG-CEF，动议 #219）、17/0546r0（EDMG-STF，动议 #209）、0433r2 21.3.6 / 21.9。列 N1–N6 请用户对照标准核对，一致；用户另外确认：标准明写数据信道用 EDMG-CEF 估，EDMG OFDM 包的 L-CEF 用 OFDM 排法（两句公开文件里没有，写进 note）。

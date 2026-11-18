@@ -147,6 +147,8 @@ consumers:
 #              → #43 的控制 PHY 码字、前导更正与 OFDM 映射（563cff4，2026-11-17），文件不变。请求在本库
 #              spec_sources#43，issue 一栏写它重新 pin 的 PR mmw60_trx#67。
 #              → dmg.data_encoding 的 ρ = 2 更正（25b2c5e，2026-11-17），文件不变；仍在 #43 里，PR mmw60_trx#70。
+#              → #48 的 OFDM 训练场、DMG CEF、hFilt 与 Golay（65ff5e4，2026-11-18），文件不变。请求在本库
+#              spec_sources#48，issue 一栏写它重新 pin 的 PR mmw60_trx#76（与它的 OFDM 接收机改动一起压缩合并）。
 #   fmcw_radar 里程碑 2 第 4 批（dfaa36b，fmcw_radar#15），文件加了 atmosphere.yaml、radar_targets.yaml
 #              → 第 2 批（e49979f，fmcw_radar#17，2026-11-14），文件加了 adpll60.yaml
 #              → 第 4 批完（f87cc9b，fmcw_radar#19，2026-11-14），文件加了 windows.yaml
@@ -156,9 +158,9 @@ consumers:
 vendored:
 
   - repo: mmw60_trx
-    at: d27046bb410b39cfd1cb24f59c91594cffaf8b8b
-    pin: 25b2c5eb25fae98027a190b9757e50056b776d81
-    issue: "mmw60_trx#70"
+    at: 147ef1d2b41e3508a105ee36c3427bb769fc4bf8
+    pin: 65ff5e44146d257f2a26955cf0af0eb005fbd308
+    issue: "mmw60_trx#76"
     files: [__init__.py, reader.py, data/energy.yaml, data/frontend60.yaml, data/ieee80211.yaml,
             data/ieee802153c.yaml, data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 

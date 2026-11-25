@@ -98,6 +98,8 @@ ieee80211bf.dmg_monostatic_ppdu  added=unreleased
 ieee80211bf.dmg_sensing_bandwidth  added=unreleased
 dmg.trn_field  added=unreleased
 edmg.trn_field  added=unreleased
+dmg.golay_sequences_32  added=unreleased
+ieee80211bf.dmg_bistatic_ppdu  added=unreleased
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0

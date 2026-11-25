@@ -7,6 +7,8 @@
 
 `reader.py` 没动。
 
+- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
+- **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
 - **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin（#54）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
 - **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
@@ -15,6 +17,24 @@
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 更正：`dmg.golay_sequences` 的 128 / 64 长序列（#57 查出，用户对照标准确认）
+- #48 时这条取自 2010 年的 TGad 0433r2：128 长 D = [64 32 16 1 8 2 4]、W = [+1 +1 +1 +1 −1 −1 +1]，64 长 D = [32 16 1 8 2 4]、W = [−1 +1 +1 −1 +1 −1]。#57 查"第 1 流的 Golay 对"时，TGay 的 SFD 11-15/1358r9（6.10.2 NOTE 2）与 11-17/0430r0 都写明 i = 1 的 Ga^1_128 / Gb^1_128、Ga^1_64 / Gb^1_64 等于 802.11 的 DMG 序列，而它们的 D / W（128：[1 8 2 4 16 32 64] / [−1 −1 −1 −1 +1 −1 −1]；64：[2 1 4 8 16 32] / [+1 +1 −1 −1 +1 −1]）生成的序列与 0433r2 的表各有一半位置不同（Ga128 前 16 个相同，第 17 个起不同）。SFD 印的四张表与它的 D / W 递推逐位相同。用户对照 IEEE 802.11-2024 确认标准是 SFD 这一版。#48 那次 N6 的核对没有覆盖到逐个序列值。
+- 改了：`ga128`、`gb128`、`ga64`、`gb64`、`d_128`、`w_128`、`d_64`、`w_64` 换成 SFD 的；cite / section / quote / note 改写。0433r2 又一处是旧版（前两处是 STF 的 1920 码片与 AGC 的 4 个 Ga64）。
+- 32 长的 `ga32`、`gb32`、`d_32`、`w_32`（控制 PHY 的扩频）公开材料里没有定稿、这次也没有核对，移到新键 `dmg.golay_sequences_32`，标 survey（未核实）；`dmg.golay_sequences` 不再有这四个字段。
+- 不受影响：`dmg.cef_golay_layout`（只是拼法）；用新表拼出的 Gu512 / Gv512 仍只是周期互补；`dmg.trn_field` 的 CE 段仍逐码片等于 SC 包的 CEF；EDMG 的 768 / 2304 码片不变。
+
+### 验收：#54（jcas60 重新 pin 到 `0d17de6`）
+- jcas60 在 jcas60#3 合并 `abb216d`（父提交 `fce7447`），重新 pin 与它自己的改动在同一个提交里，本库把重新 pin 单独拆出来核：在 `fce7447` 上只换进 `abb216d` 的 vendor 文件与 `vendor/__init__.py`，用 `fce7447` 的 `fingerprint.py` 各录一次，507 个值相同。6 个文件去掉出处头后与 `0d17de6` 逐字节相同；本地跑它的 `vendor_check --strict`：15 个 verbatim、1 个 adapted（它自己的 `__init__.py`）。它 vendor 的表 89 → 96 条，未核实 0 条。
+- 它按键读了 60.48 GHz 点（ay 的 SNR −0.0034 dB）与 `ieee80211bf.*` 的若干字段，逐项对它的感知帧：6 项对得上、3 项"条目没有定"、1 项"没有条目"（双站的 PPDU，见 #57）。
+- `consumers.yaml`：jcas60 at `abb216d`、pin `0d17de6`、issue jcas60#3。
+
+### #57（jcas60）：EDMG TRN 场的细节、双站感知的 PPDU
+- 只读公开文件（TGbf 22/0327r1 #87、22/0132r6 #92、22/1915r5 #221、23/1081r3 #358、SFD 21/0504r12；TGay SFD 15/1358r9、17/0430r0 #189）。用户对照 IEEE 802.11bf 与 802.11-2024 核对 T1–T4，未指出不一致。
+- `edmg.trn_field` 加字段：`stream1_golay`（i = 1 的 Ga_N / Gb_N 就是 DMG 的，N = 64、128）、`modulation`（旋转 π/2-BPSK）、`rotation_origin`（n 从哪里起算原文没有说）。
+- `ieee80211bf.dmg_monostatic_ppdu` 加字段：`trn_type`（没有限定 TRN-R / TRN-T / TRN-R/T）、`psdu`（协调单站时有 PSDU，RA = TA）、`waveform_scope`（任意波形的条件针对整个 TRN 场）、`coordinated_trn_waveform`、`request_trn_subfields`（协调单站时保留）。
+- 新增 `ieee80211bf.dmg_bistatic_ppdu`（spec）：BRP-RX/TX、BRP-TX 或 BRP-RX PPDU 带 TRN 场，没有 Sync 场；发端发起与收端发起的帧序（隔 BRPIFS）；TRN 格式由发 TRN 的一方用 TXVECTOR 选；反馈在 BRP Response 帧里；协调双站由 PCP/AP 逐个发 Bistatic Instance Request。
+- 共享表 181 → 183 条（spec 164 → 165，survey 1 → 2）；测试 195 个（193 通过，2 跳过）。
 
 ### #54（jcas60）第二部分：802.11bf 在 60 GHz（DMG / EDMG）的感知，DMG / EDMG 的 TRN 场
 - 标准与草案的许可禁止输入 AI，全部取自 mentor.ieee.org 的公开文件：TGbf 的 SFD 11-21/0504r12，被动议采纳的 PDT 与意见处理（22/0243r6 #75、22/0370r3 #88、22/0947r3 与 22/0966r1 #115、22/1112r1 #124、22/1524r4 #145、22/1523r3 #176、22/1830r3 #183、22/2058r0 #207、22/1915r5 #221、23/0751r1 #310、23/0702r1 #320、23/1081r3 #358、23/1544r2 #423、23/2008r3 #488、24/1351r2 #578，动议号取自 11-20/1874r96、11-23/0410r96）；TGay 的 17/0430r0（#189）、17/0007r1（#152）、17/1806r3（#392）；TGad 的 10/0433r2。TGbf 清单里 DMG 相关的约 110 个文件，两个子代理分读，每句引文本库都回原文对过（生成脚本逐段核对，1806r3 的公式图转写除外）。用户 2026-11-25 对照 IEEE 802.11bf 与 802.11-2024 逐行核对 S1–S7，一致。

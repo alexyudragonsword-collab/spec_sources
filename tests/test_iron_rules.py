@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 181
+    assert len(table) == 183
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -280,7 +280,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 164, "survey": 1, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 165, "survey": 2, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -498,16 +498,20 @@ def _acf(x: list[int], lag: int, periodic: bool = False) -> int:
 
 
 def test_the_golay_tables_are_their_recursion_reversed_and_complementary():
-    """#48: each of the six tables is the 21.9 recursion with its own D_k, W_k, read backwards (Ga128(n) =
-    A_7(128 - n) with the tables indexed from 1), and each pair is complementary: the two aperiodic
-    autocorrelations cancel at every nonzero lag."""
-    g = ss.value("dmg.golay_sequences")
-    for n in (128, 64, 32):
+    """#48, corrected in #57: each table is the 21.9 recursion with its own D_k, W_k, read backwards (Ga128(n)
+    = A_7(128 - n) with the tables indexed from 1), and each pair is complementary: the two aperiodic
+    autocorrelations cancel at every nonzero lag. 128 and 64 are the TGay SFD's i = 1 pairs, which it says
+    equal the DMG ones; 32 is still 0433r2's (unverified, its own entry)."""
+    for key, n in (("dmg.golay_sequences", 128), ("dmg.golay_sequences", 64), ("dmg.golay_sequences_32", 32)):
+        g = ss.value(key)
         a, b = _golay(g[f"d_{n}"], g[f"w_{n}"])
         ga, gb = g[f"ga{n}"], g[f"gb{n}"]
         assert len(ga) == len(gb) == n and ga == a[::-1] and gb == b[::-1]
         assert all(_acf(ga, lag) + _acf(gb, lag) == 0 for lag in range(1, n))
         assert f"Ga{n}(n) = A_{len(g[f'd_{n}'])}({n} - n)" in g["reversal"]
+    corrected = ss.value("dmg.golay_sequences")
+    assert (corrected["d_128"], corrected["w_128"]) == ([1, 8, 2, 4, 16, 32, 64], [-1, -1, -1, -1, 1, -1, -1])
+    assert ss.survey("dmg.golay_sequences_32").source == "survey" and "ga32" not in corrected
 
 
 def test_the_dmg_cef_is_built_from_the_golay_tables():

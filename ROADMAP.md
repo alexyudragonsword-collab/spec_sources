@@ -19,9 +19,9 @@
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
-### jcas60 —— pin 在 `f9ce3f2`（里程碑 0，jcas60#1），已登记；#54 已全部答复，待它重新 pin 并验收后关
-- 它要为 60.48 GHz 点（`atmosphere.yaml`）与 802.11bf 的 7 条（`ieee80211.yaml`）一次重新 pin；回报后本库照例复核（去头逐字节、`vendor_check --strict`、条数）并更新 `consumers.yaml`。
-- 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子。
+### jcas60 —— pin 在 `0d17de6`，jcas60#3 已验收，#54 已由它关闭；#57 已答复，待它重新 pin
+- **要为 #57 重新 pin**：`dmg.golay_sequences` 的 128 / 64 长序列更正了（它读这条，波形会动），32 长移到 `dmg.golay_sequences_32`；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 加字段，新增 `ieee80211bf.dmg_bistatic_ppdu`。回报后本库照例复核并更新 `consumers.yaml`。
+- 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收
 - 它定了：眼罩保留含抖动的比法并标明"比规范严"；BER 按 `ucie.raw_ber_by_rate` 分档；TX 0.4 V 作最坏情况默认值；QDR 有了出处。
@@ -40,6 +40,9 @@
 **要取的原文**：清单在 `cairn/Reference/README.md`（按上面的顺序分批，标明哪些要用户下载、哪些放行站点后本库自己取）。
 
 ## 其余待办
+
+- **`dmg.golay_sequences_32`（DMG 的 Ga32 / Gb32，控制 PHY 扩频用）未核实**：取自 0433r2，同一文件的 128 / 64 长已被证实是旧版（#57）。公开材料里没有定稿；找到公开出处（或用户对照标准核对）后改回 spec，并决定是否并回 `dmg.golay_sequences`。谁读它：mmw60_trx 与 jcas60 整份 vendor `ieee80211.yaml`、按键读，它们是否用到 32 长的两条本库不知道，#57 的回复里请 jcas60 说明。
+- **#48 的其余 0433r2 取值要不要再核**：0433r2 已三处被证实是旧版（STF 1920 码片、AGC 4 个 Ga64、Golay 128 / 64）。本库仍取自它的有 `dmg.cef_golay_layout`（拼法有 17/0007r1 的 CE 子字段印证）、`dmg.ofdm_preamble_hfilt`（73 个抽头，无第二份公开出处）。下次请用户对照标准时把 hFilt 的系数逐个列出来核。
 
 - **`itu_p676.gamma_o_dry_sea_level` 的 note 注明水汽那句的读法**：note 里"水汽另有 0.251 dB/km，合计 0.348"是把 1013.25 hPa 当干空气压算的；当总压读是 0.344（fmcw_radar#15 指出）。数值不受影响。改 note 会让 fmcw 需重新 pin，等 `atmosphere.yaml` 下次因别的原因改动时一起改（这条是本库新建的，不在迁入表里，不用记 `CHANGED`）。
 - **读取器给合并表也解析别名**：`ref(..., table)` 与消费方垫片在合并表上的查找都不认 `aliases:`。mmw60_trx 在 #23 里自己在垫片里补了一份（`_resolve`：先查表，再查 `aliases()`，警告指向调用方）。把这段做成读取器的公开函数（如 `resolve(key, table)`，`ref` 带 `table` 时也走它），垫片就能更薄。改 `reader.py` 会让三个库都需重新 pin，等下一次必须动 `reader.py` 时一起做。

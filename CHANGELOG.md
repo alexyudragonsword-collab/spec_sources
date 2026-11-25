@@ -7,6 +7,7 @@
 
 `reader.py` 没动。
 
+- **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin（#54）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
 - **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
 - **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
@@ -14,6 +15,19 @@
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### #54（jcas60）第二部分：802.11bf 在 60 GHz（DMG / EDMG）的感知，DMG / EDMG 的 TRN 场
+- 标准与草案的许可禁止输入 AI，全部取自 mentor.ieee.org 的公开文件：TGbf 的 SFD 11-21/0504r12，被动议采纳的 PDT 与意见处理（22/0243r6 #75、22/0370r3 #88、22/0947r3 与 22/0966r1 #115、22/1112r1 #124、22/1524r4 #145、22/1523r3 #176、22/1830r3 #183、22/2058r0 #207、22/1915r5 #221、23/0751r1 #310、23/0702r1 #320、23/1081r3 #358、23/1544r2 #423、23/2008r3 #488、24/1351r2 #578，动议号取自 11-20/1874r96、11-23/0410r96）；TGay 的 17/0430r0（#189）、17/0007r1（#152）、17/1806r3（#392）；TGad 的 10/0433r2。TGbf 清单里 DMG 相关的约 110 个文件，两个子代理分读，每句引文本库都回原文对过（生成脚本逐段核对，1806r3 的公式图转写除外）。用户 2026-11-25 对照 IEEE 802.11bf 与 802.11-2024 逐行核对 S1–S7，一致。
+- 新增 7 条 spec（前缀 `ieee80211bf.` 是新的，登记进 `FILE_PREFIXES` 与 AGENTS.md）：
+  - `ieee80211bf.dmg_sensing_types`：单站、协调单站、双站、协调双站、多站、被动，各自谁发、谁收、谁协调；单站是否要求全双工原文没有说。
+  - `ieee80211bf.dmg_sensing_scheduling`：感知过程 > burst > 测量交换（原称 instance），每次交换限一个 TXOP 或 SP；DMG Sensing Scheduling 子元素的字段与字节数（SA 投票后 Interburst 2、Intraburst 1 字节，单位 µs，0 表示未指定；Number Bursts 0 表示一直重复到拆除）。例：`ref("ieee80211bf.dmg_sensing_scheduling#octets@field=intraburst_interval")` → 1。
+  - `ieee80211bf.edmg_multistatic_ppdu`：EDMG BRP PPDU 在数据域与 TRN 之间插 Sync 场；每个 Sync 子字段 18 个 TRN_BL × N_CB 的 Golay 序列；只用于单流 SC；同一次交换里最多再跟 3 个。
+  - `ieee80211bf.dmg_monostatic_ppdu`：任何 DMG 或 EDMG PPDU 都可用；TRN 场里放任意波形的 4 个条件（长度、按 128 Tc 平均的功率、按 10 MHz 平均的谱密度、连续 Ga128 / Gb128 不超过 6 个）。
+  - `ieee80211bf.dmg_sensing_bandwidth`：多站在 4.32 / 6.48 / 8.64 GHz 上 Sync 与 TRN 占 2 / 3 / 4 个信道；协调单站的 BW 字段；DMG 只限 2.16 GHz 与信道聚合两件没有查到。
+  - `dmg.trn_field`：每个 TRN_LEN = AGC 4 × 5 × Ga64 + CE 9 × 128 + TRN 4 × [Ga128 −Gb128 Ga128 Gb128 Ga128] = 4992 码片。0433r2 的 AGC 子字段写 4 个 Ga64（合计 4736），是旧版，不采用。
+  - `edmg.trn_field`：基本子字段 [Ga_N, −Gb_N, Ga_N, Gb_N, Ga_N, −Gb_N]，N = TRN_BL × N_CB，TRN_BL 128 / 256 / 64；TRN_BASIC_LENGTH = 6 × TRN_BL × N_TRN（发射链 1–2 / 3–4 / 5–8 取 1 / 2 / 4）；TRN 单元 = P（0、1、2、4）+ M（1–16）个子字段；EDMG_TRN_LEN 0–255；T_TRN 公式。例：`ref("edmg.trn_field#trn_bl@trn_seq_length=normal")` → 128。
+- 新测试 3 个：用 `dmg.golay_sequences` 拼出 DMG TRN，合计 4992 码片、等于 `dmg.sc_ppdu_chips` 的值，CE 段逐码片等于 SC 包的 CEF，各序列的符号与原句一致（改一个符号即报错）；EDMG 基本子字段 768 码片、Sync 子字段 2304 码片、符号与原句一致；SA 投票对调间隔字节数后总长不变、单位是 µs，宽信道是 2.16 GHz 的整数倍。
+- 共享表 174 → 181 条（spec 157 → 164）；测试 195 个（193 通过，2 跳过）。
 
 ### #54（jcas60）第一部分：登记 jcas60、P.676 的 60.48 GHz 点、§15.255 对"通信设备顺带感知"的答复
 - **新的消费方 jcas60**（60 GHz 通感一体）：里程碑 0（jcas60#1，`8cb40e0`）按 `f9ce3f2` 整份 vendor `reader.py` 与 5 张表（`ieee80211`、`regulatory`、`frontend60`、`radar_targets`、`atmosphere`），按键读，不按条登记。本库复核：6 个文件去掉出处头后与 `f9ce3f2` 逐字节相同；本地跑它的 `vendor_check --strict`，spec_sources 的文件全是 verbatim（另报的 6 个 stale pin 是它从 fmcw_radar / mmw60_trx 拷的代码文件，对的是本库本地那两个仓库的旧检出，与本库无关）；它 vendor 的表 89 条，未核实 0 条。`consumers.yaml` 的 `vendored:` 加一条：at `8cb40e0`、pin `f9ce3f2`、issue jcas60#1。

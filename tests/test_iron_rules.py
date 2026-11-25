@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 174
+    assert len(table) == 181
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -187,7 +187,8 @@ FILE_PREFIXES = {
     "energy.yaml": {"horowitz2014", "adc_survey", "deepscale"},
     "frontend60.yaml": {"rx60", "isolation", "antenna60"},
     "ieee802153c.yaml": {"tg3c"},
-    "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "dmg", "edmg"},
+    "ieee80211.yaml": {"tgad_em", "ieee80211", "ieee80211ac", "ieee80211be", "ieee80211ay", "ieee80211bf", "dmg",
+                       "edmg"},
     "liu2025.yaml": {"liu2025"},
     "pa60.yaml": {"pa60"},
     "radar_targets.yaml": {"target_rcs"},
@@ -279,7 +280,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 157, "survey": 1, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 164, "survey": 1, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -579,3 +580,75 @@ def test_the_fcc_radar_tiers_sit_in_the_band_and_quote_their_own_numbers():
     mode = table["fcc15255.radar_mode_switch"]
     assert mode.value == {"modes_at_once": 1, "min_dwell_s": 0.033}
     assert "only one mode at any time and does so for at least 33 milliseconds" in mode.quote
+
+
+# ------------------------------------------------------------------- #54: 802.11bf sensing and the TRN fields
+def _golay_part(g: dict, name: str) -> list[int]:
+    """'+Ga128', '-Gb64' (an '_N' already substituted by the caller) -> the signed sequence from
+    dmg.golay_sequences."""
+    sign, seq = (1 if name[0] == "+" else -1), name[1:].lower()
+    return [sign * x for x in g[seq]]
+
+
+def test_the_dmg_trn_field_is_4992_chips_and_its_ce_is_the_sc_cef():
+    """#54: a DMG TRN_LEN unit is 4 AGC subfields of five Ga64, the CE subfield and 4 TRN subfields of
+    [Ga128 -Gb128 Ga128 Gb128 Ga128]: 1280 + 1152 + 2560 = 4992 chips, the TRN chips per TRN_LEN that
+    17/1806r3 gives (dmg.sc_ppdu_chips); the CE subfield is the SC packet's CEF chip for chip (Gu512, Gv512,
+    Gv128 from dmg.cef_golay_layout)."""
+    g, trn, lay = ss.value("dmg.golay_sequences"), ss.value("dmg.trn_field"), ss.value("dmg.cef_golay_layout")
+    agc = [x for n in trn["agc_subfield_sc"] for x in _golay_part(g, n)] * trn["agc_subfields_per_trn_len"]
+    ce = [x for n in trn["ce_subfield"] for x in _golay_part(g, n)]
+    sub = [x for n in trn["trn_subfield"] for x in _golay_part(g, n)]
+    assert (len(agc), len(ce), len(sub)) == (1280, 1152, 640)
+    total = len(agc) + len(ce) + trn["trn_subfields_per_trn_len"] * len(sub)
+    assert total == trn["chips_per_trn_len"] == ss.value("dmg.sc_ppdu_chips")["trn_chips_per_trn_len"] == 4992
+    gu = [x for n in lay["gu512"] for x in _golay_part(g, n)]
+    gv = [x for n in lay["gv512"] for x in _golay_part(g, n)]
+    sc_cef = {"Gu512": gu, "Gv512": gv, "Gu128": gu[:128], "Gv128": gv[:128]}
+    assert ce == [x for b in lay["sc_order"] for x in sc_cef[b]]
+    assert [n.replace("a64", "b64") for n in trn["agc_subfield_sc"]] == trn["agc_subfield_control"]
+    e = ss.survey("dmg.trn_field")
+    spelled = lambda seq: "[" + " ".join(n.lstrip("+") for n in seq) + "]"     # noqa: E731 -- the quotes' spelling
+    assert spelled(trn["trn_subfield"]) in e.quote and spelled(trn["agc_subfield_sc"]) in e.quote
+    assert spelled(trn["agc_subfield_control"]) in e.quote
+
+
+def test_the_edmg_trn_and_sync_lengths_follow_trn_bl():
+    """#54: the EDMG basic TRN subfield is six Golay sequences of TRN_BL x N_CB, so at N_CB = 1, one TX
+    chain, TRN_BL = 128 it is 768 chips, the TRN_BASIC_LENGTH formula with N_TRN = 1; the multistatic Sync
+    subfield is 18 of the same sequences, 2304 chips; the Golay tables of that length are complementary."""
+    g, trn = ss.value("dmg.golay_sequences"), ss.value("edmg.trn_field")
+    ms = ss.value("ieee80211bf.edmg_multistatic_ppdu")
+    bl = ss.ref("edmg.trn_field#trn_bl@trn_seq_length=normal")
+    assert bl == 128 and trn["trn_bl"] == [128, 256, 64] and trn["golay_length"] == ms["golay_length"] == "TRN_BL*N_CB"
+    basic = [x for n in trn["basic_subfield"] for x in _golay_part(g, n.replace("_N", str(bl)))]
+    n_trn = ss.ref("edmg.trn_field#n_trn@tx_chains_max=2")
+    assert len(basic) == 6 * bl * n_trn == 768 and trn["basic_length"] == "6*TRN_BL*N_TRN"
+    assert trn["n_trn"] == [1, 2, 4] and trn["unit_p"] == [0, 1, 2, 4] and trn["unit_m_max"] == 16
+    assert ms["golay_per_sync_subfield"] * bl == 2304
+    as_quoted = "[" + ", ".join(n.lstrip("+").replace("_N", "iN") for n in trn["basic_subfield"]) + "]"
+    assert f"TRNibasic = {as_quoted}" in ss.survey("edmg.trn_field").quote
+    ga, gb = g[f"ga{bl}"], g[f"gb{bl}"]
+    assert all(_acf(ga, lag) + _acf(gb, lag) == 0 for lag in range(1, bl))
+
+
+def test_the_dmg_sensing_schedule_swapped_its_interval_widths_and_counts_in_microseconds():
+    """#54: the SA ballot (24/1351r2) swapped the Interburst / Intraburst Interval widths of D0.3
+    (22/1830r3) and made the unit a microsecond; the subelement keeps its length. The sensing types table
+    has one row per type, and the wide multistatic channels are whole 2.16 GHz channels."""
+    s = ss.value("ieee80211bf.dmg_sensing_scheduling")
+    i, j = s["field"].index("interburst_interval"), s["field"].index("intraburst_interval")
+    swapped = list(s["d0_3_octets"])
+    swapped[i], swapped[j] = swapped[j], swapped[i]
+    assert s["octets"] == swapped and sum(s["octets"]) == 11
+    assert ss.ref("ieee80211bf.dmg_sensing_scheduling#octets@field=intraburst_interval") == 1
+    assert s["time_unit_s"] == 1e-06 and s["unit"][:3] == ["us"] * 3
+    e = ss.survey("ieee80211bf.dmg_sensing_scheduling")
+    assert "Octets 1 1 4 1 2 1 1 1 1" in e.quote and "in units of microsecond" in e.quote
+    t = ss.value("ieee80211bf.dmg_sensing_types")
+    assert {len(t[f]) for f in ("type", "transmitter", "receiver", "coordinated_by")} == {6}
+    bw = ss.value("ieee80211bf.dmg_sensing_bandwidth")
+    centres = ss.value("ieee80211ay.channel_centres_ghz")
+    spacing = round(centres[1] - centres[0], 6)
+    assert spacing == 2.16
+    assert [round(n * spacing, 6) for n in bw["multistatic_sync_trn_channels"]] == bw["multistatic_channel_ghz"]

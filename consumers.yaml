@@ -507,6 +507,8 @@ consumers:
 #              → 0.6.0（a9af261，fmcw_radar#21，2026-11-17），文件不变。
 #              → §15.255(c)(2) 的雷达各档（18241cd，fmcw_radar#26，2026-11-18），文件加了 regulatory.yaml。请求在本库
 #              spec_sources#50；它在 fmcw_radar#27 接入合规检查，44 个引用按条登记在上面。
+#   jcas60     里程碑 0（f9ce3f2，jcas60#1，2026-11-24），请求在本库 spec_sources#54；整份 vendor、按键读，不按条登记；
+#              它的 vendor/spec_sources/__init__.py 是它自己的（与 fmcw_radar 一样），不在登记里。
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
 #              （只查找，不抄数，所以不按条登记）。
 vendored:
@@ -524,6 +526,13 @@ vendored:
     issue: "fmcw_radar#26"
     files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml,
             data/windows.yaml, data/regulatory.yaml]
+
+  - repo: jcas60
+    at: 8cb40e0cbccff191f9468345777e7d3ae52a878e
+    pin: f9ce3f2b035d4d83269aa4a4eb33982c53838286
+    issue: "jcas60#1"
+    files: [reader.py, data/ieee80211.yaml, data/regulatory.yaml, data/frontend60.yaml, data/radar_targets.yaml,
+            data/atmosphere.yaml]
 
   - repo: d2d_link
     at: d5d34a62aa581a1f5a8d9db486703038ae6b7d39

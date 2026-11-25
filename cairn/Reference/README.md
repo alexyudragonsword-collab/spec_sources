@@ -165,3 +165,10 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - ✅ 47 CFR §15.255，eCFR 2026-11-16 版（该节最近修订仍是 2023-08-23，与 2026-11-16 读的 2026-11-12 版逐字节相同）：(b)(3)、(c)(2)(i)–(v)、(c)(3)、(c)(4)、(f)、(h)、(i) → `fcc15255.radar_*`（10 条）。eCFR 的 versioner API 现在要求响应压缩（curl 加 `--compressed`）。
 - ✅ 47 CFR §15.3 Definitions（2023-08-23 版，即现行）：(l) Field disturbance sensor 的定义（雷达是它的一例）。没有 indoor / outdoor、fixed、vehicular 的定义。
 - 没有读：§15.35(b)(c)（(c)(4) 说它们不适用于 (c)(2)、(3)）、§2.947 与它认可的测量规程（(i) 指向它们）。fmcw_radar 说这次不用去读。
+
+## 2026-11-25 · #54：FCC 23-35（60 GHz 雷达规则）、47 CFR §2.1；TGbf 文件清单
+
+- ✅ FCC 23-35，Report and Order，ET Docket No. 21-264，2023-05-18 通过、05-19 发布（docs.fcc.gov/public/attachments/FCC-23-35A1.pdf，41 页；Federal Register 88 FR 47384，2023-07-24，FR 文号 2023-15367，生效 2023-08-23，即 eCFR §15.255 的最近修订）。读了第 1–3、17–25、37、41–46、49–50、60–62 段，以及 Appendix B 里 §15.255(c)(2)(iv) 的条文。用于 #54 第二组的答复，不建条目。
+- ✅ 47 CFR §2.1 Definitions（eCFR，该节最近修订 2026-02-13）：Radar、Radiodetermination 的定义（现行文本把 retransmitted 拼成 "retrainsmitted"，照录）。
+- 读不到：Federal Register 的全文页（跳到 unblock.federalregister.gov 反爬页；API 的元数据能读）；FCC KDB 的检索（apps.fcc.gov/oetcf/kdb 的检索结果页返回 503）。
+- TGbf（802.11bf）在 mentor 的文件清单 2020–2025 共 3105 个文件（含各版本，00bf 组 2247 个），DMG / EDMG 感知相关的约 110 个（SFD 11-21/0504r12、PDT、CC40 / LB272 / LB276 / LB281 / SA 投票的意见处理）；动议汇编 11-20/1874r96、11-23/0410r96。按 jcas60 的限制只读这些公开文件，不读标准与草案正文。

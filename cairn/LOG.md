@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-25 · #54 第一部分：登记 jcas60、P.676 加 60.48 GHz、§15.255 的答复（feat/issue54-jcas60-part1）
+
+- fmcw 在 11-18 关了 #50。新库 jcas60（60 GHz 通感一体）开 #54：802.11bf 的 DMG / EDMG 感知条目；通信设备顺带感知时 §15.255 适用哪一款；60.48 GHz 的氧气衰减。它的里程碑 0（`8cb40e0`）已按 `f9ce3f2` vendor 6 个文件。
+- 复核：6 个文件去头后与 `f9ce3f2` 逐字节相同；本地 `vendor_check --strict` spec_sources 全 verbatim；它的表 89 条、未核实 0。登记进 `vendored:`。
+- 60.48 GHz：14.9925 → 14.993 dB/km（itur 一致）。
+- 法规：环境放行了 docs.fcc.gov、www.fcc.gov、apps.fcc.gov、www.federalregister.gov。FR 全文页跳反爬页读不到，改读 FCC 23-35 原件（41 页）。条文与 R&O 都没有"既通信又感知"的说法；KDB 检索页 503。
+- 802.11bf：TGbf 清单 3105 个文件（2247 个 00bf），DMG 相关的约 110 个；两个子代理分读 PPDU / TRN 与流程，待核对。
+
 ## 2026-11-18 · 验收 #50：fmcw_radar 重新 pin 到 18241cd 并接入合规检查（feat/accept-issue50-fmcw）
 
 - PR #52 合并（main `18241cd`），在 #50 给了 PIN 与六个答复。fmcw_radar 先在 #26 单独重新 pin（`036bb9b`，父 `8bd37e4`），再在 #27 接入（`5ffbafd`）。

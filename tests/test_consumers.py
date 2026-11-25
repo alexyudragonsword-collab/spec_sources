@@ -126,7 +126,7 @@ def _git(*args: str) -> subprocess.CompletedProcess:
 
 def test_vendoring_registrations_name_full_shas_and_files_that_exist():
     vend = _vendored()
-    assert {v["repo"] for v in vend} == {"mmw60_trx", "fmcw_radar", "d2d_link"}
+    assert {v["repo"] for v in vend} == {"mmw60_trx", "fmcw_radar", "d2d_link", "jcas60"}
     for v in vend:
         assert set(v) == {"repo", "at", "pin", "issue", "files"}, v["repo"]
         assert re.fullmatch(r"[0-9a-f]{40}", v["at"]) and re.fullmatch(r"[0-9a-f]{40}", v["pin"]), v["repo"]

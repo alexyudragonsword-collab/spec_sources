@@ -7,12 +7,19 @@
 
 `reader.py` 没动。
 
+- **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin（#54）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
 - **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
 - **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
 - **`mmw60_trx` 需重新 pin（#48），已在 mmw60_trx#76 pin 到 `65ff5e4` 并验收（见下）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### #54（jcas60）第一部分：登记 jcas60、P.676 的 60.48 GHz 点、§15.255 对"通信设备顺带感知"的答复
+- **新的消费方 jcas60**（60 GHz 通感一体）：里程碑 0（jcas60#1，`8cb40e0`）按 `f9ce3f2` 整份 vendor `reader.py` 与 5 张表（`ieee80211`、`regulatory`、`frontend60`、`radar_targets`、`atmosphere`），按键读，不按条登记。本库复核：6 个文件去掉出处头后与 `f9ce3f2` 逐字节相同；本地跑它的 `vendor_check --strict`，spec_sources 的文件全是 verbatim（另报的 6 个 stale pin 是它从 fmcw_radar / mmw60_trx 拷的代码文件，对的是本库本地那两个仓库的旧检出，与本库无关）；它 vendor 的表 89 条，未核实 0 条。`consumers.yaml` 的 `vendored:` 加一条：at `8cb40e0`、pin `f9ce3f2`、issue jcas60#1。
+- **`itu_p676.gamma_o_dry_sea_level` 加 60.48 GHz**（802.11ad / ay 信道 2 的中心，jcas60 请求）：14.993 dB/km，同一方法逐线求和（14.9925），itur 0.4.0 的 gamma0_exact 也给 14.9925。原有 7 点不变；RECOMPUTE 照旧逐点复算。
+- **第二组（法规）不建条目，只答复**：读 FCC 23-35（ET Docket No. 21-264，Report and Order，2023-05-19 发布；Federal Register 88 FR 47384，2023-07-24）原件、eCFR 的 §15.3(l)、§2.1。要点：(c)(1) / (c)(2) 按器件类别写（"Devices other than field disturbance sensors" / "Field disturbance sensors/radars"），条文与 R&O 都没有说一台器件既通信又感知时按哪一款，也没有提 WLAN 感知或 802.11bf；关断时间只写"transmitter off-times"，不分发射的用途；(c)(2)(iv) 的换档只说 (c)(2) 的各档（"the modes in the above sub-sections"）；双站时只发不收的一方算不算 FDS，原文没有。R&O 第 18 段说规则要覆盖"regardless of the particular radar topologies employed"，第 43–45 段说关断时间是给通信设备留的安静时段，第 49–50 段说不再考虑让带 LBT 的雷达用通信限值。FCC 的 KDB 检索页对本库返回 503，没能检索。
+- 共享表条数不变（174）。
 
 ### 验收：#50（fmcw_radar 重新 pin 到 `18241cd`、接入合规检查）
 - 重新 pin 单独一个提交：fmcw_radar#26 的 `036bb9b`（父提交 `8bd37e4`）。7 个登记的 vendor 文件去掉出处头后与 `18241cd` 逐字节相同（它的 `vendor/spec_sources/__init__.py` 是它自己的，不在登记里）；本库本地跑它的 `vendor_check --strict`：spec_sources 的 7 个都是 verbatim（另 26 个因本地缺别的 sibling 跳过；它报 `--fail-on-skip` 下 37 verbatim、1 adapted、无漂移）。指纹（两边都用 `8bd37e4` 的 `fingerprint.py`）：2153 个值逐位相同。它 vendor 的表 23 → 37 条，未核实 0 条。

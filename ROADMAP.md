@@ -7,22 +7,20 @@
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 `65ff5e4`，mmw60_trx#76 已验收；本库 #26、#29、#33、#43、#48 都已验收并由它关闭
-- `data/regulatory.yaml` 在 `65ff5e4` 之后多了 10 条雷达档（#50），它用不上，下次因别的事重新 pin 时一起；不为此单开 issue。
+- `data/regulatory.yaml` 在 `65ff5e4` 之后多了 10 条雷达档（#50）；`data/ieee80211.yaml` 与 `data/frontend60.yaml` 也变了（#54、#57、#59：新条目、`dmg.golay_sequences` 128 / 64 的更正、`dmg.phy_timing#brpifs_s` 20 → 44 µs）。它读的 `dmg.phy_timing` 字段是 `sbifs_s` 与 `control_preamble_s`，没变；Golay 是它自己的构造。下次因别的事重新 pin 时一起；不为此单开 issue。
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `18241cd`，fmcw_radar#26（重新 pin）与 #27（合规检查）已验收；#50 已由它关闭；它的表里没有 survey 了
 - **要为 #54 重新 pin**：`data/atmosphere.yaml` 多了 60.48 GHz 一点，它登记的两个引用不变；不急，下次 pin 时一起。
-- 供它参考（未通知）：FCC 23-35 第 62 段说占用带宽要在合规测量里实测（"we agree with Valeo that the occupied bandwidth be measured as part of the compliance measurements"，依 §2.1049），#50 里本库只答了条文本身没写怎么量；它现在取指令扫频范围。
+- **已通知（fmcw_radar#46，2026-11-26）**：FCC 23-35 第 62 段说占用带宽要在合规测量里实测（"we agree with Valeo that the occupied bandwidth be measured as part of the compliance measurements"，依 §2.1049 的 99 % 功率带宽；第 61 段的 Valeo 意见含扫频过冲与回扫）。它的 `link/compliance.py` 取指令扫频 `center ± sweep / 2`（第 30、260、380 行），影响判档与 61–61.5 GHz 档的 500 MHz 上限。请它定改不改、要不要本库建 §2.1049 的条目；它回报后验收、关 issue。
 - **#50 已由它关闭**（44 个 `fcc15255.*` 引用按条登记）。它请本库留意一件事：§15.255(c)(2) 的关断时间，一段 ≥ 2 ms 的关断被 33 ms 窗口截断时，截下来的片段算不算（它按整段计；另一种读法多扣最多 4 ms，6.4 ms 的帧在 14 dBm 档任何帧率都不合规）。条文没写，本库以后若读到 FCC 的测量规程或 KDB 对这一点的说法，在 #50 或新 issue 里告诉它。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
-### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（除 L-STF），待它重新 pin
-- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充）与 `frontend60.yaml`（3 条 `rx60.*`）。
-- **#59 未答完的一件：L-STF 的 17 段各是什么**。公开材料只有段数（TGad 10/1291r2 CID 508："replace 15 with 17"），请用户对照标准告诉本库构成后建条目。
-- **`dmg.phy_timing` 的 BRPIFS**：本库 20 µs（0433r2），公开材料另有两处写 44 µs（TGad SB001 的意见 "no later than a BRPIFS (44 us)"，TGay 17/0418r1 的计算假设）。用户 #59 时复核 `dmg.phy_timing` 说一致；本库请用户再确认这一个值。
+### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（L-STF 没有查到），待它重新 pin
+- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。
 - 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收
@@ -55,7 +53,7 @@
 
 - **EDMG 的接收灵敏度**：公开材料里没找到（TGay CID 1620 要求补，被采纳的 18/0713r3 只补了 EVM；#33 时按标题再搜了 sensitivity / minimum input / receiver / requirement，翻了两份性能要求文件与动议汇编，仍没有）。mmw60_trx 在本地写 assumed（沿用 DMG 的同调制档，`dmg.sc_mcs_extended` 进来后 SC 的高阶档也配上了）；mmw60_trx#61 起 SC 改用它按 #33 的码实测的门限，OFDM 仍借 DMG 同档。
 - **#43 里公开材料没有的三处**：Short SSW 用哪种 PPDU、哪个 MCS 发（控制模式长度下限 14 字节装不下 6 字节，SFD 只写"在 EDMG PPDU 的数据域里"）；EDMG OFDM 16 / 64-QAM 的交织置换（17/1568r0 只说在一个 OFDM 符号内交织，1170r2 写 TBD）；EDMG OFDM 的填充规则（#33、#43 两次都没找到）。EDMG 的 TRN 单元长度在 #54 里收了（`edmg.trn_field`，DMG 的在 `dmg.trn_field`）。
-- **#48 里公开材料没有的**：DMG 前导 STF 2176 码片（= 17 × 128）的组成，0433r2 写的 14 × Ga128 + −Ga128（1920 码片）是旧的，控制 PHY 的 6400 码片同样只有长度；EDMG OFDM 的 N_SYMS（30.6.6.2，本库没收）。"数据信道用 EDMG-CEF 估"与"EDMG OFDM 包的 L-CEF 用 OFDM 排法"两句标准里有、公开文件里没有，现在只在条目 note 里写明是用户对照标准确认的；以后若找到公开原句，补进 quote。
+- **#48 里公开材料没有的**：DMG 前导 STF 2176 码片（= 17 × 128）的组成（jcas60 在 #59 也问了，答"没有查到"；公开材料只有 TGad 10/1291r2 CID 508 的"replace 15 with 17"），0433r2 写的 14 × Ga128 + −Ga128（1920 码片）是旧的，控制 PHY 的 6400 码片同样只有长度；EDMG OFDM 的 N_SYMS（30.6.6.2，本库没收）。"数据信道用 EDMG-CEF 估"与"EDMG OFDM 包的 L-CEF 用 OFDM 排法"两句标准里有、公开文件里没有，现在只在条目 note 里写明是用户对照标准确认的；以后若找到公开原句，补进 quote。
 
 ## 开放问题
 

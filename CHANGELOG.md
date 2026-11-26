@@ -7,7 +7,7 @@
 
 `reader.py` 没动。
 
-- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段。mmw60_trx 不读这几条。
+- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
 - **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
@@ -24,9 +24,10 @@
 - **长 Golay 对**：新增 `edmg.golay_sequences_long`（第 1 流的 Ga / Gb 256、512）。TGay SFD 6.10.2 与 17/0430r0（#189）给 D_K；W_K 256 = [−1 −1 −1 −1 +1 −1 −1 +1]、512 = [−1 −1 −1 −1 +1 −1 −1 +1 +1]。递推倒序后逐位等于 SFD Table 41–44 的 i = 1 表；在给定 D 下穷举全部 W，只有这一组能生成这些表。
 - **更正 `ieee80211bf.dmg_bistatic_ppdu`**：#57 时 `spacing` 只写 "BRPIFS"；22/0327r1 写明同一方连发的 BRP 帧之间隔 SIFS，响应方在 BRPIFS（上限，下限 SIFS）内回。`spacing` 改写，新增 `same_sta_spacing` = SIFS、`reply_spacing` = BRPIFS；"Bistatic Instance Request / Response" 按 LB272（23/0896r3）改称 DMG Sensing Request / Response。
 - **BRP 帧的补充**（`ieee80211bf.dmg_bistatic_ppdu` 新字段）：`frame_type`（Action No Ack，22/1495r6）、`body_octets`（BRP Request 4、DMG Beam Refinement 元素 9、EDMG BRP Request 元素 12、BRP Sensing 元素 8；后两个公开文件里本库没核到原句，用户对照标准确认）、`min_data_sc_blocks` = 18（TGad 10/1291r2 CID 1097）、`edmg_min_data_sc_blocks`（TGay 18/0400r0，#408）、`first_brp_mcs` = 0（0433r2 9.6.0f）、`reply_per_exchange`。MAC 头字节数、整帧长度、其后 BRP 包的 MCS：公开材料里没有。
-- **没做**：L-STF 的 17 段各是什么（公开材料只有"15 改 17 段"，TGad 10/1291r2 CID 508），等用户告诉本库标准里的构成。
-- 用户 2026-11-26 对照 IEEE 802.11bf 与 802.11-2024 核对 Golay 256 / 512 与 BRP 的各行，以及 `dmg.phy_timing` 的各值，一致。
-- 共享表 183 → 187 条（spec 165 → 169）；测试 198 个（196 通过，2 跳过）。
+- **更正 `dmg.phy_timing` 的 BRPIFS**：20 µs → 44 µs。#33 时取自 0433r2 Table 90（aBRPIFS 20usec）；公开材料另有两处写 44 µs：TGad SB001 对 D5.0 的意见 CID 6297（12/0020r19："no later than a BRPIFS (44 us) after the request frame"）与 TGay 17/0418r1（"SIFS=3 us; BRPIFS=44 us"）。从 20 改到 44 的文件公开材料里没有。用户 2026-11-26 对照标准确认 44 µs。quote 去掉 Table 90 的 BRPIFS 一格，加上这两句。#33、#43 时用户核对 `phy_timing` 两次都没指出这一格。
+- **没有查到**：L-STF 的 17 段各是什么（公开材料只有"15 改 17 段"，TGad 10/1291r2 CID 508）。jcas60 的取材限制是不请用户提供标准原文，所以在 #59 答"没有查到"。
+- 用户 2026-11-26 对照 IEEE 802.11bf 与 802.11-2024 核对 Golay 256 / 512 与 BRP 的各行，一致；`dmg.phy_timing` 复核时先回"一致"，单问 BRPIFS 时确认是 44 µs（见上）。
+- 共享表 183 → 187 条（spec 165 → 169）；测试 199 个（197 通过，2 跳过）。
 
 ### 验收：#57（jcas60 重新 pin 到 `3a6e190`）
 - jcas60 在 jcas60#5 合并 `f54dc21`（父 `d16b6b1`）；重新 pin 是它分支上单独的提交 `ab7a81e`（父 `5739fba`），只改 vendor 文件、测试与示例的期望输出。6 个文件去掉出处头后与 `3a6e190` 逐字节相同；本地跑它的 `vendor_check --strict`：16 verbatim、1 adapted（fmcw_radar 的代码，与本库无关）。它 vendor 的表 96 → 98 条，未核实 0 → 1（`dmg.golay_sequences_32`）。

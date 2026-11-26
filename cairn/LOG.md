@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-26 · #59 收尾：**更正** BRPIFS 20 → 44 µs；通知 fmcw_radar FCC 23-35 第 62 段（feat/issue59-jcas60）
+
+- 用户对照标准确认 BRPIFS = 44 µs。`dmg.phy_timing#brpifs_s` 2.0e-05 → 4.4e-05。公开出处：TGad 12/0020r19 SB001 对 D5.0 的 CID 6297（"no later than a BRPIFS (44 us)"）、TGay 17/0418r1 slide 10（"SIFS=3 us; BRPIFS=44 us"）。两段引文逐字核过，quote 去掉 0433r2 Table 90 的 "aBRPIFS 20usec"。
+- **更正（修正 #33 的判断）**：#33 记 20 µs，#33、#43 用户两次核对 `phy_timing` 都没指出，#59 复核时先回"核对 OK"，单问这一格才改。0433r2 已四处被证实是旧版（STF、AGC、Golay 128 / 64、BRPIFS）。
+- 谁受影响：jcas60 读 `brpifs_s`（`bf.py:57`、对照表里是 2e-05）；mmw60_trx 只读 `sbifs_s`、`control_preamble_s`。
+- L-STF：按 jcas60 的取材限制答"没有查到"，并入 ROADMAP"其余待办"里 #48 那条。
+- fmcw_radar#46：FCC 23-35 第 62 段要求实测占用带宽（§2.1049，99 % 功率；Valeo 意见含过冲与回扫）；它的 `compliance.py` 取指令扫频，影响判档与 61–61.5 GHz 档的 500 MHz 上限。
+- 共享表仍 187 条；199 个测试（197 通过，2 跳过）。
+
 ## 2026-11-26 · #59：接收机压缩曲线、长 Golay 对、BRP 帧；更正双站 PPDU 的间隔（feat/issue59-jcas60）
 
 - 两个子代理分读：接收机压缩（arXiv、OSTI、英飞凌 / TI 数据手册；MDPI 与 TU/e 被站点挡住）与 BRP 帧（TGad / TGay / TGbf 的 mentor 文件）。本库回原文核了文中数、两张图（看过原图，读数与图一致）、0327r1 的 SIFS 句、TGad CID 1097 的 18 块、18/0400r0、0433r2 9.6.0f。

@@ -705,3 +705,12 @@ def test_the_bistatic_brp_exchange_separates_sifs_from_brpifs():
     assert "All BRP frames transmitted by the initiator shall be separated by SIFS" in e.quote
     assert "is 18 SC blocks" in e.quote and "DMG Sensing Request frames" in e.quote
 
+
+def test_brpifs_is_the_44_us_the_public_drafts_quote():
+    """#59: dmg.phy_timing had BRPIFS 20 us from 0433r2 Table 90; TGad SB001 (D5.0) and TGay 17/0418r1 both say
+    44 us, and the user confirmed 44 against the standard.  The old Table 90 cell is no longer quoted."""
+    e = ss.survey("dmg.phy_timing")
+    assert e.value["brpifs_s"] == pytest.approx(44e-6, rel=1e-12)
+    assert "BRPIFS (44 us)" in e.quote and "BRPIFS=44 us" in e.quote and "aBRPIFS 20usec" not in e.quote
+    assert e.value["sifs_s"] < e.value["brpifs_s"]
+

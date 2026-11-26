@@ -220,3 +220,5 @@ tg3c.pn_model  added=0.5.0
 tg3c.pn_psd0_examples_dbchz  added=0.5.0
 tg3c.pa_modified_rapp_shape  added=0.5.0
 tg3c.pa_ghorbani_nec_gaas  added=0.5.0
+fcc15255.radar_occupied_bandwidth  added=unreleased
+fcc2.occupied_bandwidth  added=unreleased

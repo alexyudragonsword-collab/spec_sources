@@ -7,6 +7,7 @@
 
 `reader.py` 没动。
 
+- **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
@@ -18,6 +19,13 @@
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### fmcw_radar#46：占用带宽（§2.1049）与 FCC 23-35 第 62 段
+- 新增 `fcc2.occupied_bandwidth`（spec）：`power_outside_each_limit_pct` = 0.5。§2.202(a) 与 §2.1049 是同一句："the mean powers radiated are each equal to 0.5 percent of the total mean power radiated by a given emission"。quote 带 §2.1049 的 (h)、(i)（测试信号）与 §2.1041（Part 15 设备的测量方法由该设备的条文规定）。新前缀 `fcc2`（47 CFR 第 2 部分），登记在 `regulatory.yaml`。
+- 新增 `fcc15255.radar_occupied_bandwidth`（spec，值是文字）：第 62 段要求在合规测量里实测占用带宽，口径 §2.1049，依据 §15.201(b)（脚注 167）；quote 含第 61 段 Valeo 的意见（含 chirp 的过冲与回扫）、脚注 163、第 22 段、§15.255(c)(2)(v)、(f)、(i)(2) 与 §15.31(c)。`codified`：写进条文的只有"扫频开着测"（§15.255(i)(2)），占用带宽这一句附录 B 与现行 §15.255 都没有，只在 R&O 正文里。
+- fmcw 问的四处读法写在后者的 note：判档用什么带宽、(f) 的带宽口径、占用带宽用什么检波与平均、是否只在发射期间测——原文都没有；R&O 第 22、9 段讲 61.0–61.5 GHz 档时用 occupied bandwidth，但没有引 §2.1049；§15.255 自己定义的带宽只有 (c)(3) 脉冲雷达的 −10 dB 与 (e)(2) 非雷达设备的 −6 dB 两种。§15.31(a)(3) 指定的 ANSI C63.10-2020 不公开，没读。
+- `fcc15255.radar_61_61p5` 的 note 加一句指向这两条，值不变。
+- 共享表 187 → 189 条（spec 169 → 171）；测试 200 个（198 通过，2 跳过）。
 
 ### #59（jcas60）：接收机压缩曲线、长 256 / 512 的 Golay 对、BRP 帧；更正双站 PPDU 的间隔
 - **接收机压缩**（公开论文与数据手册，与标准无关）：新增 `rx60.amp_spasaro2024_compression`（arXiv:2406.12115，22 nm FDSOI 57.25 GHz 放大器，文中 IP1dB −21.8 dBm；Fig. 5(b) 读图 16 点，±0.02 dB）、`rx60.rx_moody2023_compression`（Sandia OSTI 3022982，45 nm RF SOI 60–75 GHz 接收机在 67 GHz，文中 IP1dB −21.5 dBm、OP1dB 3 dBm；Fig. 7(b) 读图 11 点，±0.1 dB）、`rx60.radar_bgt60tr13c`（英飞凌数据手册 V2.4.9 Table 55：RX P1dB min −10 / typ −5 dBm，TX→RX 隔离 typ 50 dB，不含封装）。两条曲线在 P1dB 以上 3 dB 处压缩约 1.7 / 2.2 dB。AM/PM、对 60 GHz 接收机拟合 Rapp 的论文、同时给 P1dB 与 IIP3 的 60 GHz 晶体管接收链：没有查到。

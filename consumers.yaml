@@ -510,6 +510,8 @@ consumers:
 #   jcas60     里程碑 0（f9ce3f2，jcas60#1，2026-11-24），请求在本库 spec_sources#54；整份 vendor、按键读，不按条登记；
 #              它的 vendor/spec_sources/__init__.py 是它自己的（与 fmcw_radar 一样），不在登记里。
 #              → #54 的 802.11bf 条目与 60.48 GHz 点（0d17de6，jcas60#3，2026-11-25），文件不变；它验收后关了 #54。
+#              → #57 的 Golay 更正、EDMG TRN 细节与双站 PPDU（3a6e190，jcas60#5，2026-11-25），文件不变；重新 pin 是
+#              分支上的单独提交 ab7a81e（父 5739fba），它验收后关了 #57。
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
 #              （只查找，不抄数，所以不按条登记）。
 vendored:
@@ -529,9 +531,9 @@ vendored:
             data/windows.yaml, data/regulatory.yaml]
 
   - repo: jcas60
-    at: abb216dc5d0ce176cd3f0620e9006f6339c16201
-    pin: 0d17de6440344832737140ecfcdbf96b175a042a
-    issue: "jcas60#3"
+    at: f54dc218912f3ff7b3c89061a97365c0060a2e44
+    pin: 3a6e1905ef7c48c01338cf9cd808e3fd4bdad8a7
+    issue: "jcas60#5"
     files: [reader.py, data/ieee80211.yaml, data/regulatory.yaml, data/frontend60.yaml, data/radar_targets.yaml,
             data/atmosphere.yaml]
 

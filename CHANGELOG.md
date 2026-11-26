@@ -8,6 +8,7 @@
 `reader.py` 没动。
 
 - **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
+- **`fmcw_radar` 需重新 pin（#59，补记）**：下一行漏了它。fmcw_radar 也 vendor `data/frontend60.yaml`，#59 在里面新增 3 条 `rx60.*`，原有条目没动，它登记的引用不变、指纹不该动。2026-11-26 在 fmcw_radar#46 的答复里告诉了它，PIN `98b1d1b` 把 #54、#59、#46 的三个文件一并跟上。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。

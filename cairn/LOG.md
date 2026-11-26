@@ -3,6 +3,15 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-26 · 验收 fmcw_radar#46：重新 pin 到 `98b1d1b`，接入占用带宽（feat/accept-fmcw46）
+
+- PR #62 合并（main `a73f8f6`，只改文档）。fmcw 回报：重新 pin 是 main 上的单独提交 `019520a`（父 `d1c48bd`），接入是 `074e150`（0.2.35，它的 PR #47）。
+- 复核：7 个 vendor 文件去头后与 `98b1d1b` 逐字节相同；`vendor_check --strict` 本库 7 个 verbatim，26 个 polar_tx 文件因这里没有 polar_tx 克隆而跳过（它报 37 verbatim、0 skipped）。
+- 指纹：三处各用自己的工具（工具逐字节相同），各 2647 个值，三个文件逐字节相同；每处确实读自己的 vendor 副本（表 37 → 42 条）。
+- 引用：61 个（新增 3：0.5、两句文字），值都等于本库的 `ref`；`fcc15255.*` 44 → 46。fixture 换成 `074e150`。
+- `consumers.yaml`：fmcw at `074e150`、pin `98b1d1b`、issue #46。登记 14 + 44 → 14 + 47；204 个测试通过（2 跳过）。
+- 它判档仍按指令扫频；默认配置实测 99 % 占用频段 58.020–61.980 GHz（3.9596 GHz，指令边内 20.2 MHz）只进报告。
+
 ## 2026-11-26 · 合并 #61（main `98b1d1b`），答复 fmcw_radar#46；**更正** #59 漏记 fmcw 需重新 pin（feat/changelog-fmcw-frontend60）
 
 - PR #61 合并。fmcw_radar#46 答复：PIN `98b1d1b`、两个键与字段、四处读法（判档用什么带宽、(f) 的口径、检波与平均、空闲段：原文没有；第 22 段用 occupied bandwidth 但未引 §2.1049；第 62 段的占用带宽一句不在条文里）。

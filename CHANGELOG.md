@@ -7,19 +7,29 @@
 
 `reader.py` 没动。
 
-- **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
-- **`fmcw_radar` 需重新 pin（#59，补记）**：下一行漏了它。fmcw_radar 也 vendor `data/frontend60.yaml`，#59 在里面新增 3 条 `rx60.*`，原有条目没动，它登记的引用不变、指纹不该动。2026-11-26 在 fmcw_radar#46 的答复里告诉了它，PIN `98b1d1b` 把 #54、#59、#46 的三个文件一并跟上。
+- **fmcw_radar 为 #46 重新 pin，已在 fmcw_radar#46 pin 到 `98b1d1b` 并验收（见下）；`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
+- **fmcw_radar 为 #59 重新 pin（补记），已一并 pin 到 `98b1d1b` 并验收（见下）**：下一行漏了它。fmcw_radar 也 vendor `data/frontend60.yaml`，#59 在里面新增 3 条 `rx60.*`，原有条目没动，它登记的引用不变、指纹不该动。2026-11-26 在 fmcw_radar#46 的答复里告诉了它，PIN `98b1d1b` 把 #54、#59、#46 的三个文件一并跟上。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
 - **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
-- **`fmcw_radar` 需重新 pin、`jcas60` 需重新 pin（#54）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
+- **fmcw_radar、jcas60 为 #54 重新 pin，都已完成：jcas60#3 pin 到 `0d17de6`，fmcw_radar#46 pin 到 `98b1d1b`（见下）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
 - **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
 - **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
 - **`mmw60_trx` 需重新 pin（#48），已在 mmw60_trx#76 pin 到 `65ff5e4` 并验收（见下）**：`data/ieee80211.yaml` 在 `25b2c5e` 之后变了，只新增 6 条（见下），原有条目一条没动，所以它的指纹不该动。其余 8 个 vendor 文件没变。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 验收：fmcw_radar#46（fmcw_radar 重新 pin 到 `98b1d1b`，接入占用带宽）
+- 重新 pin 是它 main 上的单独提交 `019520a`（父 `d1c48bd`），接入是 `074e150`。7 个 vendor 文件去掉出处头后与 `98b1d1b` 逐字节相同；`019520a` 到 `074e150` 之间 vendor 目录没动。本地跑它的 `vendor_check --strict`：本库的 7 个文件全部 verbatim，没有过时的 pin；另有 26 个 polar_tx 的文件因为这里没有 polar_tx 的克隆而跳过（与本库无关；它在自己的环境里报 37 verbatim、0 skipped）。
+- 指纹：`d1c48bd`、`019520a`、`074e150` 三处各用自己的 `tools/fingerprint.py`（三份工具逐字节相同），各 2647 个值，三个文件逐字节相同。每个目录确实读自己的 vendor 副本：它的 vendor 表 37 → 42 条（`regulatory` +2、`frontend60` +3）。
+- 它判档仍按指令扫频，实测的 99 % 占用频段只进报告（默认配置 58.020–61.980 GHz，3.9596 GHz，指令边内 20.2 MHz）。
+- 新登记 3 个引用（fmcw_radar 共 61 个，其中 `fcc15255.*` 46 个）；后两个是文字值，它的表按原样逐字核对：
+  - `fcc2.occupied_bandwidth#power_outside_each_limit_pct` = 0.5
+  - `fcc15255.radar_occupied_bandwidth#quantity` = occupied bandwidth (47 CFR 2.1049)
+  - `fcc15255.radar_occupied_bandwidth#codified` = only the sweep condition (15.255(i)(2); 15.31(c) excepts 15.255); the occupied-bandwidth sentence is in R&O para. 62, not in the rule text
+- `consumers.yaml`：fmcw_radar at `074e150`、pin `98b1d1b`、issue fmcw_radar#46。fixture 换成 `fmcw_radar.sources.074e150.yaml`（删去 `5ffbafd` 那份）。
 
 ### fmcw_radar#46：占用带宽（§2.1049）与 FCC 23-35 第 62 段
 - 新增 `fcc2.occupied_bandwidth`（spec）：`power_outside_each_limit_pct` = 0.5。§2.202(a) 与 §2.1049 是同一句："the mean powers radiated are each equal to 0.5 percent of the total mean power radiated by a given emission"。quote 带 §2.1049 的 (h)、(i)（测试信号）与 §2.1041（Part 15 设备的测量方法由该设备的条文规定）。新前缀 `fcc2`（47 CFR 第 2 部分），登记在 `regulatory.yaml`。

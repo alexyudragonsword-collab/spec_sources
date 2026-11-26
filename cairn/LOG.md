@@ -3,6 +3,30 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-26 · #59 收尾：**更正** BRPIFS 20 → 44 µs；通知 fmcw_radar FCC 23-35 第 62 段（feat/issue59-jcas60）
+
+- 用户对照标准确认 BRPIFS = 44 µs。`dmg.phy_timing#brpifs_s` 2.0e-05 → 4.4e-05。公开出处：TGad 12/0020r19 SB001 对 D5.0 的 CID 6297（"no later than a BRPIFS (44 us)"）、TGay 17/0418r1 slide 10（"SIFS=3 us; BRPIFS=44 us"）。两段引文逐字核过，quote 去掉 0433r2 Table 90 的 "aBRPIFS 20usec"。
+- **更正（修正 #33 的判断）**：#33 记 20 µs，#33、#43 用户两次核对 `phy_timing` 都没指出，#59 复核时先回"核对 OK"，单问这一格才改。0433r2 已四处被证实是旧版（STF、AGC、Golay 128 / 64、BRPIFS）。
+- 谁受影响：jcas60 读 `brpifs_s`（`bf.py:57`、对照表里是 2e-05）；mmw60_trx 只读 `sbifs_s`、`control_preamble_s`。
+- L-STF：按 jcas60 的取材限制答"没有查到"，并入 ROADMAP"其余待办"里 #48 那条。
+- fmcw_radar#46：FCC 23-35 第 62 段要求实测占用带宽（§2.1049，99 % 功率；Valeo 意见含过冲与回扫）；它的 `compliance.py` 取指令扫频，影响判档与 61–61.5 GHz 档的 500 MHz 上限。
+- **更正（下条的膝部对照）**：P1dB + 3 dB 处单点对 Rapp（p = 1 / 2 / 3 → 1.81 / 2.61 / 3.17 dB），A 压缩 1.69 dB、等效 p ≈ 0.86，B 2.22 dB、p ≈ 1.48；下条写的"都更像 p ≈ 1–1.8"偏粗，A 比 p = 1 还缓。
+- 共享表仍 187 条；199 个测试（197 通过，2 跳过）。
+
+## 2026-11-26 · #59：接收机压缩曲线、长 Golay 对、BRP 帧；更正双站 PPDU 的间隔（feat/issue59-jcas60）
+
+- 两个子代理分读：接收机压缩（arXiv、OSTI、英飞凌 / TI 数据手册；MDPI 与 TU/e 被站点挡住）与 BRP 帧（TGad / TGay / TGbf 的 mentor 文件）。本库回原文核了文中数、两张图（看过原图，读数与图一致）、0327r1 的 SIFS 句、TGad CID 1097 的 18 块、18/0400r0、0433r2 9.6.0f。
+- 压缩：A（22 nm FDSOI，57.25 GHz）IP1dB −21.8，P1dB+3 dB 处压缩 1.68 dB；B（45 nm SOI，67 GHz）IP1dB −21.5，P1dB+3 处 2.22 dB；按 Rapp 对照（p = 1 / 2 / 3 时 1.81 / 2.61 / 3.17 dB），两条都更像 p ≈ 1–1.8。BGT60TR13C：RX P1dB −10 / −5 dBm，TX→RX 隔离 50 dB（不含封装）。
+- 长 Golay 对：W_256、W_512 由穷举唯一确定，与 SFD Table 30、17/0430r0 新 Table 2 一致。
+- 更正：#57 的 `spacing` 只写 BRPIFS；同一方连发是 SIFS。子代理报的 BRP Sensing 元素"CID 514 去掉 UID/AID"与 0947r3 原文对不上，本库只按用户的标准核对保留 8 字节，note 写明。
+- 共享表 183 → 187；198 个测试（196 通过）。L-STF 的构成与 BRPIFS（20 还是 44 µs）待用户。
+
+## 2026-11-26 · 验收 jcas60 的 #57 重新 pin；**更正**三次指纹复核的录法（feat/issue59-jcas60）
+
+- PR #58 合并（main `3a6e190`）。jcas60 在 #5 合并 `f54dc21`，重新 pin 是分支上的 `ab7a81e`（父 `5739fba`）：6 个文件去头后与 `3a6e190` 逐字节相同，`vendor_check --strict` 16 verbatim，表 96 → 98、未核实 1；指纹 993 个值里 284 个变（都是用到 Golay 码片的量），与它报的一致。它关了 #57，开了 #59（4 问）。
+- **更正（修正 #48、#50、#54 验收时的判断）**：三个库的 `fingerprint.py` 都把自己所在仓库的 `src` 插到 `sys.path` 前面；那三次本库拿父提交的工具录另一个目录，录到的仍是父提交，"逐位相同"没有测到重新 pin。这次同样录法给出 0 个变、与 jcas60 的 284 不符才查出。各用自己的工具重做：mmw60 #48 69 个相同，fmcw #50 2153 个相同，jcas60 #54 507 个相同；结论不变。
+- #59 进行中：Golay 256 / 512（SFD 与 17/0430r0 的 D / W，递推等于 SFD 的表，W 唯一）已查到；L-STF 只查到"15 改 17 段"（TGad 10/1291r2 CID 508），组成没有查到；压缩曲线与 BRP 帧在读。
+
 ## 2026-11-25 · #57：更正 DMG Golay 表；EDMG TRN 细节、双站 PPDU；验收 jcas60 的 #54 重新 pin（feat/issue57-trn-bistatic-golay）
 
 - PR #56 合并（main `0d17de6`）。jcas60 在 #3 重新 pin（`abb216d`），本库拆出重新 pin 单独核：507 个指纹值相同，6 个文件逐字节相同，表 89 → 96；它关了 #54，又开 #57（4 问）。

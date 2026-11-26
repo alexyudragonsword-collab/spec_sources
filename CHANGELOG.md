@@ -7,6 +7,7 @@
 
 `reader.py` 没动。
 
+- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
 - **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
 - **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
@@ -17,6 +18,26 @@
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### #59（jcas60）：接收机压缩曲线、长 256 / 512 的 Golay 对、BRP 帧；更正双站 PPDU 的间隔
+- **接收机压缩**（公开论文与数据手册，与标准无关）：新增 `rx60.amp_spasaro2024_compression`（arXiv:2406.12115，22 nm FDSOI 57.25 GHz 放大器，文中 IP1dB −21.8 dBm；Fig. 5(b) 读图 16 点，±0.02 dB）、`rx60.rx_moody2023_compression`（Sandia OSTI 3022982，45 nm RF SOI 60–75 GHz 接收机在 67 GHz，文中 IP1dB −21.5 dBm、OP1dB 3 dBm；Fig. 7(b) 读图 11 点，±0.1 dB）、`rx60.radar_bgt60tr13c`（英飞凌数据手册 V2.4.9 Table 55：RX P1dB min −10 / typ −5 dBm，TX→RX 隔离 typ 50 dB，不含封装）。两条曲线在 P1dB 以上 3 dB 处压缩约 1.7 / 2.2 dB。AM/PM、对 60 GHz 接收机拟合 Rapp 的论文、同时给 P1dB 与 IIP3 的 60 GHz 晶体管接收链：没有查到。
+- **长 Golay 对**：新增 `edmg.golay_sequences_long`（第 1 流的 Ga / Gb 256、512）。TGay SFD 6.10.2 与 17/0430r0（#189）给 D_K；W_K 256 = [−1 −1 −1 −1 +1 −1 −1 +1]、512 = [−1 −1 −1 −1 +1 −1 −1 +1 +1]。递推倒序后逐位等于 SFD Table 41–44 的 i = 1 表；在给定 D 下穷举全部 W，只有这一组能生成这些表。
+- **更正 `ieee80211bf.dmg_bistatic_ppdu`**：#57 时 `spacing` 只写 "BRPIFS"；22/0327r1 写明同一方连发的 BRP 帧之间隔 SIFS，响应方在 BRPIFS（上限，下限 SIFS）内回。`spacing` 改写，新增 `same_sta_spacing` = SIFS、`reply_spacing` = BRPIFS；"Bistatic Instance Request / Response" 按 LB272（23/0896r3）改称 DMG Sensing Request / Response。
+- **BRP 帧的补充**（`ieee80211bf.dmg_bistatic_ppdu` 新字段）：`frame_type`（Action No Ack，22/1495r6）、`body_octets`（BRP Request 4、DMG Beam Refinement 元素 9、EDMG BRP Request 元素 12、BRP Sensing 元素 8；后两个公开文件里本库没核到原句，用户对照标准确认）、`min_data_sc_blocks` = 18（TGad 10/1291r2 CID 1097）、`edmg_min_data_sc_blocks`（TGay 18/0400r0，#408）、`first_brp_mcs` = 0（0433r2 9.6.0f）、`reply_per_exchange`。MAC 头字节数、整帧长度、其后 BRP 包的 MCS：公开材料里没有。
+- **更正 `dmg.phy_timing` 的 BRPIFS**：20 µs → 44 µs。#33 时取自 0433r2 Table 90（aBRPIFS 20usec）；公开材料另有两处写 44 µs：TGad SB001 对 D5.0 的意见 CID 6297（12/0020r19："no later than a BRPIFS (44 us) after the request frame"）与 TGay 17/0418r1（"SIFS=3 us; BRPIFS=44 us"）。从 20 改到 44 的文件公开材料里没有。用户 2026-11-26 对照标准确认 44 µs。quote 去掉 Table 90 的 BRPIFS 一格，加上这两句。#33、#43 时用户核对 `phy_timing` 两次都没指出这一格。
+- **没有查到**：L-STF 的 17 段各是什么（公开材料只有"15 改 17 段"，TGad 10/1291r2 CID 508）。jcas60 的取材限制是不请用户提供标准原文，所以在 #59 答"没有查到"。
+- 用户 2026-11-26 对照 IEEE 802.11bf 与 802.11-2024 核对 Golay 256 / 512 与 BRP 的各行，一致；`dmg.phy_timing` 复核时先回"一致"，单问 BRPIFS 时确认是 44 µs（见上）。
+- 共享表 183 → 187 条（spec 165 → 169）；测试 199 个（197 通过，2 跳过）。
+
+### 验收：#57（jcas60 重新 pin 到 `3a6e190`）
+- jcas60 在 jcas60#5 合并 `f54dc21`（父 `d16b6b1`）；重新 pin 是它分支上单独的提交 `ab7a81e`（父 `5739fba`），只改 vendor 文件、测试与示例的期望输出。6 个文件去掉出处头后与 `3a6e190` 逐字节相同；本地跑它的 `vendor_check --strict`：16 verbatim、1 adapted（fmcw_radar 的代码，与本库无关）。它 vendor 的表 96 → 98 条，未核实 0 → 1（`dmg.golay_sequences_32`）。
+- 指纹：`5739fba` 对 `ab7a81e`，各用自己的 `fingerprint.py`，993 个值里 284 个变，与它报的一致；变的都是用到 Golay 码片的量（压缩表各行、单站的增益、L-CEF / TRN 的码片与谱）。它没有读 `ga32` 等 32 长的四个字段。
+- `consumers.yaml`：jcas60 at `f54dc21`、pin `3a6e190`、issue jcas60#5。
+
+### 更正：#48、#50、#54 三次验收的指纹复核当时没有测到被比的那一份
+- mmw60_trx、fmcw_radar、jcas60 的 `tools/fingerprint.py` 都把**它自己所在仓库**的 `src` 插到 `sys.path` 最前面。本库那三次用父提交那一份工具去录另一个目录，录到的仍是父提交，所以"逐位相同"是同一份代码比自己，没有测到重新 pin。#57 的复核里同样的录法给出"993 个值 0 个变"，与 jcas60 报的 284 个不符，才查出来。
+- 2026-11-26 重做，每个目录用它自己的那份工具（两边的工具文件逐字节相同）：mmw60_trx #48（`f547d8d` 对"`f547d8d` + `147ef1d` 的 vendor 文件"）69 个值相同；fmcw_radar #50（`8bd37e4` 对 `036bb9b`）2153 个值相同；jcas60 #54（`fce7447` 对"`fce7447` + `abb216d` 的 vendor 文件"）507 个值相同。三次的结论不变，现在才算真的测过。更早的几次验收是在各自的目录里跑各自的工具，不受影响。
+- 以后的录法：在被录的那个目录里运行它自己的 `tools/fingerprint.py`；要用同一份工具时，先确认两边的工具文件相同。
 
 ### 更正：`dmg.golay_sequences` 的 128 / 64 长序列（#57 查出，用户对照标准确认）
 - #48 时这条取自 2010 年的 TGad 0433r2：128 长 D = [64 32 16 1 8 2 4]、W = [+1 +1 +1 +1 −1 −1 +1]，64 长 D = [32 16 1 8 2 4]、W = [−1 +1 +1 −1 +1 −1]。#57 查"第 1 流的 Golay 对"时，TGay 的 SFD 11-15/1358r9（6.10.2 NOTE 2）与 11-17/0430r0 都写明 i = 1 的 Ga^1_128 / Gb^1_128、Ga^1_64 / Gb^1_64 等于 802.11 的 DMG 序列，而它们的 D / W（128：[1 8 2 4 16 32 64] / [−1 −1 −1 −1 +1 −1 −1]；64：[2 1 4 8 16 32] / [+1 +1 −1 −1 +1 −1]）生成的序列与 0433r2 的表各有一半位置不同（Ga128 前 16 个相同，第 17 个起不同）。SFD 印的四张表与它的 D / W 递推逐位相同。用户对照 IEEE 802.11-2024 确认标准是 SFD 这一版。#48 那次 N6 的核对没有覆盖到逐个序列值。

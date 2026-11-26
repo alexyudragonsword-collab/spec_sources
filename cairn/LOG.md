@@ -3,6 +3,13 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-26 · 合并 #61（main `98b1d1b`），答复 fmcw_radar#46；**更正** #59 漏记 fmcw 需重新 pin（feat/changelog-fmcw-frontend60）
+
+- PR #61 合并。fmcw_radar#46 答复：PIN `98b1d1b`、两个键与字段、四处读法（判档用什么带宽、(f) 的口径、检波与平均、空闲段：原文没有；第 22 段用 occupied bandwidth 但未引 §2.1049；第 62 段的占用带宽一句不在条文里）。
+- **更正**：#59 的 CHANGELOG 重新 pin 行只写了 jcas60 与 mmw60_trx。fmcw_radar 也 vendor `frontend60.yaml`（7 个文件之一），#59 在里面新增 3 条 `rx60.*`，它也需重新 pin。`test_consumers` 只查有没有"`fmcw_radar` 需重新 pin"这一行，fmcw 已有 #54 的一行，所以没抓到；收紧守卫列进 ROADMAP"其余待办"。`git diff --stat 18241cd 98b1d1b` 在它的文件里：atmosphere、frontend60、regulatory 三个，都只新增。
+- 答复 #46 的第一版也写错两处（只说两个文件变了；note 改在哪一条），发出后几分钟内编辑更正，正文里留了更正说明。
+- 在 #59 补充：jcas60 可直接 pin 到 `98b1d1b`，从 `da54721` 起它的文件里只有 `regulatory.yaml` 变了（新增 2 条），表 102 → 104。
+
 ## 2026-11-26 · fmcw_radar#46：占用带宽（§2.1049）与 FCC 23-35 第 62 段的条目（feat/issue46-fmcw-occupied-bandwidth）
 
 - fmcw 回报：对它的锯齿扫频，99 % 占用带宽比指令扫频窄约 1 %（3.960 / 6.931 / 0.4952 GHz 对 4 / 7 / 0.5 GHz），过冲 0–1.4 MHz、指令边外功率 0.02–0.07 %；判定仍按指令扫频，报告另给实测值。它要两条：§2.1049 的"每侧 0.5 %"（数值）与第 62 段（可引用的键），并问四处读法。

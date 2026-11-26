@@ -12,7 +12,7 @@
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `18241cd`，fmcw_radar#26（重新 pin）与 #27（合规检查）已验收；#50 已由它关闭；它的表里没有 survey 了
-- **要为 #54 与 #46 重新 pin**：`data/atmosphere.yaml` 多了 60.48 GHz 一点（#54），`data/regulatory.yaml` 多了 `fcc2.occupied_bandwidth` 与 `fcc15255.radar_occupied_bandwidth`（#46）；它登记的引用都不变。
+- **要为 #54、#59、#46 重新 pin**：`data/atmosphere.yaml` 多了 60.48 GHz 一点（#54），`data/frontend60.yaml` 多了 3 条 `rx60.*`（#59），`data/regulatory.yaml` 多了 `fcc2.occupied_bandwidth` 与 `fcc15255.radar_occupied_bandwidth`（#46）；原有值都没动，它登记的引用都不变。fmcw_radar#46 的答复给了 PIN `98b1d1b`，一次跟上三个文件。
 - **fmcw_radar#46（2026-11-26 开，FCC 23-35 第 62 段）**：它回报——判定仍按指令扫频（对它的锯齿扫频，逐周期引擎算的 99 % 占用带宽比指令窄约 1 %：4 GHz → 3.960、7 GHz → 6.931 GHz、500 MHz → 495.2 MHz；过冲 0–1.4 MHz，指令边外功率 0.02–0.07 %），报告里另给实测值，docstring 改引第 62 段；`chirp.idle_s > 0` 时回扫有 4.2 MHz 下冲（约 3.5 µs），空闲段若在发射，低端 0.5 % 点越出约 0.1 MHz，它写进读法与它的 ROADMAP。本库按它的请求建了 `fcc2.occupied_bandwidth`、`fcc15255.radar_occupied_bandwidth`，四处读法写在后者 note。待它重新 pin（单独提交，指纹预期不变）、建 `upstream:` 引用并回报用了哪些；本库登记进 `consumers.yaml`、验收后关 issue。
 - **#50 已由它关闭**（44 个 `fcc15255.*` 引用按条登记）。它请本库留意一件事：§15.255(c)(2) 的关断时间，一段 ≥ 2 ms 的关断被 33 ms 窗口截断时，截下来的片段算不算（它按整段计；另一种读法多扣最多 4 ms，6.4 ms 的帧在 14 dBm 档任何帧率都不合规）。条文没写，本库以后若读到 FCC 的测量规程或 KDB 对这一点的说法，在 #50 或新 issue 里告诉它。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
@@ -20,7 +20,7 @@
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（L-STF 没有查到），待它重新 pin
-- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。 `regulatory.yaml` 在 #46 又多了两条（它不读），#46 合并后可直接 pin 到那时的 main。
+- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。 `regulatory.yaml` 在 #46 又多了两条（它不读），可直接 pin 到 `98b1d1b`（2026-11-26 在 #59 补充告诉了它，表 102 → 104）。
 - 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收
@@ -41,6 +41,7 @@
 
 ## 其余待办
 
+- **`test_consumers` 的"需重新 pin"守卫太松**：它只查 CHANGELOG 里每个 pin 过时的库有没有**一行**"`<库>` 需重新 pin"，不查那一行是否点到了变了的文件。#59 改了 `frontend60.yaml`，fmcw_radar 也 vendor 它，但 #59 那一行没写 fmcw；因为 fmcw 已有 #54 的一行，测试照样通过（复现：去掉 CHANGELOG 里 fmcw 的"#59，补记"一行，200 个测试仍是 198 通过）。可改成：对每个库、它 pin 之后变了的每个 vendor 文件（`git diff --name-only <pin> HEAD`），要求某一行"需重新 pin"同时写到这个库名和这个文件名。CI 要有完整历史才能 diff。
 - **`dmg.golay_sequences_32`（DMG 的 Ga32 / Gb32，控制 PHY 扩频用）未核实**：取自 0433r2，同一文件的 128 / 64 长已被证实是旧版（#57）。公开材料里没有定稿；找到公开出处（或用户对照标准核对）后改回 spec，并决定是否并回 `dmg.golay_sequences`。谁读它：mmw60_trx 与 jcas60 整份 vendor `ieee80211.yaml`、按键读，它们是否用到 32 长的两条本库不知道，#57 的回复里请 jcas60 说明。
 - **#48 的其余 0433r2 取值要不要再核**：0433r2 已三处被证实是旧版（STF 1920 码片、AGC 4 个 Ga64、Golay 128 / 64）。本库仍取自它的有 `dmg.cef_golay_layout`（拼法有 17/0007r1 的 CE 子字段印证）、`dmg.ofdm_preamble_hfilt`（73 个抽头，无第二份公开出处）。下次请用户对照标准时把 hFilt 的系数逐个列出来核。
 

@@ -3,6 +3,14 @@
 本文件按倒序记录实质性进展 —— 最新条目在本行正下方。每条保持简短（摘要 + 指针），
 结论沉淀进 `cairn/<topic>.md`。
 
+## 2026-11-26 · fmcw_radar#46：占用带宽（§2.1049）与 FCC 23-35 第 62 段的条目（feat/issue46-fmcw-occupied-bandwidth）
+
+- fmcw 回报：对它的锯齿扫频，99 % 占用带宽比指令扫频窄约 1 %（3.960 / 6.931 / 0.4952 GHz 对 4 / 7 / 0.5 GHz），过冲 0–1.4 MHz、指令边外功率 0.02–0.07 %；判定仍按指令扫频，报告另给实测值。它要两条：§2.1049 的"每侧 0.5 %"（数值）与第 62 段（可引用的键），并问四处读法。
+- 读了 eCFR 2026-11-20 版的 §2.202、§2.1041、§2.1049、§15.31、§15.201、§15.255，与 R&O 第 9、22、60–62 段及附录 B（Final Rules）。
+- 新建 `fcc2.occupied_bandwidth`（0.5 %，§2.202(a) 与 §2.1049 同一句）、`fcc15255.radar_occupied_bandwidth`（文字值，含 `codified`）。生成脚本逐段核引文（R&O 8 段、eCFR 10 段）；并核：附录 B 与现行 §15.255 都没有 "occupied bandwidth" / 2.1049 / 15.201；R&O 全文没有 "fundamental emission" / "frequency stability"。
+- 读法：判档用什么带宽、(f) 的口径、检波 / 平均 / 是否只在发射期间测——原文没有；R&O 第 22 段讲 61.0–61.5 GHz 档用 "occupied bandwidth must be fully contained within the 500-megahertz bandwidth"，未引 §2.1049；条文里写进的只有扫频开着测（§15.255(i)(2)）；§2.1041(a) 说 Part 15 的测量方法由该设备的条文规定。
+- 新前缀 `fcc2`；共享表 187 → 189（spec 171）；200 个测试（198 通过，2 跳过）。fmcw、jcas60、mmw60_trx 都 vendor `regulatory.yaml`，需重新 pin，值没变。
+
 ## 2026-11-26 · #59 收尾：**更正** BRPIFS 20 → 44 µs；通知 fmcw_radar FCC 23-35 第 62 段（feat/issue59-jcas60）
 
 - 用户对照标准确认 BRPIFS = 44 µs。`dmg.phy_timing#brpifs_s` 2.0e-05 → 4.4e-05。公开出处：TGad 12/0020r19 SB001 对 D5.0 的 CID 6297（"no later than a BRPIFS (44 us)"）、TGay 17/0418r1 slide 10（"SIFS=3 us; BRPIFS=44 us"）。两段引文逐字核过，quote 去掉 0433r2 Table 90 的 "aBRPIFS 20usec"。

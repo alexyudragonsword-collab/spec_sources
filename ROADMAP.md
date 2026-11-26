@@ -7,20 +7,20 @@
 ## 报回上游（本库不改别的库；要它们做的在那个库开 issue，对方回报后本库验收、关 issue）
 
 ### mmw60_trx —— pin 在 `65ff5e4`，mmw60_trx#76 已验收；本库 #26、#29、#33、#43、#48 都已验收并由它关闭
-- `data/regulatory.yaml` 在 `65ff5e4` 之后多了 10 条雷达档（#50）；`data/ieee80211.yaml` 与 `data/frontend60.yaml` 也变了（#54、#57、#59：新条目、`dmg.golay_sequences` 128 / 64 的更正、`dmg.phy_timing#brpifs_s` 20 → 44 µs）。它读的 `dmg.phy_timing` 字段是 `sbifs_s` 与 `control_preamble_s`，没变；Golay 是它自己的构造。下次因别的事重新 pin 时一起；不为此单开 issue。
+- `data/regulatory.yaml` 在 `65ff5e4` 之后多了 10 条雷达档（#50）与占用带宽两条（fmcw_radar#46）；`data/ieee80211.yaml` 与 `data/frontend60.yaml` 也变了（#54、#57、#59：新条目、`dmg.golay_sequences` 128 / 64 的更正、`dmg.phy_timing#brpifs_s` 20 → 44 µs）。它读的 `dmg.phy_timing` 字段是 `sbifs_s` 与 `control_preamble_s`，没变；Golay 是它自己的构造。下次因别的事重新 pin 时一起；不为此单开 issue。
 - 它在 #63 里定了两件：ISCAS 2015 的 7.1 dB 照原文作双边带，另列单边带一行（它本地的 `assumed.rx_nf_dsb_to_ssb_db` = 3 dB）；Asada [5] 的 PAE 剔掉（`assumed.pa60_table1_pae_excluded`，示例 09 的中位数 8.5 → 8.8 %）。都在它本地，本库不用做什么。
 - 它自己记了：示例 09 用的 Table I 中位数 3.3 dB 把 [1]（偏置不当）与 [11]（48 / 52 GHz）也算进去了，重算会动示例输出，在它的 ROADMAP C10 待定。本库不用做什么。
 
 ### fmcw_radar —— pin 在 `18241cd`，fmcw_radar#26（重新 pin）与 #27（合规检查）已验收；#50 已由它关闭；它的表里没有 survey 了
-- **要为 #54 重新 pin**：`data/atmosphere.yaml` 多了 60.48 GHz 一点，它登记的两个引用不变；不急，下次 pin 时一起。
-- **已通知（fmcw_radar#46，2026-11-26）**：FCC 23-35 第 62 段说占用带宽要在合规测量里实测（"we agree with Valeo that the occupied bandwidth be measured as part of the compliance measurements"，依 §2.1049 的 99 % 功率带宽；第 61 段的 Valeo 意见含扫频过冲与回扫）。它的 `link/compliance.py` 取指令扫频 `center ± sweep / 2`（第 30、260、380 行），影响判档与 61–61.5 GHz 档的 500 MHz 上限。请它定改不改、要不要本库建 §2.1049 的条目；它回报后验收、关 issue。
+- **要为 #54 与 #46 重新 pin**：`data/atmosphere.yaml` 多了 60.48 GHz 一点（#54），`data/regulatory.yaml` 多了 `fcc2.occupied_bandwidth` 与 `fcc15255.radar_occupied_bandwidth`（#46）；它登记的引用都不变。
+- **fmcw_radar#46（2026-11-26 开，FCC 23-35 第 62 段）**：它回报——判定仍按指令扫频（对它的锯齿扫频，逐周期引擎算的 99 % 占用带宽比指令窄约 1 %：4 GHz → 3.960、7 GHz → 6.931 GHz、500 MHz → 495.2 MHz；过冲 0–1.4 MHz，指令边外功率 0.02–0.07 %），报告里另给实测值，docstring 改引第 62 段；`chirp.idle_s > 0` 时回扫有 4.2 MHz 下冲（约 3.5 µs），空闲段若在发射，低端 0.5 % 点越出约 0.1 MHz，它写进读法与它的 ROADMAP。本库按它的请求建了 `fcc2.occupied_bandwidth`、`fcc15255.radar_occupied_bandwidth`，四处读法写在后者 note。待它重新 pin（单独提交，指纹预期不变）、建 `upstream:` 引用并回报用了哪些；本库登记进 `consumers.yaml`、验收后关 issue。
 - **#50 已由它关闭**（44 个 `fcc15255.*` 引用按条登记）。它请本库留意一件事：§15.255(c)(2) 的关断时间，一段 ≥ 2 ms 的关断被 33 ms 窗口截断时，截下来的片段算不算（它按整段计；另一种读法多扣最多 4 ms，6.4 ms 的帧在 14 dBm 档任何帧率都不合规）。条文没写，本库以后若读到 FCC 的测量规程或 KDB 对这一点的说法，在 #50 或新 issue 里告诉它。
 - 它自己记了（它的 ROADMAP P1 #5）：目标 RCS 是常数，不随距离、视角、频段变（示例 05 的车在 5.3 m，按 ISO 中心约 4.3 dBsm，比它的 10 低约 5.7 dB；同一个三面角 77 GHz 比 60 GHz 多 2.17 dB）。要按"种类 + 尺寸 / 视角"算时它再来对接；本库已有 `target_rcs.iso19206_3_car_rear`（距离下降的参数）、`target_rcs.iso19206_3_car_30m`（一周的上下界）、`target_rcs.trihedral_peak`（公式），到时看要不要补 derived。
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
 ### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（L-STF 没有查到），待它重新 pin
-- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。
+- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。 `regulatory.yaml` 在 #46 又多了两条（它不读），#46 合并后可直接 pin 到那时的 main。
 - 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收

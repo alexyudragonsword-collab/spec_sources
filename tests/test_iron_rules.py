@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 187
+    assert len(table) == 189
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -192,7 +192,7 @@ FILE_PREFIXES = {
     "liu2025.yaml": {"liu2025"},
     "pa60.yaml": {"pa60"},
     "radar_targets.yaml": {"target_rcs"},
-    "regulatory.yaml": {"fcc15255"},
+    "regulatory.yaml": {"fcc15255", "fcc2"},
     "tdc.yaml": {"tdc"},
     "ucie.yaml": {"ucie"},
     "windows.yaml": {"harris1978"},
@@ -280,7 +280,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 169, "survey": 2, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 171, "survey": 2, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -584,6 +584,24 @@ def test_the_fcc_radar_tiers_sit_in_the_band_and_quote_their_own_numbers():
     mode = table["fcc15255.radar_mode_switch"]
     assert mode.value == {"modes_at_once": 1, "min_dwell_s": 0.033}
     assert "only one mode at any time and does so for at least 33 milliseconds" in mode.quote
+
+
+def test_the_occupied_bandwidth_is_2_1049s_and_para_62_points_there_without_being_rule_text():
+    """fmcw_radar#46: 0.5 % of the mean power outside each limit is the number 2.202(a) and 2.1049 both print;
+    FCC 23-35 para. 62 sends radar bandwidth there through 15.201(b), and only the sweep condition of that
+    paragraph is in 15.255 itself."""
+    obw, ro = ss.survey("fcc2.occupied_bandwidth"), ss.survey("fcc15255.radar_occupied_bandwidth")
+    assert obw.value == {"power_outside_each_limit_pct": 0.5}
+    assert obw.quote.count("each equal to 0.5 percent of the total mean power radiated by a given emission") == 2
+    assert "parts 15 and 18, the measurement procedures are specified in the rules governing" in obw.quote
+    assert "fcc2.occupied_bandwidth" in ro.note and "fcc15255.radar_occupied_bandwidth" in obw.note
+    assert "section 2.1049 as required by section 15.201(b)" in ro.quote
+    assert ro.value["required_by"] == "47 CFR 15.201(b)" and "2.1049" in ro.value["quantity"]
+    assert "frequency sweep, step, or hop function activated" in ro.quote
+    assert ro.value["sweep_during_measurement"].endswith("frequency sweep, step, or hop function activated")
+    assert "Except as otherwise indicated in §§ 15.255 and 15.256" in ro.quote
+    assert "occupied bandwidth" not in ss.survey("fcc15255.radar_61_61p5").quote
+    assert "fcc15255.radar_occupied_bandwidth" in ss.survey("fcc15255.radar_61_61p5").note
 
 
 # ------------------------------------------------------------------- #54: 802.11bf sensing and the TRN fields

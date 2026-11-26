@@ -19,8 +19,10 @@
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
-### jcas60 —— pin 在 `0d17de6`，jcas60#3 已验收，#54 已由它关闭；#57 已答复，待它重新 pin
-- **要为 #57 重新 pin**：`dmg.golay_sequences` 的 128 / 64 长序列更正了（它读这条，波形会动），32 长移到 `dmg.golay_sequences_32`；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 加字段，新增 `ieee80211bf.dmg_bistatic_ppdu`。回报后本库照例复核并更新 `consumers.yaml`。
+### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（除 L-STF），待它重新 pin
+- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充）与 `frontend60.yaml`（3 条 `rx60.*`）。
+- **#59 未答完的一件：L-STF 的 17 段各是什么**。公开材料只有段数（TGad 10/1291r2 CID 508："replace 15 with 17"），请用户对照标准告诉本库构成后建条目。
+- **`dmg.phy_timing` 的 BRPIFS**：本库 20 µs（0433r2），公开材料另有两处写 44 µs（TGad SB001 的意见 "no later than a BRPIFS (44 us)"，TGay 17/0418r1 的计算假设）。用户 #59 时复核 `dmg.phy_timing` 说一致；本库请用户再确认这一个值。
 - 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收

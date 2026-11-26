@@ -21,7 +21,7 @@ DATA_FILES = [f.name for f in ss.data_files()]
 # ------------------------------------------------------------------- rule 1: every entry tagged, and what a tag needs
 def test_rule1_every_entry_is_tagged_cited_and_complete():
     table = ss.all_entries()
-    assert len(table) == 183
+    assert len(table) == 187
     for key, e in table.items():
         assert e.source in ss.SOURCES and e.cite, key
         if e.source == "spec":
@@ -280,7 +280,7 @@ def test_rule5_holds_over_the_whole_data_directory():
     for tag in ss.SOURCES:
         out = subprocess.run(["grep", "-h", "-c", f"source: {tag}", *files], capture_output=True, text=True)
         assert sum(int(n) for n in out.stdout.split()) == len(ss.by_source(tag)), tag
-    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 165, "survey": 2, "assumed": 0, "derived": 16}
+    assert {t: len(ss.by_source(t)) for t in ss.SOURCES} == {"spec": 169, "survey": 2, "assumed": 0, "derived": 16}
 
 
 def test_rule5_no_tag_spelling_outside_tag_lines_anywhere_in_the_package():
@@ -656,3 +656,52 @@ def test_the_dmg_sensing_schedule_swapped_its_interval_widths_and_counts_in_micr
     spacing = round(centres[1] - centres[0], 6)
     assert spacing == 2.16
     assert [round(n * spacing, 6) for n in bw["multistatic_sync_trn_channels"]] == bw["multistatic_channel_ghz"]
+
+
+# ------------------------------------------------------------------- #59: long Golay pairs, RX compression, BRP timing
+def test_the_long_edmg_golay_pairs_are_their_recursion_reversed_and_complementary():
+    """#59: the stream-1 pairs of length 256 and 512 are the 21.9 recursion with the TGay SFD's D_k, W_k read
+    backwards (they equal the SFD's tables 41-44), and each pair is complementary."""
+    g = ss.value("edmg.golay_sequences_long")
+    for n in (256, 512):
+        a, b = _golay(g[f"d_{n}"], g[f"w_{n}"])
+        ga, gb = g[f"ga{n}"], g[f"gb{n}"]
+        assert len(ga) == len(gb) == n and ga == a[::-1] and gb == b[::-1]
+        assert all(_acf(ga, lag) + _acf(gb, lag) == 0 for lag in range(1, n))
+        assert f"Ga{n}(n) = A_{len(g[f'd_{n}'])}({n} - n)" in g["reversal"]
+    assert g["d_256"] == [1, 8, 2, 4, 16, 32, 64, 128] and g["d_512"] == g["d_256"] + [256]
+
+
+def _interp(xs: list[float], ys: list[float], x: float) -> float:
+    i = next(k for k in range(1, len(xs)) if xs[k] >= x)
+    return ys[i - 1] + (ys[i] - ys[i - 1]) * (x - xs[i - 1]) / (xs[i] - xs[i - 1])
+
+
+def test_the_rx_compression_curves_fall_and_agree_with_their_stated_p1db():
+    """#59: the two read-off curves only fall with input power, and at the IP1dB each paper states, the gain
+    read off the figure is 1 dB below the small-signal value to within the reading error (0.1 dB)."""
+    for key, field, small_signal in (("rx60.amp_spasaro2024_compression", "gt_db", None),
+                                     ("rx60.rx_moody2023_compression", "conversion_gain_db", None)):
+        v = ss.value(key)
+        x, y = v["pin_dbm"], v[field]
+        assert x == sorted(x) and all(b <= a for a, b in zip(y, y[1:], strict=False)), key
+        g0 = y[0] if small_signal is None else small_signal
+        compression = g0 - _interp(x, y, v["ip1db_dbm"])
+        assert compression == pytest.approx(1.0, abs=0.1), (key, compression)
+    moody = ss.value("rx60.rx_moody2023_compression")
+    assert moody["conversion_gain_db"][0] - moody["gain_at_ip1db_db"] == pytest.approx(1.0)
+    bgt = ss.value("rx60.radar_bgt60tr13c")
+    assert bgt["rx_p1db_dbm_min"] < bgt["rx_p1db_dbm_typ"] and bgt["tx_rx_isolation_db_typ"] == 50.0
+
+
+def test_the_bistatic_brp_exchange_separates_sifs_from_brpifs():
+    """#59: BRP frames of the same STA are SIFS apart, the other STA answers within BRPIFS (#57 had only
+    BRPIFS); an SC BRP packet's data field is at least 18 SC blocks."""
+    v = ss.value("ieee80211bf.dmg_bistatic_ppdu")
+    assert (v["same_sta_spacing"], v["reply_spacing"]) == ("SIFS", "BRPIFS")
+    assert "SIFS between" in v["spacing"] and "BRPIFS" in v["spacing"]
+    assert v["min_data_sc_blocks"] == 18 and v["first_brp_mcs"] == 0
+    e = ss.survey("ieee80211bf.dmg_bistatic_ppdu")
+    assert "All BRP frames transmitted by the initiator shall be separated by SIFS" in e.quote
+    assert "is 18 SC blocks" in e.quote and "DMG Sensing Request frames" in e.quote
+

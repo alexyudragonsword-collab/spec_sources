@@ -78,7 +78,10 @@ NEW = {"isolation.tx_rx_tue2018_no_ebg_min_db",
        "ieee80211bf.dmg_sensing_types", "ieee80211bf.dmg_sensing_scheduling", "ieee80211bf.edmg_multistatic_ppdu",
        "ieee80211bf.dmg_monostatic_ppdu", "ieee80211bf.dmg_sensing_bandwidth", "dmg.trn_field", "edmg.trn_field",
        # issue #57 (jcas60): the bistatic PPDU; the 32-chip DMG Golay pair split out of dmg.golay_sequences, unverified
-       "ieee80211bf.dmg_bistatic_ppdu", "dmg.golay_sequences_32"}
+       "ieee80211bf.dmg_bistatic_ppdu", "dmg.golay_sequences_32",
+       # issue #59 (jcas60): the long stream-1 Golay pairs; RX compression curves and a 60 GHz radar chip's RF table
+       "edmg.golay_sequences_long", "rx60.amp_spasaro2024_compression", "rx60.rx_moody2023_compression",
+       "rx60.radar_bgt60tr13c"}
 #: migrated entries since read in the original (milestone 2): survey -> spec. Their value and unit
 #: still equal the source table; tag, cite, note, quote and section are the verification's own.
 VERIFIED = {k: "0.3.0 (IEEE 802.11-09/0296r16)" for k in (
@@ -251,7 +254,7 @@ def test_every_shared_entry_is_accounted_for():
     mmw = {_now(k) for k, e in fixture_entries(MMW60).items() if e["source"] != "assumed" and k not in MMW60_STAYS}
     ucie = set(ss.legacy_keys("d2d_link").values())
     assert set(ss.all_entries()) == mmw | ucie | NEW
-    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 104 == 183
+    assert len(mmw) + len(ucie) + len(NEW) == 63 + 16 + 108 == 187
     assert set(CHANGED) <= set(ss.all_entries())
 
 

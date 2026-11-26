@@ -24,6 +24,9 @@ rx60.radar_iwr6843_fig7_2  added=0.1.0
 isolation.tx_rx_tue2018  added=0.1.0
 isolation.tx_rx_tue2018_no_ebg_min_db  added=0.1.0
 antenna60.okada2013_dbi  added=0.2.0
+rx60.amp_spasaro2024_compression  added=unreleased
+rx60.rx_moody2023_compression  added=unreleased
+rx60.radar_bgt60tr13c  added=unreleased
 survey.rx60_comm_iscas2015  added=0.1.0  aliased=0.2.0  retired=0.3.0
 survey.antenna60_okada2013_dbi  added=0.1.0  aliased=0.2.0  retired=0.3.0
 # ieee80211.yaml
@@ -100,6 +103,7 @@ dmg.trn_field  added=unreleased
 edmg.trn_field  added=unreleased
 dmg.golay_sequences_32  added=unreleased
 ieee80211bf.dmg_bistatic_ppdu  added=unreleased
+edmg.golay_sequences_long  added=unreleased
 # liu2025.yaml
 liu2025.mcs_list  added=0.1.0
 liu2025.ppdu_format  added=0.1.0

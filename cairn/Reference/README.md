@@ -186,3 +186,13 @@ array_tx 要的是面阵实测的复数 S 参数（.sNp），能读到的论文�
 - ✅ TGad 11-12/0213r0（CID 6001，2012）：只把 Gu / Gv 的"complementary Golay"措辞删掉（它们不是互补对），与本库 #48 时算出的"只周期互补"一致；不涉及 D / W。TGad 2009–2012 文件清单 942 个，按标题筛 Golay / 序列 / 前导，没有别的改序列的文件。
 - ✅ TGbf 22/0327r1（动议 #87，双站的 BRP 帧序）、SFD 21/0504r12 动议 #45、#46 → `ieee80211bf.dmg_bistatic_ppdu`；22/0132r6（#92）、22/1915r5（#221）、23/1081r3（#358）→ `ieee80211bf.dmg_monostatic_ppdu` 的补充；17/0430r0（TGay #189）→ `edmg.trn_field` 的旋转与第 1 流。
 - 没有：DMG 定稿的 Ga32 / Gb32；EDMG TRN 的 π/2 旋转从哪个 n 起算。
+
+## 2026-11-26 · #59：60 GHz 接收机压缩、长 Golay 对、BRP 帧
+
+- ✅ M. Spasaro et al., IMS 2022 作者稿 arXiv:2406.12115（CC BY-NC-ND 4.0）：IV.A 与 Fig. 5(b)（渲染后按像素读图）→ `rx60.amp_spasaro2024_compression`。
+- ✅ J. Moody, S. Lepanowski, T. Forbes（Sandia），SAND2025-02836C，OSTI 3022982 全文：Abstract、III 与 Fig. 7(b)（读图）→ `rx60.rx_moody2023_compression`。同一工作的摘要 OSTI 2004749 写 IP1dB −20.4 dBm（不一致，按全文）。
+- ✅ Infineon BGT60TR13C Datasheet V2.4.9（2023-11-21）Table 55 → `rx60.radar_bgt60tr13c`。另读了英飞凌 BGT60UTR11AIP / ATR24C / CUTR13AIP / ATR24AIP 与 TI 多颗 60 / 77 GHz 雷达芯片的数据手册：都只有 P1dB，没有曲线与 IIP3，未建条目。
+- 读不到：www.mdpi.com（403）、research.tue.nl（Cloudflare）、www.mouser.com（拒绝）；代理不放行 analog.com 等。MDPI 上有几篇 60 GHz 接收前端 / LNA 的论文（Electronics 14(10):2091、14(14):2819、13(21):4285，Applied Sciences 12(9):4468）没能读。
+- ✅ TGay SFD 15/1358r9 Table 41–44、17/0430r0 新 Table 2 → `edmg.golay_sequences_long`。
+- ✅ TGad 10/1291r2（D1.0 PHY CR：CID 508 STF 15 → 17 段、CID 1097 BRP 数据域至少 18 SC 块）、10/0833r2、10/0887r2、10/0944r1、11/0592r0（Gu512 改法被拒）、12/0213r0、10/0439r1（2010 年 STF 15 段的演示稿）；TGay 18/0400r0（#408）、17/0007r1、17/1674r0；TGbf 22/1495r6、22/2073r2、23/0896r3 → `ieee80211bf.dmg_bistatic_ppdu` 的更正与补充。
+- 没有：L-STF 17 段的构成；BRP 帧的 MAC 头字节数与整帧长度；BRPIFS 从 20 µs 改到别的值的文件（公开材料只在两处提到 44 µs）。

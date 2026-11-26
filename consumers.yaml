@@ -488,6 +488,30 @@ consumers:
     value: 20.0
     was: ""
 
+  - repo: fmcw_radar
+    at: 074e150079d41e379a431ff41719649575b21458
+    local: fcc15255.radar_occupied_bandwidth.codified
+    key: fcc15255.radar_occupied_bandwidth
+    field: codified
+    value: "only the sweep condition (15.255(i)(2); 15.31(c) excepts 15.255); the occupied-bandwidth sentence is in R&O para. 62, not in the rule text"
+    was: ""
+
+  - repo: fmcw_radar
+    at: 074e150079d41e379a431ff41719649575b21458
+    local: fcc15255.radar_occupied_bandwidth.quantity
+    key: fcc15255.radar_occupied_bandwidth
+    field: quantity
+    value: "occupied bandwidth (47 CFR 2.1049)"
+    was: ""
+
+  - repo: fmcw_radar
+    at: 074e150079d41e379a431ff41719649575b21458
+    local: fcc2.occupied_bandwidth.power_outside_each_limit_pct
+    key: fcc2.occupied_bandwidth
+    field: power_outside_each_limit_pct
+    value: 0.5
+    was: ""
+
 # 三个库按 spec_sources@d7b4d1e 迁移、本库验收于 2026-11-13（各自 issue 里有回报与复核数字）。之后同日验收的重新 pin：
 #   mmw60_trx  0.2.0（e573d4d，mmw60_trx#23）→ 0.3.0（9a443ba，mmw60_trx#25）→ 0.4.0（8e5f2e2，mmw60_trx#27，2026-11-14）
 #              → Liu 刊出版与 tg3c（7aae876，2026-11-15），文件加了 ieee802153c.yaml。这次是它在本库开的 spec_sources#26，
@@ -507,6 +531,8 @@ consumers:
 #              → 0.6.0（a9af261，fmcw_radar#21，2026-11-17），文件不变。
 #              → §15.255(c)(2) 的雷达各档（18241cd，fmcw_radar#26，2026-11-18），文件加了 regulatory.yaml。请求在本库
 #              spec_sources#50；它在 fmcw_radar#27 接入合规检查，44 个引用按条登记在上面。
+#              → 占用带宽的两条与 #54、#59 的新增（98b1d1b，2026-11-26），文件不变。请求在 fmcw_radar#46（本库开的），
+#              重新 pin 是它 main 上的单独提交 019520a（父 d1c48bd），接入是 074e150；新登记 3 个引用（2 个是文字值）。
 #   jcas60     里程碑 0（f9ce3f2，jcas60#1，2026-11-24），请求在本库 spec_sources#54；整份 vendor、按键读，不按条登记；
 #              它的 vendor/spec_sources/__init__.py 是它自己的（与 fmcw_radar 一样），不在登记里。
 #              → #54 的 802.11bf 条目与 60.48 GHz 点（0d17de6，jcas60#3，2026-11-25），文件不变；它验收后关了 #54。
@@ -524,9 +550,9 @@ vendored:
             data/ieee802153c.yaml, data/liu2025.yaml, data/pa60.yaml, data/regulatory.yaml]
 
   - repo: fmcw_radar
-    at: 036bb9b92a5fcef84ca491c74289b1f1bdc73135
-    pin: 18241cd698facbc745ff73c7e7b267d915436acc
-    issue: "fmcw_radar#26"
+    at: 074e150079d41e379a431ff41719649575b21458
+    pin: 98b1d1b33d091ccd3133775610ced59e8bf72c16
+    issue: "fmcw_radar#46"
     files: [reader.py, data/frontend60.yaml, data/atmosphere.yaml, data/radar_targets.yaml, data/adpll60.yaml,
             data/windows.yaml, data/regulatory.yaml]
 

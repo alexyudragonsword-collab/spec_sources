@@ -25,7 +25,7 @@ FIXTURE_FILES = {
     # not a source table: fmcw_radar's table at its last acceptance, fmcw_radar#27 for spec_sources#50 (its references,
     # test_consumers.py; the snapshots it replaces -- ffc703e for #15, 0d32179 for #17, 4495310 for #19 -- are in git
     # history)
-    "fmcw_radar.sources.5ffbafd.yaml": ("fmcw_radar", "5ffbafdeaab515670633915f99f2c93af760bd5c",
+    "fmcw_radar.sources.074e150.yaml": ("fmcw_radar", "074e150079d41e379a431ff41719649575b21458",
                                         "src/fmcw_radar/data/sources.yaml"),
 }
 #: 0.2.0 renamed mmw60_trx's 17 keys whose prefix was a tag (survey. / derived.), not a domain;

@@ -1,5 +1,5 @@
-# fixture: fmcw_radar@5ffbafdeaab515670633915f99f2c93af760bd5c src/fmcw_radar/data/sources.yaml
-# 下面逐字节是该提交上的原文件（tests/test_extraction.py 对照 git show 核对）。只读：fmcw_radar#27 验收时它的表（spec_sources#50），test_consumers.py 用它核对 58 条引用。
+# fixture: fmcw_radar@074e150079d41e379a431ff41719649575b21458 src/fmcw_radar/data/sources.yaml
+# 下面逐字节是该提交上的原文件（tests/test_extraction.py 对照 git show 核对）。只读：fmcw_radar#46 验收时它的表（spec_sources#61），test_consumers.py 用它核对 61 条引用。
 # 外部来源与占位数字表 —— 本库里每一个不是用户在 config 里定的数都在这里，一条一个，带来源标签。
 #
 #   assumed  占位值:没有任何实测或文献依据,只是量级合理(天线增益、RX 增益档、LO 相噪、TDC、77 GHz 一档的全部)。
@@ -28,6 +28,12 @@ entries:
     section: "7.9 RF Specification, p. 32"
     quote: "Transmitter: Output power, TYP 12 dBm; Power backoff range 26 dB"
     note: "一颗雷达芯片的典型值,在芯片端口,不含天线。0.2.7 及以前是 10 dBm 的占位。mmw60_trx 自己的 PA(Psat 15 dBm)是它的假设,雷达不读。"
+  60g_sensing.tx_backoff_db:
+    value: 8.0
+    unit: dB
+    source: assumed
+    cite: "this library's design choice (0.2.20): the transmitter backed off from its 12 dBm to the 14 dBm peak EIRP of 47 CFR 15.255(c)(2)(iii)(A), the only tier above the default one whose band holds the 58-62 GHz sweep; the datasheet the 12 dBm is read from gives a power backoff range of 26 dB"
+    note: "占位(设计取舍,不是外部的数):= tx_power_dbm + tx_gain_dbi − fcc15255.radar_57_64.peak_eirp_dbm = 12 + 10 − 14,tests/test_compliance.py 守着这个等式。发射天线增益的占位(10 dBi)变了,它要跟着变:合规的雷达 EIRP 钉在上限,变的是回退量。0.2.19 及以前没有回退,EIRP 22 dBm,超限 8 dB(用户选的选项 (a):降 EIRP,不换频段)。"
   60g_sensing.tx_gain_dbi:
     value: 10.0
     unit: dBi
@@ -136,6 +142,12 @@ entries:
     source: assumed
     cite: "placeholder: 77 GHz automotive transmitter per channel"
     note: "占位。"
+  77g_automotive.tx_backoff_db:
+    value: 0.0
+    unit: dB
+    source: assumed
+    cite: "placeholder: no backoff"
+    note: "占位。47 CFR §15.255 只管 57–71 GHz,对 76–81 GHz 不适用(link/compliance.py 回答'不适用');这一档的规管限值本库没有读,未核实。"
   77g_automotive.tx_gain_dbi:
     value: 12.0
     unit: dBi
@@ -698,3 +710,30 @@ entries:
     section: "§15.255(b)(3)；(c)(2) 首句"
     quote: "(2) Field disturbance sensors/radars shall not exceed −10 dBm peak conducted output power and 10 dBm peak EIRP except that field disturbance sensors/radars that limit their operation to all or part of the specified frequency band may operate without being subject to a transmitter conducted output power limit if they operate in compliance with paragraph (b)(3) of this section or with one or more of the provisions below:"
     note: "装在无人机上、工作频率限制在 60–64 GHz 之内(离地 ≤ 121.92 m,本库不建模高度):计入关断的最短连续时长;更短的空闲(chirp 之间的回扫)不算关断。"
+  fcc2.occupied_bandwidth.power_outside_each_limit_pct:
+    value: 0.5
+    unit: "%"
+    source: spec
+    upstream: "spec_sources:fcc2.occupied_bandwidth#power_outside_each_limit_pct"
+    cite: "47 CFR 2.202, 2.1049 and 2.1041, eCFR current text (2026-11-20); read in the original by spec_sources (2026-11-26, fmcw_radar#46 / spec_sources#61)"
+    section: "§2.202(a); §2.1049"
+    quote: "The occupied bandwidth, that is the frequency bandwidth such that, below its lower and above its upper frequency limits, the mean powers radiated are each equal to 0.5 percent of the total mean power radiated by a given emission shall be measured under the following conditions as applicable"
+    note: "占用带宽的定义:上限以上、下限以下的平均功率各占该发射总平均功率的份额(每侧,%)。本库用它从 chirp 的实际频率轨迹算 99 % 占用频段(link/occupied.py),只报告、不改判定。"
+  fcc15255.radar_occupied_bandwidth.quantity:
+    value: "occupied bandwidth (47 CFR 2.1049)"
+    unit: ""
+    source: spec
+    upstream: "spec_sources:fcc15255.radar_occupied_bandwidth#quantity"
+    cite: "FCC 23-35, Report and Order 'Amendment of Section 15.255 of the Commission's Rules', ET Docket No. 21-264 (adopted 2023-05-18), and 47 CFR 15.255, 15.31 (eCFR 2026-11-20); read in the original by spec_sources (2026-11-25 / 2026-11-26, fmcw_radar#46 / spec_sources#61)"
+    section: "FCC 23-35 ¶61, ¶62, fn 160, 163, 167"
+    quote: "(FCC 23-35 para. 62) With respect to transmission bandwidth, we agree with Valeo that the occupied bandwidth be measured as part of the compliance measurements. Doing so will ensure fidelity to the requirements specified in section 2.1049 as required by section 15.201(b)."
+    note: "雷达合规测量里要测的带宽是哪一种:文字条目,原样引 spec_sources 的字段,报告照印。"
+  fcc15255.radar_occupied_bandwidth.codified:
+    value: "only the sweep condition (15.255(i)(2); 15.31(c) excepts 15.255); the occupied-bandwidth sentence is in R&O para. 62, not in the rule text"
+    unit: ""
+    source: spec
+    upstream: "spec_sources:fcc15255.radar_occupied_bandwidth#codified"
+    cite: "FCC 23-35, Report and Order 'Amendment of Section 15.255 of the Commission's Rules', ET Docket No. 21-264 (adopted 2023-05-18), and 47 CFR 15.255, 15.31 (eCFR 2026-11-20); read in the original by spec_sources (2026-11-25 / 2026-11-26, fmcw_radar#46 / spec_sources#61)"
+    section: "FCC 23-35 ¶62 and Appendix B (Final Rules); 47 CFR §15.255(i)(2), §15.31(c)"
+    quote: "(FCC 23-35 para. 62) With respect to transmission bandwidth, we agree with Valeo that the occupied bandwidth be measured as part of the compliance measurements. Doing so will ensure fidelity to the requirements specified in section 2.1049 as required by section 15.201(b)."
+    note: "第 62 段的效力:写进条文的只有'扫频开着测';占用带宽那句是委员会在 R&O 正文里的说法,不在 §15.255 的条文里。文字条目,报告照印。"

@@ -18,8 +18,8 @@
 - 它的 `tdc_jitter_s` 仍是 1 ps 占位，用户定暂不开 issue（见里程碑 2 第 2 批）。
 - 它在 #15 里选了只算氧气，信道不含水汽，记在它自己的 ROADMAP。以后要算总气体衰减，本库再补 P.676 Table 2 与水汽那一支，并先定 1013.25 hPa 按总压还是干空气压读。
 
-### jcas60 —— pin 在 `3a6e190`，jcas60#5 已验收，#54、#57 已由它关闭；#59 已答复（L-STF 没有查到），待它重新 pin
-- **要为 #59 重新 pin**：`ieee80211.yaml`（长 Golay 对、双站 PPDU 的更正与补充、`dmg.phy_timing#brpifs_s` 20 → 44 µs）与 `frontend60.yaml`（3 条 `rx60.*`）。它读 `brpifs_s`，C 行的空口时间会动。 `regulatory.yaml` 在 #46 又多了两条（它不读），可直接 pin 到 `98b1d1b`（2026-11-26 在 #59 补充告诉了它，表 102 → 104）。
+### jcas60 —— pin 在 `98b1d1b`，jcas60#13 已验收，#54、#57、#59 已由它关闭
+- 它自己记了：压缩曲线全点拟合的 p（0.898 / 1.618）比它表里沿用 fmcw_radar 的占位 p = 2 缓，换不换要与 fmcw_radar 一起定，留给用户；L-STF 那一条（+4.95 dB）定为做不了。它提了一句备忘（不是请求）：`dmg.sc_ppdu_chips#data_chips` 的文字公式 "N_BLKS*512 + 64" 与 `dmg.phy_params` 的 `sc_block_chips` / `sc_gi_chips` 一致，它断言这句写法不变——本库改这句文字时它会红。
 - 802.11bf 里公开材料没有的：单站是否要求全双工 / 独立接收链；非 EDMG 的 DMG 感知只限 2.16 GHz 的明文；信道聚合时的感知；'Number of Instances per Burst' 改名后的字段名；间隔字段的取值范围（本库只按字节数推了上限）；采纳文本里指明估信道用哪一段的句子；TRN 的 π/2 旋转从哪个 n 起算。
 
 ### d2d_link —— pin 在 `bbc0ccb`，#2 已验收

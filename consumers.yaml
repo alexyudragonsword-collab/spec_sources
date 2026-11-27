@@ -538,6 +538,9 @@ consumers:
 #              → #54 的 802.11bf 条目与 60.48 GHz 点（0d17de6，jcas60#3，2026-11-25），文件不变；它验收后关了 #54。
 #              → #57 的 Golay 更正、EDMG TRN 细节与双站 PPDU（3a6e190，jcas60#5，2026-11-25），文件不变；重新 pin 是
 #              分支上的单独提交 ab7a81e（父 5739fba），它验收后关了 #57。
+#              → #59 的接收机压缩曲线、长 Golay 对、BRP 帧与 BRPIFS 更正（da54721，jcas60#12 压缩合并为 348c536，2026-11-26），
+#              文件不变；只换 pin 是分支上的单独提交 2879073（父 fd35a2b），它验收后关了 #59。
+#              → 跟到 98b1d1b（jcas60#13 压缩合并为 f7fece6，父 348c536，2026-11-26），只多了 #46 的两条 regulatory 条目，它不读。
 #   d2d_link   里程碑 2 第 3 批（bbc0ccb，d2d_link#2，2026-11-14）；它的垫片把 ucie.raw_ber_by_rate 用 ref 展开成分档的 BER 目标
 #              （只查找，不抄数，所以不按条登记）。
 vendored:
@@ -557,9 +560,9 @@ vendored:
             data/windows.yaml, data/regulatory.yaml]
 
   - repo: jcas60
-    at: f54dc218912f3ff7b3c89061a97365c0060a2e44
-    pin: 3a6e1905ef7c48c01338cf9cd808e3fd4bdad8a7
-    issue: "jcas60#5"
+    at: f7fece6322a2a33aaf26055d2fa3d4ded6b2ccf7
+    pin: 98b1d1b33d091ccd3133775610ced59e8bf72c16
+    issue: "jcas60#13"
     files: [reader.py, data/ieee80211.yaml, data/regulatory.yaml, data/frontend60.yaml, data/radar_targets.yaml,
             data/atmosphere.yaml]
 

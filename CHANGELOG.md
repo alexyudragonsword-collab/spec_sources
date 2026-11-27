@@ -7,12 +7,12 @@
 
 `reader.py` 没动。
 
-- **fmcw_radar 为 #46 重新 pin，已在 fmcw_radar#46 pin 到 `98b1d1b` 并验收（见下）；`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
+- **fmcw_radar 为 #46 重新 pin，已在 fmcw_radar#46 pin 到 `98b1d1b` 并验收（见下）；jcas60 也已在 jcas60#13 pin 到 `98b1d1b` 并验收（见下）；`mmw60_trx` 需重新 pin（fmcw_radar#46）**：三者都 vendor 的 `data/regulatory.yaml` 新增 `fcc15255.radar_occupied_bandwidth` 与 `fcc2.occupied_bandwidth`，`fcc15255.radar_61_61p5` 的 note 加了一句指向它们。原有条目的值都没动：fmcw_radar 按条登记的 44 个 `fcc15255.*` 引用不变，指纹不该动。jcas60、mmw60_trx 不读这几条。
 - **fmcw_radar 为 #59 重新 pin（补记），已一并 pin 到 `98b1d1b` 并验收（见下）**：下一行漏了它。fmcw_radar 也 vendor `data/frontend60.yaml`，#59 在里面新增 3 条 `rx60.*`，原有条目没动，它登记的引用不变、指纹不该动。2026-11-26 在 fmcw_radar#46 的答复里告诉了它，PIN `98b1d1b` 把 #54、#59、#46 的三个文件一并跟上。
-- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
-- **`jcas60` 需重新 pin、`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
+- **jcas60 为 #59 重新 pin，已在 jcas60#12 pin 到 `da54721`、jcas60#13 跟到 `98b1d1b` 并验收（见下）；`mmw60_trx` 需重新 pin（#59）**：两者都 vendor 的 `data/ieee80211.yaml` 与 `data/frontend60.yaml` 变了：新增 `edmg.golay_sequences_long` 与 3 条 `rx60.*`；`ieee80211bf.dmg_bistatic_ppdu` 的 `spacing` **改了值**（更正，见下）并加了字段；`dmg.phy_timing` 的 `brpifs_s` **改了值** 2.0e-05 → 4.4e-05（更正，见下）。jcas60 读 `dmg.phy_timing#brpifs_s`（C 行的空口时间与对照表），它的数会动；mmw60_trx 只读这条的 `sbifs_s` 与 `control_preamble_s`，也不读其余几条。
+- **jcas60 为 #57 重新 pin，已在 jcas60#5 pin 到 `3a6e190` 并验收（见下）；`mmw60_trx` 需重新 pin（#57）**：两者都 vendor 的 `data/ieee80211.yaml` 变了：`dmg.golay_sequences` 的 128 / 64 长序列**值变了**（更正，见下），32 长的两条移到新键 `dmg.golay_sequences_32`（未核实）；`edmg.trn_field`、`ieee80211bf.dmg_monostatic_ppdu` 多了字段；新增 `ieee80211bf.dmg_bistatic_ppdu`。jcas60 读 `dmg.golay_sequences`，它的波形会动；mmw60_trx 的 Golay 是它自己的构造，不读这条。
 - **jcas60 为 #54 重新 pin，已在 jcas60#3 pin 到 `0d17de6` 并验收（见下）**。
-- **`mmw60_trx` 需重新 pin、`jcas60` 需重新 pin（#54 第二部分）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
+- **`mmw60_trx` 需重新 pin（#54 第二部分）；jcas60 已在 jcas60#3 pin 到 `0d17de6`（见下）**：两者都 vendor 的 `data/ieee80211.yaml` 新增 7 条（见下），原有条目一条没动，指纹不该动。fmcw_radar、d2d_link 不 vendor 这个文件。
 - **fmcw_radar、jcas60 为 #54 重新 pin，都已完成：jcas60#3 pin 到 `0d17de6`，fmcw_radar#46 pin 到 `98b1d1b`（见下）**：两者都 vendor 的 `data/atmosphere.yaml` 在它们的 pin（`18241cd`、`f9ce3f2`）之后变了：`itu_p676.gamma_o_dry_sea_level` 多了 60.48 GHz 一点（14.993 dB/km），原有 7 点的值不变，所以 fmcw_radar 按条登记的两个引用（60、77.5 GHz）不动，指纹也不该动。mmw60_trx、d2d_link 不涉及。
 - **fmcw_radar 为 #50 重新 pin，已在 fmcw_radar#26 pin 到 `18241cd`、#27 接入并验收（见下）**；它新 vendor 了 `data/regulatory.yaml`。
 - **`mmw60_trx` 需重新 pin（#50）**：它 vendor 的 `data/regulatory.yaml` 在 `65ff5e4` 之后变了：新增 10 条 `fcc15255.radar_*`，原有 4 条只改了 `fcc15255.eirp_avg_dbm` 的 note（指向新条目），值都没动，所以它的指纹不该动。它用不上这些条目，下次 pin 时一起即可。fmcw_radar 现在不 vendor 这个文件，接入时加上；d2d_link 不涉及。
@@ -20,6 +20,13 @@
 - **`mmw60_trx` 要为 #43 重新 pin，已在 mmw60_trx#67 pin 到 `563cff4` 并验收（见下）**：`data/ieee80211.yaml` 在 `a9af261` 之后变了（#43，见下）。值变了的有三条：`dmg.control_phy` 的 `stf_chips` 5120 → 6400；`dmg.phy_timing` 的 `data_preamble_s` 1.745e-06 → 1.891e-06、`control_preamble_s` 3.564e-06 → 4.291e-06；`edmg.short_ssw` 的各字段位宽（总长仍 48 位），并多了 `itxss_mu_*` 两列。
 - fmcw_radar、d2d_link vendor 的文件没动。
 - **`mmw60_trx` 要为 ρ = 2 的更正再 pin 一次，已在 mmw60_trx#70 pin 到 `25b2c5e` 并验收（见下）**：`data/ieee80211.yaml` 在 `563cff4` 之后变了，只是 `dmg.data_encoding`：note 改正、新增 `sc_rho2_codeword`、`sc_rho2_pn` 两个字段，原有字段的值不变（见下面"更正"一节）。
+
+### 验收：#59（jcas60 重新 pin 到 `da54721`，再跟到 `98b1d1b`）
+- jcas60#12 压缩合并为 `348c536`：分支上 `fd35a2b` 写预期，`2879073` 只换 pin 到 `da54721`，`6020559` 用上（压缩提交与 `6020559` 内容相同）。jcas60#13 压缩合并为 `f7fece6`（父 `348c536`），只换 pin 到 `98b1d1b`（与分支 `89bc906` 内容相同）。
+- vendor 文件：`2879073` 与 `f7fece6` 的 6 个文件去掉出处头后，分别与 `da54721`、`98b1d1b` 逐字节相同。`f7fece6` 上跑它的 `vendor_check --strict`：21 个文件全 verbatim；另报 7 个过时的 pin，都是 fmcw_radar 与 mmw60_trx 的文件，来自这里两个旧克隆的 HEAD（11-13 的 `ffc703e`、`b16b6a0`），与本库无关。
+- 指纹（四处各用自己的 `tools/fingerprint.py`，四份工具逐字节相同）：FP_SUMMARY
+- 它的用法：`brpifs_s` 只进了一句说明与引用清单，没有哪行的数靠它；压缩曲线用全部点拟合 Rapp，p = 0.898 / 1.618（本库单点 0.86 / 1.48），ay 单站压缩判据 43.24 → 35.45 / 41.93 dB（表里 p 仍用占位 2，留给用户定）；TRN_BL = 256 干净区 10.90 → 21.80 m；C 行建成一帧一次交换，空口 4.51 → 5.67 %。L-STF 那一条定为做不了。
+- `consumers.yaml`：jcas60 at `f7fece6`、pin `98b1d1b`、issue jcas60#13。它在 #59 里验收后关了 #59。
 
 ### 验收：fmcw_radar#46（fmcw_radar 重新 pin 到 `98b1d1b`，接入占用带宽）
 - 重新 pin 是它 main 上的单独提交 `019520a`（父 `d1c48bd`），接入是 `074e150`。7 个 vendor 文件去掉出处头后与 `98b1d1b` 逐字节相同；`019520a` 到 `074e150` 之间 vendor 目录没动。本地跑它的 `vendor_check --strict`：本库的 7 个文件全部 verbatim，没有过时的 pin；另有 26 个 polar_tx 的文件因为这里没有 polar_tx 的克隆而跳过（与本库无关；它在自己的环境里报 37 verbatim、0 skipped）。
